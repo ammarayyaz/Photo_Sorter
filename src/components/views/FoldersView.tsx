@@ -14,6 +14,7 @@ import { ProcessedItem, PipelineConfig, PipelineMetrics, FaceCluster } from '../
 import { QuickAccessFolder, FolderData } from '../dashboard/QuickAccessFolder';
 import { UnsortedFolderCard, UnsortedFolderData } from '../dashboard/UnsortedFolderCard';
 import { analyzeRealImageFile } from '../../engine/realImageProcessor';
+import { MinimalPhotoCalendar } from '../dashboard/MinimalPhotoCalendar';
 
 interface FoldersViewProps {
   initialSubTab?: 'sorted' | 'unsorted';
@@ -57,6 +58,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
   const [subTab, setSubTab] = useState<'sorted' | 'unsorted'>(initialSubTab);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
+  const [selectedCalendarDate, setSelectedCalendarDate] = useState<string | null>(null);
 
   const [selectedFolderId, setSelectedFolderId] = useState<string>('');
 
@@ -242,54 +244,66 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
         </div>
       )}
 
-      {/* 2. Drag & Drop Zone */}
-      <div
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        className={`relative rounded-2xl border-2 border-dashed p-6 transition-colors flex flex-col items-center justify-center text-center cursor-pointer ${
-          isDragging
-            ? 'border-[#1E60E6] bg-blue-50/80'
-            : 'border-slate-300 bg-slate-50/50 hover:bg-slate-100/50 hover:border-blue-400'
-        }`}
-      >
-        <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-[#1E60E6] mb-2">
-          <UploadCloud className="w-6 h-6 animate-bounce" />
+      {/* 2. Top Hero Section: Drag & Drop Zone (Left) + Minimal Calendar (Right) */}
+      <div className="grid grid-cols-3 gap-3.5 items-stretch">
+        {/* Left: Drag & Drop Zone (2 Columns wide) */}
+        <div
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          className={`col-span-2 relative rounded-2xl border-2 border-dashed p-5 transition-colors flex flex-col items-center justify-center text-center cursor-pointer ${
+            isDragging
+              ? 'border-[#1E60E6] bg-blue-50/80'
+              : 'border-slate-300 bg-slate-50/50 hover:bg-slate-100/50 hover:border-blue-400'
+          }`}
+        >
+          <div className="w-10 h-10 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-[#1E60E6] mb-1.5">
+            <UploadCloud className="w-5 h-5 animate-bounce" />
+          </div>
+
+          <h2 className="text-xs font-bold text-slate-800 tracking-tight">
+            Drag &amp; drop photo folders or images here
+          </h2>
+          <p className="text-[10px] text-slate-400 mt-0.5 max-w-sm">
+            Select your real camera folders or raw image files. LuminaSort automatically groups and tags photos by capture date on the calendar.
+          </p>
+
+          <div className="flex items-center gap-2 mt-2.5">
+            <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold cursor-pointer transition-colors">
+              <FolderPlus className="w-3.5 h-3.5 text-[#1E60E6]" />
+              <span>Select Folder</span>
+              <input
+                type="file"
+                // @ts-ignore
+                webkitdirectory=""
+                directory=""
+                multiple
+                className="hidden"
+                onChange={(e) => handleFilesSelected(e.target.files)}
+              />
+            </label>
+
+            <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1E60E6] hover:bg-blue-700 text-white text-xs font-bold cursor-pointer transition-colors">
+              <FileImage className="w-3.5 h-3.5" />
+              <span>Choose Images</span>
+              <input
+                type="file"
+                multiple
+                accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.bmp,.tiff,.tif,.svg,.avif,.heic,.heif,.cr2,.cr3,.nef,.nrw,.arw,.srf,.sr2,.dng,.orf,.rw2,.pef,.ptx,.raf,.raw"
+                className="hidden"
+                onChange={(e) => handleFilesSelected(e.target.files)}
+              />
+            </label>
+          </div>
         </div>
 
-        <h2 className="text-xs font-bold text-slate-800 tracking-tight">
-          Drag and drop photo folders or images from your computer here
-        </h2>
-        <p className="text-[11px] text-slate-400 mt-0.5 max-w-md">
-          Select your real camera folders or raw image files. LuminaSort reads real pixel data and extracts luminance, blur, and horizon levels.
-        </p>
-
-        <div className="flex items-center gap-2 mt-3">
-          <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold cursor-pointer transition-colors">
-            <FolderPlus className="w-3.5 h-3.5 text-[#1E60E6]" />
-            <span>Select Folder</span>
-            <input
-              type="file"
-              // @ts-ignore
-              webkitdirectory=""
-              directory=""
-              multiple
-              className="hidden"
-              onChange={(e) => handleFilesSelected(e.target.files)}
-            />
-          </label>
-
-          <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1E60E6] hover:bg-blue-700 text-white text-xs font-bold cursor-pointer transition-colors">
-            <FileImage className="w-3.5 h-3.5" />
-            <span>Choose Images</span>
-            <input
-              type="file"
-              multiple
-              accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.bmp,.tiff,.tif,.svg,.avif,.heic,.heif,.cr2,.cr3,.nef,.nrw,.arw,.srf,.sr2,.dng,.orf,.rw2,.pef,.ptx,.raf,.raw"
-              className="hidden"
-              onChange={(e) => handleFilesSelected(e.target.files)}
-            />
-          </label>
+        {/* Right: Minimal Photo Calendar (1 Column wide) */}
+        <div className="col-span-1">
+          <MinimalPhotoCalendar
+            items={_items}
+            selectedDate={selectedCalendarDate}
+            onSelectDate={(d) => setSelectedCalendarDate(d)}
+          />
         </div>
       </div>
 
@@ -379,6 +393,27 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                 </button>
               </div>
 
+              {/* Calendar Filter Badge if Active */}
+              {selectedCalendarDate && (
+                <div className="flex items-center justify-between bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-xl text-xs text-[#1E60E6] font-medium">
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-bold">Filtering by Date:</span>
+                    <span className="font-mono font-bold bg-white px-2 py-0.5 rounded border border-blue-200">
+                      {selectedCalendarDate}
+                    </span>
+                    <span>
+                      ({selectedFolderObj.items.filter((item) => item.metadata.timestamp.startsWith(selectedCalendarDate)).length} photos)
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => setSelectedCalendarDate(null)}
+                    className="text-[11px] font-bold text-blue-700 hover:text-blue-900 underline cursor-pointer"
+                  >
+                    Clear Filter
+                  </button>
+                </div>
+              )}
+
               {/* Real Files Table */}
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
@@ -393,7 +428,13 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
-                    {selectedFolderObj.items.map((item) => {
+                    {selectedFolderObj.items
+                      .filter((item) =>
+                        selectedCalendarDate
+                          ? item.metadata.timestamp.startsWith(selectedCalendarDate)
+                          : true
+                      )
+                      .map((item) => {
                       const isSelected = activeItem?.metadata.id === item.metadata.id;
                       return (
                         <tr
