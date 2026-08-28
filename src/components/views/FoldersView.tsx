@@ -5,15 +5,14 @@ import {
   FileImage,
   Sparkles,
   Trash2,
-  Play,
   FolderCheck,
   FolderClock,
   FolderOpen,
   CheckSquare,
   Square,
-  LayoutGrid,
-  List,
-  Search
+  X,
+  Search,
+  Play
 } from 'lucide-react';
 import { ProcessedItem, PipelineConfig, PipelineMetrics, FaceCluster } from '../../engine/types';
 import { QuickAccessFolder, FolderData } from '../dashboard/QuickAccessFolder';
@@ -56,7 +55,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
   folders = [],
   setFolders,
   faceClusters: _faceClusters = [],
-  activeItem,
+  activeItem: _activeItem,
   onSelectItem,
   onAddRealItems,
   onDeleteFolder,
@@ -65,22 +64,22 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
   onStartPipeline,
 }) => {
   const [subTab, setSubTab] = useState<'sorted' | 'unsorted'>(initialSubTab);
-  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [selectedCalendarDate, setSelectedCalendarDate] = useState<string | null>(null);
+
+  // Full-Screen Dedicated Folder Page State
+  const [openedFolderId, setOpenedFolderId] = useState<string | null>(null);
+  const [selectedImageIds, setSelectedImageIds] = useState<Set<string>>(new Set());
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  const [selectedFolderId, setSelectedFolderId] = useState<string>('');
-  const [selectedImageIds, setSelectedImageIds] = useState<Set<string>>(new Set());
-
-  // Ensure there is always a folder structure even if images were uploaded without a folder
+  // Fallback folder structure if raw images were uploaded directly
   const effectiveFolders = useMemo(() => {
     if (folders.length > 0) return folders;
     if (_items.length > 0) {
       return [
         {
-          id: 'default_all_uploaded',
+          id: 'default_uploaded_photos',
           name: 'All Uploaded Photos',
           isSorted: false,
           date: new Date().toLocaleDateString(),
@@ -97,7 +96,6 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
     setIsAnalyzing(true);
 
     const filesArray = Array.from(fileList);
-    // Determine folder name from webkitRelativePath or use batch timestamp
     const firstRel = filesArray[0]?.webkitRelativePath;
     let detectedFolderName = 'My_Uploaded_Photos';
     if (firstRel && firstRel.includes('/')) {
@@ -124,7 +122,6 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
     if (setFolders) {
       setFolders((prev) => [newFolder, ...prev]);
     }
-    setSelectedFolderId(newFolderId);
     setSubTab('unsorted');
 
     if (onAddRealItems) {
@@ -186,29 +183,30 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
       };
     });
 
-  // Pick selected folder or fallback to first folder
   const currentTabFolders = subTab === 'unsorted' ? unsortedFoldersList : sortedFoldersList;
-  const currentTabFolderId = selectedFolderId || (currentTabFolders[0]?.id ?? '');
-  const selectedFolderObj = effectiveFolders.find((f) => f.id === currentTabFolderId) || effectiveFolders[0];
 
-  const currentFolderVisibleItems = useMemo(() => {
-    if (!selectedFolderObj) return [];
-    return selectedFolderObj.items.filter((item) => {
-      const matchesDate = selectedCalendarDate
-        ? item.metadata.timestamp.startsWith(selectedCalendarDate)
-        : true;
+  // Find currently opened full-screen folder
+  const openedFolder = effectiveFolders.find((f) => f.id === openedFolderId);
+
+  const openedFolderVisibleItems = useMemo(() => {
+    if (!openedFolder) return [];
+    return openedFolder.items.filter((item) => {
       const matchesSearch = searchTerm
         ? item.metadata.filename.toLowerCase().includes(searchTerm.toLowerCase())
         : true;
-      return matchesDate && matchesSearch;
+      return matchesSearch;
     });
-  }, [selectedFolderObj, selectedCalendarDate, searchTerm]);
+  }, [openedFolder, searchTerm]);
 
-  const handleToggleSelectAllImages = () => {
-    if (selectedImageIds.size === currentFolderVisibleItems.length && currentFolderVisibleItems.length > 0) {
+  const isAllSelected =
+    openedFolderVisibleItems.length > 0 &&
+    selectedImageIds.size === openedFolderVisibleItems.length;
+
+  const handleToggleSelectAll = () => {
+    if (isAllSelected) {
       setSelectedImageIds(new Set());
     } else {
-      setSelectedImageIds(new Set(currentFolderVisibleItems.map((i) => i.metadata.id)));
+      setSelectedImageIds(new Set(openedFolderVisibleItems.map((i) => i.metadata.id)));
     }
   };
 
@@ -249,10 +247,8 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
         <div className="flex items-center gap-1">
           {/* Unsorted Folders Tab */}
           <button
-            onClick={() => {
-              setSubTab('unsorted');
-            }}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
+            onClick={() => setSubTab('unsorted')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
               subTab === 'unsorted'
                 ? 'bg-white text-slate-900 border border-slate-200'
                 : 'text-slate-600 hover:text-slate-900'
@@ -267,10 +263,8 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
 
           {/* Sorted Folders Tab */}
           <button
-            onClick={() => {
-              setSubTab('sorted');
-            }}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
+            onClick={() => setSubTab('sorted')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
               subTab === 'sorted'
                 ? 'bg-white text-[#1E60E6] border border-slate-200'
                 : 'text-slate-600 hover:text-slate-900'
@@ -391,7 +385,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
       </div>
 
       {/* ========================================================================= */}
-      {/* FOLDERS GRID SECTION (Unsorted or Sorted) */}
+      {/* 3. FOLDERS OVERVIEW GRID (Clean, no images below) */}
       {/* ========================================================================= */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
@@ -404,7 +398,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
             </span>
           </div>
           <span className="text-[11px] text-slate-400 font-medium">
-            Click any folder to open and inspect all images inside it
+            Click any folder to open its full-screen image gallery
           </span>
         </div>
 
@@ -415,9 +409,10 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                 <UnsortedFolderCard
                   key={folder.id}
                   folder={folder}
-                  isSelected={selectedFolderObj?.id === folder.id}
+                  isSelected={openedFolderId === folder.id}
                   onClick={() => {
-                    setSelectedFolderId(folder.id);
+                    setOpenedFolderId(folder.id);
+                    setSelectedImageIds(new Set());
                     const fObj = effectiveFolders.find((f) => f.id === folder.id);
                     if (fObj && fObj.items.length > 0 && onSelectItem) {
                       onSelectItem(fObj.items[0]);
@@ -449,9 +444,10 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                 <QuickAccessFolder
                   key={folder.id}
                   folder={folder}
-                  isActive={selectedFolderObj?.id === folder.id}
+                  isActive={openedFolderId === folder.id}
                   onClick={() => {
-                    setSelectedFolderId(folder.id);
+                    setOpenedFolderId(folder.id);
+                    setSelectedImageIds(new Set());
                     const fObj = effectiveFolders.find((f) => f.id === folder.id);
                     if (fObj && fObj.items.length > 0 && onSelectItem) {
                       onSelectItem(fObj.items[0]);
@@ -477,311 +473,176 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
       </div>
 
       {/* ========================================================================= */}
-      {/* PROMINENT OPEN FOLDER EXPLORER (Shows images inside clicked folder) */}
+      {/* 4. DEDICATED FULLSCREEN FOLDER PAGE (No navbar, edge-to-edge, close cross) */}
       {/* ========================================================================= */}
-      {selectedFolderObj && (
-        <div className="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col gap-3 mt-1">
-          {/* Header Bar for Open Folder */}
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+      {openedFolder && (
+        <div className="fixed inset-0 z-[9999] bg-white flex flex-col w-screen h-screen m-0 p-0 overflow-hidden select-none animate-in fade-in duration-150">
+          {/* Top Floating Clean Full-Screen Header Bar */}
+          <div className="flex items-center justify-between px-6 py-3.5 border-b border-slate-200 bg-white flex-shrink-0">
+            {/* Left: Folder Name & Count */}
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#1E60E6] border border-blue-200 flex items-center justify-center font-bold">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#1E60E6] border border-blue-200 flex items-center justify-center font-bold">
                 <FolderOpen className="w-5 h-5" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="font-bold text-xs text-slate-900">
-                    {selectedFolderObj.name}
-                  </h3>
+                  <h1 className="text-sm font-extrabold text-slate-900 tracking-tight">
+                    {openedFolder.name}
+                  </h1>
                   <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 text-[#1E60E6] font-mono font-bold">
-                    Active Folder
+                    {openedFolder.items.length} Photos
                   </span>
                 </div>
                 <p className="text-[10px] text-slate-400 font-mono mt-0.5">
-                  {selectedFolderObj.items.length} Real Photos •{' '}
                   {(
-                    selectedFolderObj.items.reduce(
-                      (sum, i) => sum + i.metadata.fileSize,
-                      0
-                    ) / 1000000
+                    openedFolder.items.reduce((s, i) => s + i.metadata.fileSize, 0) / 1000000
                   ).toFixed(1)}{' '}
-                  MB Total Size
+                  MB Total Folder Size
                 </p>
               </div>
             </div>
 
-            {/* Folder Actions & View Switcher */}
-            <div className="flex items-center gap-2">
-              {/* Search Inside Folder */}
-              <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1 text-xs">
-                <Search className="w-3.5 h-3.5 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder="Filter images..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="bg-transparent text-xs text-slate-900 placeholder:text-slate-400 outline-none w-28"
-                />
-              </div>
+            {/* Middle: Quick Search */}
+            <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs w-64">
+              <Search className="w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search images in folder..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="bg-transparent text-xs text-slate-900 placeholder:text-slate-400 outline-none w-full"
+              />
+            </div>
 
-              {/* View Mode Toggle (Grid vs Table) */}
-              <div className="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200 text-xs">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`p-1.5 rounded-lg transition-colors ${
-                    viewMode === 'grid'
-                      ? 'bg-white text-[#1E60E6] font-bold shadow-sm'
-                      : 'text-slate-500 hover:text-slate-900'
-                  }`}
-                  title="Grid Preview"
-                >
-                  <LayoutGrid className="w-3.5 h-3.5" />
-                </button>
-                <button
-                  onClick={() => setViewMode('table')}
-                  className={`p-1.5 rounded-lg transition-colors ${
-                    viewMode === 'table'
-                      ? 'bg-white text-[#1E60E6] font-bold shadow-sm'
-                      : 'text-slate-500 hover:text-slate-900'
-                  }`}
-                  title="Table Details"
-                >
-                  <List className="w-3.5 h-3.5" />
-                </button>
-              </div>
+            {/* Right: Actions & Close Cross Button */}
+            <div className="flex items-center gap-2.5">
+              {/* Select All Checkbox */}
+              <button
+                onClick={handleToggleSelectAll}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
+              >
+                {isAllSelected ? (
+                  <CheckSquare className="w-4 h-4 text-[#1E60E6]" />
+                ) : (
+                  <Square className="w-4 h-4 text-slate-400" />
+                )}
+                <span>{isAllSelected ? 'Deselect All' : 'Select All'}</span>
+              </button>
 
-              {/* Delete Selected Photos Button */}
+              {/* Delete Selected (X) Photos */}
               {selectedImageIds.size > 0 && (
                 <button
                   onClick={handleDeleteSelectedImages}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 text-xs font-bold transition-colors active:scale-98 cursor-pointer"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-colors cursor-pointer active:scale-95 shadow-sm"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   <span>Delete Selected ({selectedImageIds.size})</span>
                 </button>
               )}
 
-              {/* Delete Entire Current Folder Button */}
-              {onDeleteFolder && selectedFolderObj.id !== 'default_all_uploaded' && (
-                <button
-                  onClick={() => onDeleteFolder(selectedFolderObj.id)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-rose-50 border border-slate-200 hover:border-rose-200 text-slate-600 hover:text-rose-600 text-xs font-bold transition-colors cursor-pointer"
-                  title="Delete this entire folder and all its images"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                  <span>Delete Folder</span>
-                </button>
-              )}
-
+              {/* Start Sorting Trigger */}
               <button
-                onClick={onStartPipeline}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1E60E6] hover:bg-blue-700 text-white font-bold text-xs transition-colors active:scale-98 cursor-pointer"
+                onClick={() => {
+                  setOpenedFolderId(null);
+                  onStartPipeline();
+                }}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1E60E6] hover:bg-blue-700 text-white text-xs font-bold transition-colors cursor-pointer active:scale-95 shadow-sm"
               >
                 <Play className="w-3.5 h-3.5 fill-current" />
-                <span>Start Auto-Sorting &amp; Leveling</span>
+                <span>Start Auto-Sorting</span>
+              </button>
+
+              {/* Close Cross Button */}
+              <button
+                onClick={() => setOpenedFolderId(null)}
+                className="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 flex items-center justify-center transition-colors cursor-pointer ml-1"
+                title="Close Fullscreen View"
+              >
+                <X className="w-5 h-5" />
               </button>
             </div>
           </div>
 
-          {/* Calendar Date Filter Active Bar */}
-          {selectedCalendarDate && (
-            <div className="flex items-center justify-between bg-blue-50 border border-blue-200 px-3 py-1.5 rounded-xl text-xs text-[#1E60E6] font-medium">
-              <div className="flex items-center gap-1.5">
-                <span className="font-bold">Filtering by Date:</span>
-                <span className="font-mono font-bold bg-white px-2 py-0.5 rounded border border-blue-200">
-                  {selectedCalendarDate}
-                </span>
-                <span>
-                  ({currentFolderVisibleItems.length} photos match)
-                </span>
+          {/* Fullscreen Edge-to-Edge Image Gallery */}
+          <div className="flex-1 overflow-y-auto p-6 bg-slate-50">
+            {openedFolderVisibleItems.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center text-center text-slate-400 gap-2">
+                <FileImage className="w-12 h-12 text-slate-300" />
+                <p className="text-sm font-bold text-slate-700">No images in this folder</p>
+                <p className="text-xs text-slate-400">All photos were deleted or none match your search.</p>
               </div>
-              <button
-                onClick={() => setSelectedCalendarDate(null)}
-                className="text-[11px] font-bold text-blue-700 hover:text-blue-900 underline cursor-pointer"
-              >
-                Clear Date Filter
-              </button>
-            </div>
-          )}
+            ) : (
+              <div className="grid grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
+                {openedFolderVisibleItems.map((item) => {
+                  const isChecked = selectedImageIds.has(item.metadata.id);
 
-          {/* MODE A: GRID THUMBNAIL GALLERY VIEW */}
-          {viewMode === 'grid' && (
-            <div className="grid grid-cols-4 gap-3">
-              {currentFolderVisibleItems.map((item) => {
-                const isSelectedRow = activeItem?.metadata.id === item.metadata.id;
-                const isChecked = selectedImageIds.has(item.metadata.id);
+                  return (
+                    <div
+                      key={item.metadata.id}
+                      onClick={() => onSelectItem && onSelectItem(item)}
+                      className={`relative rounded-2xl border p-2.5 flex flex-col justify-between transition-all cursor-pointer bg-white ${
+                        isChecked
+                          ? 'border-blue-500 ring-2 ring-blue-500/20 bg-blue-50/40'
+                          : 'border-slate-200 hover:border-blue-400 hover:shadow-sm'
+                      }`}
+                    >
+                      {/* Full Preview Image */}
+                      <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-slate-900 border border-slate-100">
+                        <img
+                          src={item.thumbnailUrl}
+                          alt={item.metadata.filename}
+                          className="w-full h-full object-cover"
+                        />
 
-                return (
-                  <div
-                    key={item.metadata.id}
-                    onClick={() => onSelectItem && onSelectItem(item)}
-                    className={`relative rounded-2xl border p-2.5 flex flex-col justify-between transition-colors cursor-pointer ${
-                      isChecked
-                        ? 'border-blue-500 bg-blue-50/50'
-                        : isSelectedRow
-                        ? 'border-[#1E60E6] bg-slate-50'
-                        : 'border-slate-200 hover:border-blue-300 bg-white'
-                    }`}
-                  >
-                    {/* Thumbnail Image Container */}
-                    <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-slate-900 border border-slate-100">
-                      <img
-                        src={item.thumbnailUrl}
-                        alt={item.metadata.filename}
-                        className="w-full h-full object-cover"
-                      />
+                        {/* Top Left Selection Checkbox */}
+                        <button
+                          onClick={(e) => handleToggleImageSelection(item.metadata.id, e)}
+                          className="absolute top-2 left-2 z-10 p-1 rounded-lg bg-black/60 hover:bg-black text-white backdrop-blur-sm transition-colors cursor-pointer"
+                          title={isChecked ? 'Deselect image' : 'Select image for deletion'}
+                        >
+                          {isChecked ? (
+                            <CheckSquare className="w-4 h-4 text-[#1E60E6]" />
+                          ) : (
+                            <Square className="w-4 h-4 text-white" />
+                          )}
+                        </button>
 
-                      {/* Checkbox Trigger Top Left */}
-                      <button
-                        onClick={(e) => handleToggleImageSelection(item.metadata.id, e)}
-                        className="absolute top-2 left-2 z-10 p-1 rounded-lg bg-black/60 hover:bg-black text-white backdrop-blur-sm transition-colors"
-                        title={isChecked ? 'Deselect image' : 'Select image'}
-                      >
-                        {isChecked ? (
-                          <CheckSquare className="w-3.5 h-3.5 text-[#1E60E6]" />
-                        ) : (
-                          <Square className="w-3.5 h-3.5" />
-                        )}
-                      </button>
+                        {/* Top Right Specific Image Delete (Trash Icon) */}
+                        <button
+                          onClick={(e) => handleDeleteSingle(item.metadata.id, e)}
+                          className="absolute top-2 right-2 z-10 p-1 rounded-lg bg-black/60 hover:bg-rose-600 text-white backdrop-blur-sm transition-colors cursor-pointer"
+                          title="Delete this image from folder"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
 
-                      {/* 1-Click Delete Button Top Right */}
-                      <button
-                        onClick={(e) => handleDeleteSingle(item.metadata.id, e)}
-                        className="absolute top-2 right-2 z-10 p-1 rounded-lg bg-black/60 hover:bg-rose-600 text-white backdrop-blur-sm transition-colors"
-                        title="Delete image"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-
-                      {/* Sharpness Bottom Overlay */}
-                      <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-between bg-black/75 backdrop-blur-sm text-white px-2 py-0.5 rounded-lg text-[9px] font-mono z-10">
-                        <span>Sharp: {item.quality.laplacianSharpness.toFixed(1)}</span>
-                        <span className="text-blue-300">Lum {item.lightroom.meanLuminance}</span>
+                        {/* Bottom Quality Pill */}
+                        <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-between bg-black/75 backdrop-blur-sm text-white px-2 py-0.5 rounded-lg text-[9px] font-mono z-10">
+                          <span>Sharp: {item.quality.laplacianSharpness.toFixed(0)}</span>
+                          <span className="text-blue-300">Lum {item.lightroom.meanLuminance}</span>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* Metadata Strip */}
-                    <div className="flex flex-col gap-0.5 pt-2">
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-[11px] text-slate-900 truncate max-w-[140px]">
-                          {item.metadata.filename}
-                        </span>
-                        <span className="text-[9px] font-mono text-slate-400">
-                          {(item.metadata.fileSize / 1000000).toFixed(1)} MB
-                        </span>
-                      </div>
-                      <span className="text-[9px] font-mono text-slate-400 truncate">
-                        {item.metadata.dimensions.width} × {item.metadata.dimensions.height} px
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {/* MODE B: TABLE LIST VIEW */}
-          {viewMode === 'table' && (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
-                <thead>
-                  <tr className="text-slate-400 border-b border-slate-100 font-semibold text-[11px]">
-                    <th className="pb-2 pl-1 w-8">
-                      <button
-                        onClick={handleToggleSelectAllImages}
-                        className="flex items-center justify-center text-slate-400 hover:text-blue-600"
-                        title={selectedImageIds.size === currentFolderVisibleItems.length ? 'Deselect all' : 'Select all'}
-                      >
-                        {selectedImageIds.size > 0 && selectedImageIds.size === currentFolderVisibleItems.length ? (
-                          <CheckSquare className="w-4 h-4 text-[#1E60E6]" />
-                        ) : (
-                          <Square className="w-4 h-4" />
-                        )}
-                      </button>
-                    </th>
-                    <th className="pb-2 pl-1">FILENAME</th>
-                    <th className="pb-2">DIMENSIONS</th>
-                    <th className="pb-2">LUMINANCE</th>
-                    <th className="pb-2">SHARPNESS</th>
-                    <th className="pb-2">FILE SIZE</th>
-                    <th className="pb-2 pr-1 text-right">ACTION</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
-                  {currentFolderVisibleItems.map((item) => {
-                    const isSelectedRow = activeItem?.metadata.id === item.metadata.id;
-                    const isChecked = selectedImageIds.has(item.metadata.id);
-
-                    return (
-                      <tr
-                        key={item.metadata.id}
-                        onClick={() => onSelectItem && onSelectItem(item)}
-                        className={`cursor-pointer transition-colors ${
-                          isChecked
-                            ? 'bg-blue-50/80 font-bold text-blue-900'
-                            : isSelectedRow
-                            ? 'bg-slate-50 font-bold text-slate-900'
-                            : 'hover:bg-slate-50'
-                        }`}
-                      >
-                        <td className="py-2.5 pl-1" onClick={(e) => handleToggleImageSelection(item.metadata.id, e)}>
-                          <button className="flex items-center justify-center text-slate-400 hover:text-blue-600">
-                            {isChecked ? (
-                              <CheckSquare className="w-4 h-4 text-[#1E60E6]" />
-                            ) : (
-                              <Square className="w-4 h-4" />
-                            )}
-                          </button>
-                        </td>
-
-                        <td className="py-2.5 pl-1 flex items-center gap-2">
-                          <div className="w-7 h-7 rounded-lg overflow-hidden bg-slate-900 flex-shrink-0 border border-slate-200">
-                            <img
-                              src={item.thumbnailUrl}
-                              alt={item.metadata.filename}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          <span className="truncate max-w-[160px] text-slate-900 font-medium">
+                      {/* Bottom Info Strip */}
+                      <div className="flex flex-col gap-0.5 pt-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-[11px] text-slate-900 truncate max-w-[120px]">
                             {item.metadata.filename}
                           </span>
-                        </td>
-
-                        <td className="py-2.5 font-mono text-[11px] text-slate-500">
-                          {item.metadata.dimensions.width} × {item.metadata.dimensions.height}
-                        </td>
-
-                        <td className="py-2.5 font-mono text-[11px]">
-                          <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700">
-                            {item.lightroom.meanLuminance}
+                          <span className="text-[9px] font-mono text-slate-400">
+                            {(item.metadata.fileSize / 1000000).toFixed(1)} MB
                           </span>
-                        </td>
-
-                        <td className="py-2.5 font-mono text-[11px]">
-                          <span className="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold border border-emerald-100">
-                            {item.quality.laplacianSharpness.toFixed(1)}
-                          </span>
-                        </td>
-
-                        <td className="py-2.5 font-mono text-[11px] text-slate-500">
-                          {(item.metadata.fileSize / 1000000).toFixed(2)} MB
-                        </td>
-
-                        <td className="py-2.5 pr-1 text-right">
-                          <button
-                            onClick={(e) => handleDeleteSingle(item.metadata.id, e)}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
-                            title="Delete this image"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
+                        </div>
+                        <span className="text-[9px] font-mono text-slate-400 truncate">
+                          {item.metadata.dimensions.width} × {item.metadata.dimensions.height} px
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
