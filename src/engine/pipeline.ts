@@ -157,7 +157,8 @@ export class PhotoPipelineController {
         item.quality.laplacianSharpness,
         isMotion,
         item.blurClassification.motionDirectionDeg || 0,
-        eyeScore
+        eyeScore,
+        item.faces.length > 0
       );
       item.blurClassification = blurClass;
 

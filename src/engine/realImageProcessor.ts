@@ -188,7 +188,11 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
       const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
       let meanLuminance = 120;
-      let laplacianSharpness = 85.0;
+      let subjectSharpness = 85.0;
+      let isMotionSmear = false;
+      let motionAngleDeg = 0;
+      let eyeOpennessScore = 0.90;
+      let detectedFaces: import('./types').DetectedFace[] = [];
 
       if (ctx) {
         ctx.drawImage(img, 0, 0, sampleWidth, sampleHeight);
@@ -196,9 +200,14 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
           const imgData = ctx.getImageData(0, 0, sampleWidth, sampleHeight);
           const data = imgData.data;
           let totalLum = 0;
-          let pixelCount = data.length / 4;
+          const pixelCount = data.length / 4;
 
           const gray = new Float32Array(pixelCount);
+          let skinPixelCount = 0;
+          let skinCenterX = 0;
+          let skinCenterY = 0;
+
+          // 1. Convert to Gray and Detect Skin Tone Clusters (YCbCr space)
           for (let i = 0; i < pixelCount; i++) {
             const r = data[i * 4];
             const g = data[i * 4 + 1];
@@ -206,12 +215,53 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
             const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
             gray[i] = lum;
             totalLum += lum;
+
+            // Approximate YCbCr Skin Tone Detection
+            const cb = 128 - 0.168736 * r - 0.331264 * g + 0.5 * b;
+            const cr = 128 + 0.5 * r - 0.418688 * g - 0.081312 * b;
+            if (cb >= 77 && cb <= 127 && cr >= 133 && cr <= 173) {
+              const x = i % sampleWidth;
+              const y = Math.floor(i / sampleWidth);
+              // Focus skin search in upper 75% where faces typically reside
+              if (y < sampleHeight * 0.75) {
+                skinPixelCount++;
+                skinCenterX += x;
+                skinCenterY += y;
+              }
+            }
           }
           meanLuminance = Math.round(totalLum / pixelCount);
 
-          let laplacianSum = 0;
-          let laplacianSqSum = 0;
-          let edgeCount = 0;
+          // 2. Compute Subject ROI & Background Sharpness Independently
+          // If skin cluster exists, center ROI around face; otherwise use center 60% box
+          let roiXMin = Math.round(sampleWidth * 0.2);
+          let roiXMax = Math.round(sampleWidth * 0.8);
+          let roiYMin = Math.round(sampleHeight * 0.15);
+          let roiYMax = Math.round(sampleHeight * 0.75);
+
+          const hasFaceCluster = skinPixelCount > (sampleWidth * sampleHeight * 0.02);
+          if (hasFaceCluster) {
+            const avgX = Math.round(skinCenterX / skinPixelCount);
+            const avgY = Math.round(skinCenterY / skinPixelCount);
+            const halfW = Math.round(sampleWidth * 0.22);
+            const halfH = Math.round(sampleHeight * 0.22);
+            roiXMin = Math.max(1, avgX - halfW);
+            roiXMax = Math.min(sampleWidth - 2, avgX + halfW);
+            roiYMin = Math.max(1, avgY - halfH);
+            roiYMax = Math.min(sampleHeight - 2, avgY + halfH);
+          }
+
+          let centerLapSqSum = 0;
+          let centerLapSum = 0;
+          let centerEdgeCount = 0;
+
+          let bgLapSqSum = 0;
+          let bgLapSum = 0;
+          let bgEdgeCount = 0;
+
+          let dxSqSum = 0;
+          let dySqSum = 0;
+          let gradCount = 0;
 
           for (let y = 1; y < sampleHeight - 1; y += 2) {
             for (let x = 1; x < sampleWidth - 1; x += 2) {
@@ -223,26 +273,94 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
                 gray[idx + 1] -
                 4 * gray[idx];
 
-              laplacianSum += lap;
-              laplacianSqSum += lap * lap;
-              edgeCount++;
+              const dx = gray[idx + 1] - gray[idx - 1];
+              const dy = gray[idx + sampleWidth] - gray[idx - sampleWidth];
+              dxSqSum += dx * dx;
+              dySqSum += dy * dy;
+              gradCount++;
+
+              const isInsideROI = x >= roiXMin && x <= roiXMax && y >= roiYMin && y <= roiYMax;
+              if (isInsideROI) {
+                centerLapSum += lap;
+                centerLapSqSum += lap * lap;
+                centerEdgeCount++;
+              } else {
+                bgLapSum += lap;
+                bgLapSqSum += lap * lap;
+                bgEdgeCount++;
+              }
             }
           }
 
-          if (edgeCount > 0) {
-            const meanLap = laplacianSum / edgeCount;
-            const variance = laplacianSqSum / edgeCount - meanLap * meanLap;
-            laplacianSharpness = Math.min(100, Math.max(10, Math.round(Math.sqrt(variance) * 2.5)));
+          // Calculate Subject ROI Variance (Preserves Bokeh!)
+          if (centerEdgeCount > 0) {
+            const meanLap = centerLapSum / centerEdgeCount;
+            const variance = centerLapSqSum / centerEdgeCount - meanLap * meanLap;
+            subjectSharpness = Math.min(100, Math.max(15, Math.round(Math.sqrt(Math.max(0, variance)) * 2.8)));
+          }
+
+          // Calculate Directional Motion Smear
+          if (gradCount > 0) {
+            const ratioX = dxSqSum / (dySqSum + 1);
+            const ratioY = dySqSum / (dxSqSum + 1);
+            if (ratioX > 4.5) {
+              isMotionSmear = true;
+              motionAngleDeg = 0;
+            } else if (ratioY > 4.5) {
+              isMotionSmear = true;
+              motionAngleDeg = 90;
+            }
+          }
+
+          // Evaluate Eye Openness & Register Face
+          if (hasFaceCluster) {
+            // Check eye region contrast in upper face ROI
+            const eyeYStart = roiYMin + Math.round((roiYMax - roiYMin) * 0.2);
+            const eyeYEnd = roiYMin + Math.round((roiYMax - roiYMin) * 0.5);
+            let eyeVarSum = 0;
+            let eyePixelCount = 0;
+
+            for (let y = eyeYStart; y < eyeYEnd; y++) {
+              for (let x = roiXMin; x < roiXMax; x++) {
+                const idx = y * sampleWidth + x;
+                const d = Math.abs(gray[idx] - gray[idx - sampleWidth]);
+                eyeVarSum += d;
+                eyePixelCount++;
+              }
+            }
+
+            const eyeDetail = eyePixelCount > 0 ? eyeVarSum / eyePixelCount : 15;
+            // If eye detail is high, eyes are open and sharp
+            eyeOpennessScore = eyeDetail > 8 ? 0.94 : (eyeDetail > 4 ? 0.65 : 0.35);
+
+            detectedFaces.push({
+              faceId: `face_${Date.now()}_${index}_${Math.random().toString(36).substring(2, 6)}`,
+              boundingBox: {
+                x: Math.round((roiXMin / sampleWidth) * width),
+                y: Math.round((roiYMin / sampleHeight) * height),
+                width: Math.round(((roiXMax - roiXMin) / sampleWidth) * width),
+                height: Math.round(((roiYMax - roiYMin) / sampleHeight) * height),
+              },
+              eyeOpenness: eyeOpennessScore,
+              isSmiling: true,
+              sharpness: subjectSharpness,
+              embedding: [0.1, 0.2, 0.3, 0.4],
+              assignedClusterId: 'cluster_1',
+            });
           }
         } catch {
-          // Fallback if canvas security restriction occurs
+          // Fallback if canvas read restriction occurs
         }
       }
 
-      // Eye Openness Evaluation (default 0.92 for open eyes; shallow depth-of-field bokeh is preserved)
-      const eyeOpennessScore = 0.92;
       const lrAdjustments = calculateLightroomAdjustments(meanLuminance);
-      const blurClass = classifyBlurAndMotion(laplacianSharpness, false, 0, eyeOpennessScore);
+      const blurClass = classifyBlurAndMotion(
+        subjectSharpness,
+        isMotionSmear,
+        motionAngleDeg,
+        eyeOpennessScore,
+        detectedFaces.length > 0
+      );
       const crop = calculateInscribedCrop(width, height, 0);
 
       const metadata: ImageMetadata = {
@@ -289,10 +407,10 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
         blurClassification: blurClass,
         lightroom: lrAdjustments,
         quality: {
-          laplacianSharpness,
-          faceQualityScore: 85,
+          laplacianSharpness: subjectSharpness,
+          faceQualityScore: detectedFaces.length > 0 ? Math.round(eyeOpennessScore * 100) : 85,
           compositionScore: 88,
-          compositeScore: Math.round(laplacianSharpness * 0.6 + 35),
+          compositeScore: Math.round(subjectSharpness * 0.6 + 35),
         },
         geometry: {
           requiresCorrection: false,
@@ -301,12 +419,12 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
           cropBox: { x: crop.x, y: crop.y, width: crop.width, height: crop.height },
           cropLossPercentage: 0,
         },
-        faces: [],
+        faces: detectedFaces,
         occasion: {
-          occasion: 'Imported Photo Album',
+          occasion: detectedFaces.length > 0 ? 'Portrait Session' : 'Imported Photo Album',
           setting: 'Standard Gallery',
           confidence: 0.9,
-          suggestedTags: [format, 'Imported Photo', lrAdjustments.exposureState.replace('_', ' ')],
+          suggestedTags: [format, detectedFaces.length > 0 ? 'Portrait' : 'Imported Photo', lrAdjustments.exposureState.replace('_', ' ')],
           isCloudVerified: false,
         },
         targetPath: `Organized/${file.name}`,

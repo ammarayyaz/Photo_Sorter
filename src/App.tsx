@@ -361,6 +361,35 @@ export const AppContent: React.FC = () => {
     }
   };
 
+  const handleBulkToggleArchive = (itemIds: string[], archive: boolean) => {
+    const idSet = new Set(itemIds);
+    setItems((prev) =>
+      prev.map((i) => {
+        if (idSet.has(i.metadata.id)) {
+          return {
+            ...i,
+            isArchived: archive,
+            isBurstWinner: !archive,
+            blurClassification: {
+              ...i.blurClassification,
+              isArchived: archive,
+              reason: archive ? 'Manually moved to _archive' : 'Manually restored to Kept Winner',
+            },
+          };
+        }
+        return i;
+      })
+    );
+    if (pipelineRef.current) {
+      itemIds.forEach((id) => {
+        const it = items.find((i) => i.metadata.id === id);
+        if (it && it.isArchived !== archive) {
+          pipelineRef.current?.toggleArchiveState(id);
+        }
+      });
+    }
+  };
+
   const handleRenameFaceCluster = (clusterId: string, newName: string) => {
     if (pipelineRef.current) {
       pipelineRef.current.renameFaceCluster(clusterId, newName);
@@ -424,6 +453,7 @@ export const AppContent: React.FC = () => {
                 items={items}
                 metrics={metrics}
                 onToggleArchive={handleToggleArchive}
+                onToggleArchiveBulk={handleBulkToggleArchive}
                 onContinueToStraighten={() => setActiveTab('step3-enhancement')}
                 onGoToIngest={() => setActiveTab('step1-folders')}
               />
