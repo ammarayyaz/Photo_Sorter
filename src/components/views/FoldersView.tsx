@@ -561,27 +561,27 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
       </div>
 
       {/* ========================================================================= */}
-      {/* 4. DEDICATED FULLSCREEN EDGE-TO-EDGE FOLDER PAGE (NO BORDERS, ZERO GAP) */}
+      {/* 4. DEDICATED FULLSCREEN EDGE-TO-EDGE FOLDER PAGE (LIGHT MODE, LARGE IMAGES, NO BORDERS, ZERO GAP) */}
       {/* ========================================================================= */}
       {openedFolder && (
-        <div className="fixed inset-0 z-[9999] bg-black text-white flex flex-col w-screen h-screen m-0 p-0 overflow-hidden select-none animate-in fade-in duration-150">
+        <div className="fixed inset-0 z-[9999] bg-white dark:bg-[#150027] text-[#23003F] dark:text-[#FFFDB4] flex flex-col w-screen h-screen m-0 p-0 overflow-hidden select-none animate-in fade-in duration-150 transition-colors">
           {/* Top Clean Full-Screen Header Bar */}
-          <div className="flex items-center justify-between px-6 py-3 border-b border-white/10 bg-[#120022] flex-shrink-0 z-20">
+          <div className="flex items-center justify-between px-6 py-3.5 border-b border-[#E7E0EE] dark:border-[#4C177D] bg-white dark:bg-[#20003A] flex-shrink-0 z-20 transition-colors">
             {/* Left: Folder Name & Count */}
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-[#F94500]/15 text-[#F94500] border border-[#F94500]/30 flex items-center justify-center font-bold">
-                <FolderOpen className="w-4.5 h-4.5" />
+              <div className="w-10 h-10 rounded-xl bg-[#F94500]/15 text-[#F94500] border border-[#F94500]/30 flex items-center justify-center font-bold">
+                <FolderOpen className="w-5 h-5" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h1 className="font-heading text-sm font-extrabold text-[#FFFDB4] tracking-tight">
+                  <h1 className="font-heading text-base font-extrabold text-[#23003F] dark:text-[#FFFDB4] tracking-tight">
                     {openedFolder.name}
                   </h1>
                   <span className="text-2xs px-2 py-0.5 rounded-full bg-[#FFFDB4] text-[#23003F] font-mono tabular-nums font-bold">
                     {openedFolder.items.length} Photos
                   </span>
                 </div>
-                <p className="font-mono tabular-nums text-2xs text-[#BCACCE] mt-0.5">
+                <p className="font-mono tabular-nums text-xs text-[#5A476E] dark:text-[#BCACCE] mt-0.5">
                   {(
                     openedFolder.items.reduce((s, i) => s + i.metadata.fileSize, 0) / 1000000
                   ).toFixed(1)}{' '}
@@ -591,14 +591,14 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
             </div>
 
             {/* Middle: Quick Search */}
-            <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-xs w-64">
+            <div className="flex items-center gap-2 bg-[#FAF8FD] dark:bg-[#2E074E] border border-[#E7E0EE] dark:border-[#4C177D] rounded-xl px-3 py-1.5 text-xs w-64">
               <Search className="w-4 h-4 text-[#BCACCE]" />
               <input
                 type="text"
                 placeholder="Search images in folder..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="bg-transparent font-sans text-xs text-white placeholder:text-[#BCACCE] outline-none w-full"
+                className="bg-transparent font-sans text-xs text-[#23003F] dark:text-white placeholder:text-[#BCACCE] outline-none w-full"
               />
             </div>
 
@@ -607,7 +607,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
               {/* Select All Checkbox */}
               <button
                 onClick={handleToggleSelectAll}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-white/15 bg-white/5 hover:bg-white/10 text-[#FFFDB4] font-heading text-xs font-bold transition-colors cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#E7E0EE] dark:border-[#4C177D] bg-white dark:bg-[#20003A] hover:bg-[#F4F1F8] dark:hover:bg-[#320857] text-[#23003F] dark:text-[#FFFDB4] font-heading text-xs font-bold transition-colors cursor-pointer"
               >
                 {isAllSelected ? (
                   <CheckSquare className="w-4 h-4 text-[#F94500]" />
@@ -621,7 +621,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
               {selectedImageIds.size > 0 && (
                 <button
                   onClick={handleDeleteSelectedImages}
-                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#F94500] hover:bg-[#D83C00] text-white font-heading text-xs font-bold tracking-wide transition-all cursor-pointer active:scale-95 shadow-sm"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#F94500] hover:bg-[#D83C00] text-white font-heading text-xs font-bold tracking-wide transition-all cursor-pointer active:scale-95 shadow-sm"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   <span>Delete Selected ({selectedImageIds.size})</span>
@@ -634,7 +634,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                   setOpenedFolderId(null);
                   onStartPipeline();
                 }}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#F94500] hover:bg-[#D83C00] text-white font-heading text-xs font-bold tracking-wide transition-all cursor-pointer active:scale-95 shadow-sm"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#F94500] hover:bg-[#D83C00] text-white font-heading text-xs font-bold tracking-wide transition-all cursor-pointer active:scale-95 shadow-sm"
               >
                 <Play className="w-3.5 h-3.5 fill-current" />
                 <span>Start Auto-Sorting</span>
@@ -643,24 +643,24 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
               {/* Close Cross Button */}
               <button
                 onClick={() => setOpenedFolderId(null)}
-                className="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 text-[#FFFDB4] flex items-center justify-center transition-colors cursor-pointer ml-1"
+                className="w-9 h-9 rounded-xl bg-[#F4F1F8] dark:bg-[#320857] hover:bg-[#E7E0EE] dark:hover:bg-[#4C177D] text-[#23003F] dark:text-[#FFFDB4] flex items-center justify-center transition-colors cursor-pointer ml-1"
                 title="Close Fullscreen View (Esc)"
               >
-                <X className="w-4.5 h-4.5" />
+                <X className="w-5 h-5" />
               </button>
             </div>
           </div>
 
-          {/* Fullscreen Edge-to-Edge Photo Grid (NO BORDERS, ZERO GAP, FLUSH EDGE-TO-EDGE) */}
-          <div className="flex-1 overflow-y-auto p-0 m-0 bg-black">
+          {/* Fullscreen Edge-to-Edge Photo Grid (LARGE IMAGES, NO BORDERS, ZERO GAP, FLUSH EDGE-TO-EDGE) */}
+          <div className="flex-1 overflow-y-auto p-0 m-0 bg-white dark:bg-[#150027]">
             {openedFolderVisibleItems.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center text-[#BCACCE] gap-2 p-8">
                 <FileImage className="w-12 h-12 text-[#BCACCE]" />
-                <p className="font-heading text-sm font-bold text-[#FFFDB4]">No images in this folder</p>
-                <p className="font-sans text-xs text-[#BCACCE]">All photos were deleted or none match your search.</p>
+                <p className="font-heading text-sm font-bold text-[#23003F] dark:text-[#FFFDB4]">No images in this folder</p>
+                <p className="font-sans text-xs text-[#5A476E] dark:text-[#BCACCE]">All photos were deleted or none match your search.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-8 gap-0 p-0 m-0 w-full">
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-0 p-0 m-0 w-full">
                 {openedFolderVisibleItems.map((item) => {
                   const isChecked = selectedImageIds.has(item.metadata.id);
 
@@ -671,7 +671,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                         setLightboxItem(item);
                         if (onSelectItem) onSelectItem(item);
                       }}
-                      className={`relative group aspect-[4/3] w-full overflow-hidden cursor-pointer bg-neutral-900 select-none border-0 ${
+                      className={`relative group aspect-[4/3] w-full overflow-hidden cursor-pointer bg-slate-100 dark:bg-neutral-900 select-none border-0 ${
                         isChecked
                           ? 'ring-4 ring-inset ring-[#F94500] z-10'
                           : ''
