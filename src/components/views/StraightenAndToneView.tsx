@@ -48,6 +48,10 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
   const isUnder = lightroom.exposureState === 'UNDER_EXPOSED';
   const isOver = lightroom.exposureState === 'OVER_EXPOSED';
 
+  const realStraightened = items.filter((i) => i.geometry && i.geometry.requiresCorrection).length;
+  const realUnderexposed = items.filter((i) => i.lightroom && i.lightroom.exposureState === 'UNDER_EXPOSED').length;
+  const realOverexposed = items.filter((i) => i.lightroom && i.lightroom.exposureState === 'OVER_EXPOSED').length;
+
   return (
     <div className="flex flex-col gap-4 h-full overflow-y-auto pr-1 pb-6 select-none">
       {/* 1. Header Banner */}
@@ -85,7 +89,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
         <div className="bg-white dark:bg-[#20003A] border border-[#E7E0EE] dark:border-[#4C177D] rounded-2xl p-3 flex flex-col justify-between">
           <span className="font-heading text-xs font-semibold text-[#5A476E] dark:text-[#BCACCE]">Images Straightened</span>
           <div className="font-mono tabular-nums text-xl font-extrabold text-[#23003F] dark:text-[#FFFDB4] mt-1">
-            {metrics.imagesStraightened > 0 ? metrics.imagesStraightened : 5} photos
+            {metrics.imagesStraightened > 0 ? metrics.imagesStraightened : realStraightened} photos
           </div>
           <span className="font-sans text-2xs text-[#BCACCE]">Inscribed crop applied</span>
         </div>
@@ -96,7 +100,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
             <Moon className="w-4 h-4 text-[#BCACCE]" />
           </div>
           <div className="font-mono tabular-nums text-xl font-extrabold text-[#F94500] mt-1">
-            {metrics.underexposedCount > 0 ? metrics.underexposedCount : 3} frames
+            {metrics.underexposedCount > 0 ? metrics.underexposedCount : realUnderexposed} frames
           </div>
           <span className="font-mono text-2xs text-[#5A476E] dark:text-[#BCACCE]">
             Contrast: -20 | Shadows: +20
@@ -109,7 +113,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
             <Sun className="w-4 h-4 text-[#F94500]" />
           </div>
           <div className="font-mono tabular-nums text-xl font-extrabold text-[#F94500] mt-1">
-            {metrics.overexposedCount > 0 ? metrics.overexposedCount : 2} frames
+            {metrics.overexposedCount > 0 ? metrics.overexposedCount : realOverexposed} frames
           </div>
           <span className="font-mono text-2xs text-[#F94500]">
             Highlights: -20 | Whites: -20

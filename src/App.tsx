@@ -378,6 +378,7 @@ export const AppContent: React.FC = () => {
           status={status}
           metrics={metrics}
           items={items}
+          onAddRealItems={handleAddRealItems}
         />
 
         {/* Column 2: Center Content Area */}
@@ -470,6 +471,7 @@ export const AppContent: React.FC = () => {
           activeItem={activeItem}
           metrics={metrics}
           faceClusters={faceClusters}
+          items={items}
         />
       </div>
     </div>

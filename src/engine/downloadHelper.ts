@@ -14,19 +14,27 @@ async function renderFullResolutionBlob(item: ProcessedItem): Promise<Blob> {
   }
 
   let sourceUrl = item.originalFileUrl || item.thumbnailUrl;
+  let isCreatedUrl = false;
   if (sourceBlob) {
     sourceUrl = URL.createObjectURL(sourceBlob);
+    isCreatedUrl = true;
   }
 
   // 2. Load the source image into an HTMLImageElement
   const img = new Image();
   img.crossOrigin = 'anonymous';
 
-  await new Promise<void>((resolve, reject) => {
-    img.onload = () => resolve();
-    img.onerror = () => reject(new Error('Failed to load image for full-res export'));
-    img.src = sourceUrl;
-  });
+  try {
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error('Failed to load image for full-res export'));
+      img.src = sourceUrl;
+    });
+  } finally {
+    if (isCreatedUrl) {
+      URL.revokeObjectURL(sourceUrl);
+    }
+  }
 
   const origWidth = img.naturalWidth || item.metadata.dimensions.width || 1920;
   const origHeight = img.naturalHeight || item.metadata.dimensions.height || 1080;

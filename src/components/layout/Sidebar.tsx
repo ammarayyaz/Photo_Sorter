@@ -13,6 +13,7 @@ import {
   Plus
 } from 'lucide-react';
 import { ProcessingStatus, PipelineMetrics, ProcessedItem } from '../../engine/types';
+import { analyzeRealImageFile } from '../../engine/realImageProcessor';
 
 export type ActiveTab =
   | 'step1-folders'
@@ -28,6 +29,7 @@ interface SidebarProps {
   status: ProcessingStatus;
   metrics: PipelineMetrics;
   items?: ProcessedItem[];
+  onAddRealItems?: (newItems: ProcessedItem[], folderName: string, newFolderObj?: any) => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -35,6 +37,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   setActiveTab,
   metrics,
   items = [],
+  onAddRealItems,
 }) => {
   // Real storage calculation from actual user ingested items
   const totalBytes = items.reduce((sum, item) => sum + item.metadata.fileSize, 0);
@@ -79,8 +82,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
               multiple
               accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.bmp,.tiff,.tif,.svg,.avif,.heic,.heif,.cr2,.cr3,.nef,.nrw,.arw,.srf,.sr2,.dng,.orf,.rw2,.pef,.ptx,.raf,.raw"
               className="hidden"
-              onChange={() => {
+              onChange={async (e) => {
                 setActiveTab('step1-folders');
+                if (e.target.files && e.target.files.length > 0 && onAddRealItems) {
+                  const files = Array.from(e.target.files);
+                  const processed: ProcessedItem[] = [];
+                  for (let i = 0; i < files.length; i++) {
+                    const item = await analyzeRealImageFile(files[i], i);
+                    processed.push(item);
+                  }
+                  const folderName = files[0].webkitRelativePath
+                    ? files[0].webkitRelativePath.split('/')[0]
+                    : 'Sidebar Uploaded Photos';
+                  const folderId = `folder_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+                  const newFolderObj = {
+                    id: folderId,
+                    name: folderName,
+                    isSorted: false,
+                    date: new Date().toLocaleDateString(),
+                    items: processed,
+                  };
+                  onAddRealItems(processed, folderName, newFolderObj);
+                }
               }}
             />
           </label>

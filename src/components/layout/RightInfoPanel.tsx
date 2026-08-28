@@ -16,21 +16,23 @@ interface RightInfoPanelProps {
   activeItem: ProcessedItem | null;
   metrics: PipelineMetrics;
   faceClusters: FaceCluster[];
+  items?: ProcessedItem[];
 }
 
 export const RightInfoPanel: React.FC<RightInfoPanelProps> = ({
   activeItem,
   metrics,
   faceClusters,
+  items = [],
 }) => {
-  const totalRawMb = metrics.totalScanned > 0
-    ? (metrics.totalScanned * 24.5).toFixed(1)
-    : '0.0';
-  const totalRawGb = (Number(totalRawMb) / 1000).toFixed(2);
+  // Real storage calculation from actual user ingested items
+  const realTotalBytes = items.reduce((sum, item) => sum + item.metadata.fileSize, 0);
+  const totalRawMb = (realTotalBytes / 1000000).toFixed(1);
+  const totalRawGb = (realTotalBytes / 1000000000).toFixed(2);
 
-  const totalEnhancedMb = metrics.currentProcessed > 0
-    ? (metrics.currentProcessed * 1.8).toFixed(1)
-    : '0.0';
+  const enhancedItems = items.filter((i) => !i.isArchived);
+  const enhancedBytes = enhancedItems.reduce((sum, item) => sum + item.metadata.fileSize, 0);
+  const totalEnhancedMb = (enhancedBytes / 1000000).toFixed(1);
 
   return (
     <aside className="w-[280px] h-full flex flex-col bg-white dark:bg-[#1A0030] border-l border-[#E7E0EE] dark:border-[#4C177D] select-none flex-shrink-0 text-xs overflow-y-auto transition-colors duration-200">
@@ -55,17 +57,17 @@ export const RightInfoPanel: React.FC<RightInfoPanelProps> = ({
             <div className="flex items-center justify-between text-xs">
               <span className="font-heading font-semibold text-[#23003F] dark:text-[#BCACCE]">RAW Ingested</span>
               <span className="text-2xs font-mono tabular-nums text-[#BCACCE]">
-                {metrics.totalScanned} files
+                {items.length > 0 ? items.length : metrics.totalScanned} files
               </span>
             </div>
             <div className="font-mono tabular-nums text-base font-extrabold text-[#23003F] dark:text-[#FFFDB4]">
-              {totalRawGb} GB
+              {realTotalBytes > 1000000000 ? `${totalRawGb} GB` : `${totalRawMb} MB`}
             </div>
             <div className="w-full bg-[#E7E0EE] dark:bg-[#320857] h-1.5 rounded-full overflow-hidden">
               <div
                 className="bg-[#F94500] h-full rounded-full transition-all duration-300"
                 style={{
-                  width: `${Math.min(100, Math.max(0, (metrics.totalScanned / 20) * 100))}%`,
+                  width: `${items.length > 0 ? 100 : 0}%`,
                 }}
               />
             </div>
@@ -76,7 +78,7 @@ export const RightInfoPanel: React.FC<RightInfoPanelProps> = ({
             <div className="flex items-center justify-between text-xs">
               <span className="font-heading font-semibold text-[#23003F] dark:text-[#BCACCE]">Enhanced Images</span>
               <span className="text-2xs font-mono tabular-nums text-[#BCACCE]">
-                {metrics.currentProcessed} files
+                {enhancedItems.length} files
               </span>
             </div>
             <div className="font-mono tabular-nums text-base font-extrabold text-[#23003F] dark:text-[#FFFDB4]">
@@ -86,7 +88,7 @@ export const RightInfoPanel: React.FC<RightInfoPanelProps> = ({
               <div
                 className="bg-[#FFFDB4] h-full rounded-full transition-all duration-300"
                 style={{
-                  width: `${Math.min(100, Math.max(0, (metrics.currentProcessed / 20) * 100))}%`,
+                  width: `${items.length > 0 ? Math.round((enhancedItems.length / items.length) * 100) : 0}%`,
                 }}
               />
             </div>
