@@ -373,11 +373,11 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
           {displayedItems.map((item) => {
             const isArchived = item.isArchived;
             const isMotion = item.blurClassification.blurType === 'MOTION_SHAKE';
-            const isEyesClosed = item.blurClassification.blurType === 'DEFOCUS_BLUR';
-            const isChecked = selectedIds.has(item.metadata.id);
             const facet = item.quality.facet;
+            const isEyesClosed = (facet && facet.isBlink) || (item.faces[0] && item.faces[0].eyeOpenness < 0.45) || item.blurClassification.blurType === 'DEFOCUS_BLUR';
+            const isChecked = selectedIds.has(item.metadata.id);
             const facetScore = facet ? facet.facetCompositeScore : item.quality.compositeScore;
-            const earRatio = facet ? facet.earRatio : (item.faces[0]?.eyeOpenness ? 0.32 : 0.50);
+            const earRatio = facet ? facet.earRatio : (item.faces[0]?.eyeOpenness ?? (isEyesClosed ? 0.14 : 0.32));
 
             return (
               <div

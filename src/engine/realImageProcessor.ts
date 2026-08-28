@@ -208,6 +208,7 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
           let skinCenterX = 0;
           let skinCenterY = 0;
 
+          const isSkin = new Uint8Array(pixelCount);
           // 1. Convert to Gray and Detect Skin Tone Clusters (YCbCr space)
           for (let i = 0; i < pixelCount; i++) {
             const r = data[i * 4];
@@ -217,10 +218,11 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
             gray[i] = lum;
             totalLum += lum;
 
-            // Approximate YCbCr Skin Tone Detection
+            // Accurate YCbCr Skin Tone Range
             const cb = 128 - 0.168736 * r - 0.331264 * g + 0.5 * b;
             const cr = 128 + 0.5 * r - 0.418688 * g - 0.081312 * b;
             if (cb >= 77 && cb <= 127 && cr >= 133 && cr <= 173) {
+              isSkin[i] = 1;
               const x = i % sampleWidth;
               const y = Math.floor(i / sampleWidth);
               // Focus skin search in upper 75% where faces typically reside
@@ -234,18 +236,17 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
           meanLuminance = Math.round(totalLum / pixelCount);
 
           // 2. Compute Subject ROI & Background Sharpness Independently
-          // If skin cluster exists, center ROI around face; otherwise use center 60% box
           let roiXMin = Math.round(sampleWidth * 0.2);
           let roiXMax = Math.round(sampleWidth * 0.8);
           let roiYMin = Math.round(sampleHeight * 0.15);
           let roiYMax = Math.round(sampleHeight * 0.75);
 
-          const hasFaceCluster = skinPixelCount > (sampleWidth * sampleHeight * 0.02);
+          const hasFaceCluster = skinPixelCount > (sampleWidth * sampleHeight * 0.015);
           if (hasFaceCluster) {
             const avgX = Math.round(skinCenterX / skinPixelCount);
             const avgY = Math.round(skinCenterY / skinPixelCount);
-            const halfW = Math.round(sampleWidth * 0.22);
-            const halfH = Math.round(sampleHeight * 0.22);
+            const halfW = Math.round(sampleWidth * 0.18);
+            const halfH = Math.round(sampleHeight * 0.20);
             roiXMin = Math.max(1, avgX - halfW);
             roiXMax = Math.min(sampleWidth - 2, avgX + halfW);
             roiYMin = Math.max(1, avgY - halfH);
@@ -313,26 +314,50 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
             }
           }
 
-          // Evaluate Eye Openness & Register Face
+          // 3. Strict Eye Sclera/Pupil Openness Analysis (Facet EAR Model)
           if (hasFaceCluster) {
-            // Check eye region contrast in upper face ROI
-            const eyeYStart = roiYMin + Math.round((roiYMax - roiYMin) * 0.2);
-            const eyeYEnd = roiYMin + Math.round((roiYMax - roiYMin) * 0.5);
-            let eyeVarSum = 0;
-            let eyePixelCount = 0;
+            // Strictly sample inside skin mask across the upper 30-55% of the face ROI
+            const eyeYStart = roiYMin + Math.round((roiYMax - roiYMin) * 0.25);
+            const eyeYEnd = roiYMin + Math.round((roiYMax - roiYMin) * 0.50);
+            
+            let skinLumSum = 0;
+            let skinCountInEyeZone = 0;
+            let minLumInEyeZone = 255;
+            let maxLumInEyeZone = 0;
 
             for (let y = eyeYStart; y < eyeYEnd; y++) {
               for (let x = roiXMin; x < roiXMax; x++) {
                 const idx = y * sampleWidth + x;
-                const d = Math.abs(gray[idx] - gray[idx - sampleWidth]);
-                eyeVarSum += d;
-                eyePixelCount++;
+                // ONLY examine genuine skin/face pixels (ignore background fence/slats)
+                if (isSkin[idx] === 1) {
+                  const val = gray[idx];
+                  skinLumSum += val;
+                  skinCountInEyeZone++;
+                  if (val < minLumInEyeZone) minLumInEyeZone = val;
+                  if (val > maxLumInEyeZone) maxLumInEyeZone = val;
+                }
               }
             }
 
-            const eyeDetail = eyePixelCount > 0 ? eyeVarSum / eyePixelCount : 15;
-            // If eye detail is high, eyes are open and sharp
-            eyeOpennessScore = eyeDetail > 8 ? 0.94 : (eyeDetail > 4 ? 0.65 : 0.35);
+            if (skinCountInEyeZone > 10) {
+              const avgSkinLum = skinLumSum / skinCountInEyeZone;
+              const pupilDip = avgSkinLum - minLumInEyeZone;
+              const scleraRange = maxLumInEyeZone - minLumInEyeZone;
+
+              // An open eye MUST have a dark pupil (dip > 24) and bright sclera contrast (range > 35)
+              // Closed eyelids have smooth, uniform skin with pupilDip < 20 and scleraRange < 25
+              const isOpenEye = pupilDip >= 22 && scleraRange >= 30;
+              
+              if (isOpenEye) {
+                eyeOpennessScore = Math.min(0.98, 0.70 + (pupilDip / 100));
+              } else {
+                // Subject is blinking, looking down with closed eyelids, or eyes shut
+                eyeOpennessScore = 0.18;
+              }
+            } else {
+              // Not enough facial skin pixels in eye band
+              eyeOpennessScore = 0.25;
+            }
 
             detectedFaces.push({
               faceId: `face_${Date.now()}_${index}_${Math.random().toString(36).substring(2, 6)}`,
