@@ -60,23 +60,23 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="flex items-center justify-between pb-4 select-none bg-transparent">
-      {/* 1. Left Breadcrumb Navigation */}
+      {/* 1. Left Breadcrumb Navigation (Typography Rule 2 & 4: Clear Hierarchy & Alignment) */}
       <div className="flex items-center gap-2 text-xs">
-        <div className="flex items-center gap-1.5 font-semibold">
-          <span className="text-[#F94500] font-bold">{getTabBreadcrumb()}</span>
+        <div className="flex items-center gap-1.5">
+          <span className="font-heading text-[#F94500] font-bold tracking-tight">{getTabBreadcrumb()}</span>
           <ChevronRight className="w-3.5 h-3.5 text-[#BCACCE]" />
-          <span className="text-[#23003F] dark:text-[#FFFDB4] font-bold truncate max-w-[220px]">
+          <span className="font-heading text-[#23003F] dark:text-[#FFFDB4] font-bold tracking-tight truncate max-w-[240px]">
             {folderName}
           </span>
         </div>
       </div>
 
-      {/* 2. Top Right Control Actions */}
+      {/* 2. Top Right Control Actions (Typography Rule 7: High-Impact Clear CTAs) */}
       <div className="flex items-center gap-2">
         {/* Light / Dark Mode Toggle Button */}
         <button
           onClick={toggleTheme}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-[#23003F] hover:bg-[#F3EFF9] dark:hover:bg-[#320857] border border-[#E7E0EE] dark:border-[#4C177D] text-xs font-bold text-[#23003F] dark:text-[#FFFDB4] transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-[#23003F] hover:bg-[#F3EFF9] dark:hover:bg-[#320857] border border-[#E7E0EE] dark:border-[#4C177D] font-heading text-xs font-bold text-[#23003F] dark:text-[#FFFDB4] transition-colors cursor-pointer"
           title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
         >
           {theme === 'dark' ? (
@@ -92,11 +92,11 @@ export const Header: React.FC<HeaderProps> = ({
           )}
         </button>
 
-        {/* Primary Action Button */}
+        {/* Primary Action CTA Button */}
         {status === 'IDLE' && (
           <button
             onClick={onStart}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-[#F94500] hover:bg-[#D83C00] text-white text-xs font-bold transition-colors active:scale-98 cursor-pointer shadow-sm"
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-[#F94500] hover:bg-[#D83C00] text-white font-heading font-bold text-xs tracking-wide transition-all active:scale-98 cursor-pointer shadow-sm"
           >
             <Play className="w-3 h-3 fill-current" />
             <span>Run 4-Step Pipeline</span>
@@ -106,7 +106,7 @@ export const Header: React.FC<HeaderProps> = ({
         {isRunning && (
           <button
             onClick={onPause}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-heading font-bold text-xs transition-colors cursor-pointer"
           >
             <Pause className="w-3.5 h-3.5 fill-current" />
             <span>Pause</span>
@@ -116,7 +116,7 @@ export const Header: React.FC<HeaderProps> = ({
         {status === 'PAUSED' && (
           <button
             onClick={onResume}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-[#F94500] hover:bg-[#D83C00] text-white text-xs font-bold transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-[#F94500] hover:bg-[#D83C00] text-white font-heading font-bold text-xs transition-colors cursor-pointer"
           >
             <Play className="w-3.5 h-3.5 fill-current" />
             <span>Resume</span>
@@ -124,7 +124,7 @@ export const Header: React.FC<HeaderProps> = ({
         )}
 
         {status === 'COMPLETED' && (
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FFFDB4]/30 dark:bg-[#FFFDB4]/10 text-[#23003F] dark:text-[#FFFDB4] border border-[#FFFDB4] text-xs font-bold">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FFFDB4]/30 dark:bg-[#FFFDB4]/10 text-[#23003F] dark:text-[#FFFDB4] border border-[#FFFDB4] font-heading font-bold text-xs">
             <Sparkles className="w-3.5 h-3.5 text-[#F94500]" />
             <span>Pipeline Complete</span>
           </div>

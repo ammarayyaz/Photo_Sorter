@@ -16,7 +16,7 @@ export default {
           yellow: '#FFFDB4',   // Light Yellow / Cream
         },
         indigo: {
-          950: '#17002B',
+          950: '#150027',
           900: '#23003F', // Dark Indigo base
           800: '#2F0850',
           700: '#3D0E66',
@@ -29,8 +29,8 @@ export default {
         },
         purple: {
           lavender: '#BCACCE',
-          light: '#F4F1F8',
-          border: '#D5CBE0',
+          light: '#FAF8FD',
+          border: '#E7E0EE',
         },
         yellow: {
           cream: '#FFFDB4',
@@ -38,20 +38,23 @@ export default {
         },
       },
       fontFamily: {
-        sans: [
-          '-apple-system',
-          'BlinkMacSystemFont',
-          '"SF Pro Text"',
-          '"SF Pro Display"',
-          'system-ui',
-          '"Segoe UI"',
-          'Roboto',
-          'Helvetica',
-          'Arial',
-          'sans-serif'
-        ],
-        mono: ['Inter', '-apple-system', 'system-ui', 'sans-serif'],
-        num: ['Inter', '-apple-system', 'system-ui', 'sans-serif'],
+        // Heading & Brand: Plus Jakarta Sans (Modern, Geometric, High-Impact)
+        heading: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+        // Body & UI: Inter (Clean, Modern, Exceptional Readability)
+        sans: ['"Inter"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+        body: ['"Inter"', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
+        // Numbers & Metrics: Inter with Tabular Figures
+        mono: ['"Inter"', 'monospace'],
+        num: ['"Inter"', 'system-ui', 'sans-serif'],
+      },
+      fontSize: {
+        '2xs': ['9px', { lineHeight: '12px', letterSpacing: '0.04em' }],
+        'xs': ['11px', { lineHeight: '15px' }],
+        'sm': ['13px', { lineHeight: '18px' }],
+        'base': ['14px', { lineHeight: '20px' }],
+        'lg': ['16px', { lineHeight: '22px' }],
+        'xl': ['18px', { lineHeight: '24px', letterSpacing: '-0.01em' }],
+        '2xl': ['22px', { lineHeight: '28px', letterSpacing: '-0.02em' }],
       },
       boxShadow: {
         none: 'none',

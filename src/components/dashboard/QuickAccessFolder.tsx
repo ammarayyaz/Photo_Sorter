@@ -64,8 +64,8 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
         {/* Top: ORGANIZED FOLDER Label & Delete Action */}
         <div className="flex items-center justify-between">
           <span
-            className={`text-[9px] font-extrabold uppercase tracking-wider block ${
-              isActive ? 'text-white/90' : 'text-[#6B5B7E] dark:text-[#BCACCE]'
+            className={`font-heading text-2xs font-extrabold uppercase tracking-wider block ${
+              isActive ? 'text-white/90' : 'text-[#5A476E] dark:text-[#BCACCE]'
             }`}
           >
             ORGANIZED FOLDER
@@ -73,7 +73,7 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
 
           <div className="flex items-center gap-1.5">
             <span
-              className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-md ${
+              className={`font-mono tabular-nums text-2xs font-bold px-2 py-0.5 rounded-md ${
                 isActive ? 'bg-white text-[#F94500]' : 'bg-[#FFFDB4] text-[#23003F]'
               }`}
             >
@@ -109,8 +109,8 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
             <Folder className="w-3.5 h-3.5" />
           </div>
           <span
-            className={`text-[10px] font-mono font-semibold ${
-              isActive ? 'text-white/80' : 'text-[#6B5B7E] dark:text-[#BCACCE]'
+            className={`font-mono tabular-nums text-2xs font-semibold ${
+              isActive ? 'text-white/80' : 'text-[#5A476E] dark:text-[#BCACCE]'
             }`}
           >
             {folder.size}
@@ -120,14 +120,14 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
         {/* Bottom: FOLDER Label & Folder Name */}
         <div className="mt-auto pt-1">
           <span
-            className={`text-[9px] font-extrabold uppercase tracking-widest block ${
+            className={`font-heading text-2xs font-extrabold uppercase tracking-widest block ${
               isActive ? 'text-white/80' : 'text-[#BCACCE]'
             }`}
           >
             FOLDER
           </span>
           <div
-            className={`font-bold text-xs truncate mt-0.5 ${
+            className={`font-heading font-bold text-xs truncate mt-0.5 ${
               isActive ? 'text-white' : 'text-[#23003F] dark:text-[#FFFDB4]'
             }`}
           >

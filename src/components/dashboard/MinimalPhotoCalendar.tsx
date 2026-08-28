@@ -89,7 +89,7 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
             <CalendarIcon className="w-3.5 h-3.5" />
           </div>
           <div>
-            <h3 className="text-xs font-bold text-[#23003F] dark:text-[#FFFDB4] leading-none">
+            <h3 className="font-heading text-xs font-bold text-[#23003F] dark:text-[#FFFDB4] leading-none">
               {monthNames[month]} {year}
             </h3>
           </div>
@@ -99,20 +99,20 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
         <div className="flex items-center gap-1">
           <button
             onClick={goToToday}
-            className="text-[10px] font-bold px-2 py-0.5 rounded-lg text-[#BCACCE] hover:text-[#23003F] dark:hover:text-[#FFFDB4] hover:bg-[#F4F1F8] dark:hover:bg-[#320857] transition-colors cursor-pointer"
+            className="font-heading text-2xs font-bold px-2 py-0.5 rounded-lg text-[#BCACCE] hover:text-[#23003F] dark:hover:text-[#FFFDB4] hover:bg-[#FAF8FD] dark:hover:bg-[#320857] transition-colors cursor-pointer"
           >
             Today
           </button>
           <button
             onClick={prevMonth}
-            className="p-1 rounded-lg hover:bg-[#F4F1F8] dark:hover:bg-[#320857] text-[#BCACCE] hover:text-[#23003F] dark:hover:text-[#FFFDB4] transition-colors cursor-pointer"
+            className="p-1 rounded-lg hover:bg-[#FAF8FD] dark:hover:bg-[#320857] text-[#BCACCE] hover:text-[#23003F] dark:hover:text-[#FFFDB4] transition-colors cursor-pointer"
             title="Previous Month"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={nextMonth}
-            className="p-1 rounded-lg hover:bg-[#F4F1F8] dark:hover:bg-[#320857] text-[#BCACCE] hover:text-[#23003F] dark:hover:text-[#FFFDB4] transition-colors cursor-pointer"
+            className="p-1 rounded-lg hover:bg-[#FAF8FD] dark:hover:bg-[#320857] text-[#BCACCE] hover:text-[#23003F] dark:hover:text-[#FFFDB4] transition-colors cursor-pointer"
             title="Next Month"
           >
             <ChevronRight className="w-3.5 h-3.5" />
@@ -120,8 +120,8 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
         </div>
       </div>
 
-      {/* Weekday Labels */}
-      <div className="grid grid-cols-7 text-center text-[10px] font-bold text-[#BCACCE]">
+      {/* Weekday Labels (Rule 4: Consistent Alignment & Hierarchy) */}
+      <div className="grid grid-cols-7 text-center font-heading text-2xs font-bold text-[#BCACCE]">
         <span>Su</span>
         <span>Mo</span>
         <span>Tu</span>
@@ -139,7 +139,7 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
           return (
             <div
               key={`prev-${i}`}
-              className="h-7 rounded-lg flex items-center justify-center text-[11px] font-mono text-[#BCACCE]/40"
+              className="h-7 rounded-lg flex items-center justify-center text-xs font-mono tabular-nums text-[#BCACCE]/40"
             >
               {dayNum}
             </div>
@@ -189,14 +189,14 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
                   onSelectDate(isSelected ? null : dateKey);
                 }
               }}
-              className={`relative h-7 rounded-lg flex flex-col items-center justify-center text-[11px] font-mono transition-all cursor-pointer ${
+              className={`relative h-7 rounded-lg flex flex-col items-center justify-center text-xs font-mono tabular-nums transition-all cursor-pointer ${
                 isSelected
                   ? 'bg-[#F94500] text-white font-bold'
                   : hasPhotos
                   ? 'bg-[#FFFDB4]/40 dark:bg-[#FFFDB4]/20 text-[#23003F] dark:text-[#FFFDB4] font-bold border border-[#FFFDB4] hover:bg-[#FFFDB4]/70'
                   : isToday
-                  ? 'bg-[#F4F1F8] dark:bg-[#320857] text-[#23003F] dark:text-[#FFFDB4] font-bold'
-                  : 'text-[#564867] dark:text-[#BCACCE] hover:bg-[#F4F1F8] dark:hover:bg-[#320857]'
+                  ? 'bg-[#FAF8FD] dark:bg-[#320857] text-[#23003F] dark:text-[#FFFDB4] font-bold'
+                  : 'text-[#564867] dark:text-[#BCACCE] hover:bg-[#FAF8FD] dark:hover:bg-[#320857]'
               }`}
             >
               <span>{dayNum}</span>
@@ -204,7 +204,7 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
               {/* Photo Count Indicator Dot / Pill */}
               {hasPhotos && (
                 <span
-                  className={`absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full flex items-center justify-center text-[8px] font-extrabold ${
+                  className={`absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full flex items-center justify-center text-[8px] font-mono tabular-nums font-extrabold ${
                     isSelected
                       ? 'bg-white text-[#F94500]'
                       : 'bg-[#F94500] text-white'
@@ -231,7 +231,7 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
           <div className="flex items-center justify-between pb-2 border-b border-[#4C177D]">
             <div className="flex items-center gap-1.5">
               <CalendarIcon className="w-3.5 h-3.5 text-[#FFFDB4]" />
-              <span className="font-bold text-xs text-white">
+              <span className="font-heading font-bold text-xs text-white">
                 {new Date(hoveredDate + 'T00:00:00').toLocaleDateString(undefined, {
                   month: 'short',
                   day: 'numeric',
@@ -239,21 +239,21 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
                 })}
               </span>
             </div>
-            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#F94500] text-white font-bold">
+            <span className="text-2xs font-mono tabular-nums px-1.5 py-0.5 rounded bg-[#F94500] text-white font-bold">
               {hoveredItems.length} photos
             </span>
           </div>
 
           {/* List of Photo Names */}
           <div className="flex flex-col gap-1.5 py-2">
-            <span className="text-[9px] font-extrabold uppercase tracking-wider text-[#BCACCE]">
+            <span className="font-heading text-2xs font-extrabold uppercase tracking-wider text-[#BCACCE]">
               Uploaded Images on this Date:
             </span>
             <div className="flex flex-col gap-1 max-h-28 overflow-y-hidden">
               {hoveredItems.slice(0, 5).map((item) => (
                 <div
                   key={item.metadata.id}
-                  className="flex items-center justify-between text-[10px] bg-[#320857] px-2 py-1 rounded-lg border border-[#4C177D]"
+                  className="flex items-center justify-between text-xs bg-[#320857] px-2 py-1 rounded-lg border border-[#4C177D]"
                 >
                   <div className="flex items-center gap-1.5 truncate max-w-[150px]">
                     <ImageIcon className="w-3 h-3 text-[#FFFDB4] flex-shrink-0" />
@@ -261,13 +261,13 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
                       {item.metadata.filename}
                     </span>
                   </div>
-                  <span className="font-mono text-[9px] text-[#BCACCE] flex-shrink-0">
+                  <span className="font-mono tabular-nums text-2xs text-[#BCACCE] flex-shrink-0">
                     {(item.metadata.fileSize / 1000000).toFixed(1)} MB
                   </span>
                 </div>
               ))}
               {hoveredItems.length > 5 && (
-                <span className="text-[9px] text-[#BCACCE] text-center italic">
+                <span className="text-2xs text-[#BCACCE] text-center italic">
                   + {hoveredItems.length - 5} more images
                 </span>
               )}
@@ -275,7 +275,7 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
           </div>
 
           {/* Tooltip Footer Total Size */}
-          <div className="pt-2 border-t border-[#4C177D] flex items-center justify-between text-[10px] font-mono text-[#BCACCE]">
+          <div className="pt-2 border-t border-[#4C177D] flex items-center justify-between text-xs font-mono tabular-nums text-[#BCACCE]">
             <span className="flex items-center gap-1">
               <HardDrive className="w-3 h-3 text-[#BCACCE]" />
               Total Date Size

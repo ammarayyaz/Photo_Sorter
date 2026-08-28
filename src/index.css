@@ -1,36 +1,36 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* Palette Constants */
+  /* User 4-Color Palette Constants */
   --palette-indigo: #23003F;
   --palette-red: #F94500;
   --palette-purple: #BCACCE;
   --palette-yellow: #FFFDB4;
 
-  /* Light Theme */
+  /* Light Theme (Maximum Contrast & Clean Legibility) */
   --bg-page: #FFFFFF;
   --bg-surface: #FAF8FD;
   --bg-card: #FFFFFF;
   --border-app: #E7E0EE;
   --text-main: #23003F;
-  --text-muted: #6B5B7E;
-  --text-dim: #9E8EA8;
+  --text-muted: #5A476E;
+  --text-dim: #8F7D9E;
   --primary-accent: #F94500;
 }
 
 .dark {
-  /* Dark Theme */
+  /* Dark Theme (Maximum Contrast & Crisp Visibility) */
   --bg-page: #150027;
-  --bg-surface: #23003F;
+  --bg-surface: #20003A;
   --bg-card: #2B054D;
   --border-app: #4C177D;
   --text-main: #FFFFFF;
   --text-muted: #BCACCE;
-  --text-dim: #8E7A9F;
+  --text-dim: #9480A6;
   --primary-accent: #F94500;
 }
 
@@ -40,7 +40,7 @@
   text-shadow: none !important;
 }
 
-/* Primary Text Font: Apple San Francisco / SF Pro */
+/* Typography Foundation */
 html, body {
   margin: 0;
   padding: 0;
@@ -48,7 +48,9 @@ html, body {
   width: 100%;
   background-color: var(--bg-page);
   color: var(--text-main);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -56,15 +58,49 @@ html, body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Numbers & Metrics Font: Inter with Tabular Figures */
+/* Hierarchy: Headings use Plus Jakarta Sans */
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--text-main);
+}
+
+/* Numbers, Metrics & Data: Inter Tabular Figures */
 .font-mono,
 .font-num,
 [class*="font-mono"],
 [class*="font-num"],
 .tabular-nums {
-  font-family: 'Inter', -apple-system, system-ui, sans-serif !important;
+  font-family: 'Inter', monospace !important;
   font-feature-settings: 'tnum' 1, 'zero' 1, 'cv05' 1 !important;
   letter-spacing: -0.01em;
+}
+
+/* Typography Rule 7: High-Impact Clear CTA Buttons */
+.cta-button-primary {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  background-color: #F94500;
+  color: #FFFFFF;
+  transition: transform 0.1s ease, background-color 0.15s ease;
+}
+.cta-button-primary:hover {
+  background-color: #D83C00;
+}
+.cta-button-primary:active {
+  transform: scale(0.98);
+}
+
+/* Typography Rule 5: Small Uppercase Tags & Section Headers */
+.label-tag-uppercase {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800;
+  font-size: 9px;
+  line-height: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 /* Minimal Custom Scrollbar */
@@ -83,7 +119,7 @@ html, body {
   background: rgba(188, 172, 206, 0.7);
 }
 
-/* Focus styles */
+/* Clean Focus Visibility */
 *:focus-visible {
   outline: 2px solid #F94500;
   outline-offset: 2px;

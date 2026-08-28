@@ -61,7 +61,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="w-8 h-8 rounded-xl bg-[#F94500] text-white flex items-center justify-center shadow-sm">
             <Sparkles className="w-4 h-4" />
           </div>
-          <span className="font-extrabold text-lg text-[#23003F] dark:text-[#FFFDB4] tracking-tight">
+          <span className="font-heading font-extrabold text-lg text-[#23003F] dark:text-[#FFFDB4] tracking-tight">
             LuminaSort
           </span>
         </div>
@@ -69,9 +69,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* 2. Main Curved Dark Indigo Body */}
       <div className="flex-1 bg-[#23003F] dark:bg-[#20003A] rounded-tr-[44px] p-5 flex flex-col justify-between text-white overflow-y-auto border-t border-r border-[#4A1578]/50">
-        <div className="flex flex-col gap-3">
-          {/* Vibrant Red/Orange Action Button */}
-          <label className="w-full bg-[#F94500] hover:bg-[#D83C00] text-white font-bold text-xs py-2.5 px-4 rounded-full transition-colors active:scale-98 flex items-center justify-center gap-2 cursor-pointer shadow-sm">
+        <div className="flex flex-col gap-3.5">
+          {/* High-Impact CTA Button (Rule 7) */}
+          <label className="w-full bg-[#F94500] hover:bg-[#D83C00] text-white font-heading font-bold text-xs tracking-wide py-2.5 px-4 rounded-full transition-all active:scale-98 flex items-center justify-center gap-2 cursor-pointer shadow-sm">
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>Upload New Files</span>
             <input
@@ -85,12 +85,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
             />
           </label>
 
-          {/* 4-Step Pipeline Navigation Menu */}
-          <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#BCACCE] px-1 pt-1">
+          {/* 4-Step Pipeline Navigation Menu (Rule 2 Hierarchy) */}
+          <div className="font-heading text-2xs font-extrabold uppercase tracking-wider text-[#BCACCE] px-1 pt-1">
             4-Step Photo Pipeline
           </div>
 
-          <nav className="flex flex-col gap-1 text-xs font-medium">
+          <nav className="flex flex-col gap-1 text-xs font-semibold">
             {/* Step 1: Ingest Folders */}
             <button
               onClick={() => setActiveTab('step1-folders')}
@@ -102,10 +102,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             >
               <div className="flex items-center gap-2.5">
                 <Folder className="w-4 h-4 stroke-[2]" />
-                <span>1. Ingest Folders</span>
+                <span className="font-sans">1. Ingest Folders</span>
               </div>
               <span
-                className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold ${
+                className={`text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums ${
                   activeTab === 'step1-folders'
                     ? 'bg-[#FFFDB4] text-[#23003F]'
                     : 'bg-white/20 text-[#FFFDB4]'
@@ -126,11 +126,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
             >
               <div className="flex items-center gap-2.5">
                 <Archive className="w-4 h-4 stroke-[2]" />
-                <span>2. Eye &amp; Motion Culling</span>
+                <span className="font-sans">2. Eye &amp; Motion Culling</span>
               </div>
               {metrics.framesCulled > 0 && (
                 <span
-                  className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold ${
+                  className={`text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums ${
                     activeTab === 'step2-culling'
                       ? 'bg-[#F94500] text-white'
                       : 'bg-[#F94500] text-white'
@@ -152,11 +152,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
             >
               <div className="flex items-center gap-2.5">
                 <Compass className="w-4 h-4 stroke-[2]" />
-                <span>3. Straighten &amp; Tone</span>
+                <span className="font-sans">3. Straighten &amp; Tone</span>
               </div>
               {metrics.imagesStraightened > 0 && (
                 <span
-                  className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold ${
+                  className={`text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums ${
                     activeTab === 'step3-enhancement'
                       ? 'bg-[#FFFDB4] text-[#23003F]'
                       : 'bg-white/20 text-[#FFFDB4]'
@@ -178,10 +178,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             >
               <div className="flex items-center gap-2.5">
                 <CheckCircle2 className="w-4 h-4 stroke-[2]" />
-                <span>4. Output &amp; Review</span>
+                <span className="font-sans">4. Output &amp; Review</span>
               </div>
               <span
-                className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold ${
+                className={`text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums ${
                   activeTab === 'step4-output'
                     ? 'bg-[#FFFDB4] text-[#23003F]'
                     : 'bg-white/20 text-[#FFFDB4]'
@@ -195,11 +195,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </nav>
 
           {/* Secondary Utilities */}
-          <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#BCACCE] px-1 pt-2">
+          <div className="font-heading text-2xs font-extrabold uppercase tracking-wider text-[#BCACCE] px-1 pt-2">
             Organize &amp; Settings
           </div>
 
-          <nav className="flex flex-col gap-0.5 text-xs font-medium">
+          <nav className="flex flex-col gap-0.5 text-xs font-semibold">
             {/* Shared With Me / Face Clusters */}
             <button
               onClick={() => setActiveTab('faces')}
@@ -211,10 +211,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             >
               <div className="flex items-center gap-2.5">
                 <Users className="w-4 h-4 stroke-[1.8]" />
-                <span>Shared With Me</span>
+                <span className="font-sans">Shared With Me</span>
               </div>
               {metrics.distinctPeopleCount > 0 && (
-                <span className="text-[10px] px-1.5 py-0.5 rounded-full font-mono bg-white/20 text-[#FFFDB4]">
+                <span className="text-2xs px-2 py-0.5 rounded-full font-mono tabular-nums bg-white/20 text-[#FFFDB4]">
                   {metrics.distinctPeopleCount}
                 </span>
               )}
@@ -230,22 +230,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
               }`}
             >
               <RotateCcw className="w-4 h-4 stroke-[1.8]" />
-              <span>Backups &amp; Settings</span>
+              <span className="font-sans">Backups &amp; Settings</span>
             </button>
           </nav>
         </div>
 
         {/* 3. Real Bottom Storage Details Section */}
         <div className="flex flex-col gap-3 pt-3 border-t border-[#4A1578] text-xs text-white">
-          <div className="text-[10px] font-bold tracking-wider text-[#BCACCE] uppercase">
+          <div className="font-heading text-2xs font-bold tracking-wider text-[#BCACCE] uppercase">
             Storage Details
           </div>
 
           {/* Real Storage Meter 1 */}
           <div className="flex flex-col gap-1.5">
-            <div className="flex items-center gap-2 text-white/90 text-[11px] font-medium">
-              <Cloud className="w-3.5 h-3.5 text-[#BCACCE]" />
-              <span>Storage</span>
+            <div className="flex items-center justify-between text-white/90 text-xs font-semibold">
+              <span className="flex items-center gap-1.5 font-sans">
+                <Cloud className="w-3.5 h-3.5 text-[#BCACCE]" />
+                Storage
+              </span>
+              <span className="font-mono tabular-nums text-2xs text-[#BCACCE]">
+                {formattedStorage} / 1 TB
+              </span>
             </div>
             <div className="w-full bg-white/15 h-1.5 rounded-full overflow-hidden">
               <div
@@ -253,16 +258,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 style={{ width: `${usedPercentage}%` }}
               />
             </div>
-            <span className="text-[10px] text-[#BCACCE] font-mono">
-              {formattedStorage} of 1 TB used
-            </span>
           </div>
 
           {/* Real Storage Meter 2: Photos */}
           <div className="flex flex-col gap-1.5">
-            <div className="flex items-center gap-2 text-white/90 text-[11px] font-medium">
-              <Image className="w-3.5 h-3.5 text-[#BCACCE]" />
-              <span>Photos</span>
+            <div className="flex items-center justify-between text-white/90 text-xs font-semibold">
+              <span className="flex items-center gap-1.5 font-sans">
+                <Image className="w-3.5 h-3.5 text-[#BCACCE]" />
+                Photos
+              </span>
+              <span className="font-mono tabular-nums text-2xs text-[#BCACCE]">
+                {items.length} Files
+              </span>
             </div>
             <div className="w-full bg-white/15 h-1.5 rounded-full overflow-hidden">
               <div
@@ -270,15 +277,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 style={{ width: `${usedPercentage}%` }}
               />
             </div>
-            <span className="text-[10px] text-[#BCACCE] font-mono">
-              {formattedStorage} of 1 TB used
-            </span>
           </div>
 
           {/* Upgrade Storage Link */}
           <button
             onClick={() => setActiveTab('settings')}
-            className="flex items-center gap-1 text-[11px] font-bold text-[#FFFDB4] hover:text-white transition-colors pt-1 cursor-pointer"
+            className="flex items-center gap-1 font-heading text-xs font-bold text-[#FFFDB4] hover:text-white transition-colors pt-1 cursor-pointer"
           >
             <span>Upgrade Storage</span>
             <ArrowUpRight className="w-3.5 h-3.5" />

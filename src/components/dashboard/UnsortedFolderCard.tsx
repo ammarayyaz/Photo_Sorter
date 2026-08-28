@@ -32,7 +32,7 @@ export const UnsortedFolderCard: React.FC<UnsortedFolderCardProps> = ({
         isSelected ? 'scale-[1.02]' : 'hover:-translate-y-1'
       }`}
     >
-      {/* 1. BACK FOLDER SILHOUETTE (Dark Indigo base) */}
+      {/* 1. BACK FOLDER SILHOUETTE */}
       <svg
         viewBox="0 0 280 180"
         className="w-full h-full absolute inset-0"
@@ -106,13 +106,13 @@ export const UnsortedFolderCard: React.FC<UnsortedFolderCardProps> = ({
       <div className="absolute left-[12px] right-[12px] bottom-[8px] top-[66px] z-30 flex flex-col justify-between p-3 select-none">
         {/* Top Info Bar */}
         <div className="flex items-center justify-between">
-          <span className="flex items-center gap-1 text-[9px] font-extrabold uppercase tracking-wider text-[#23003F] bg-[#FFFDB4] border border-[#FFFDB4] px-2 py-0.5 rounded-full font-mono">
+          <span className="flex items-center gap-1 font-heading text-2xs font-extrabold uppercase tracking-wider text-[#23003F] bg-[#FFFDB4] border border-[#FFFDB4] px-2 py-0.5 rounded-full">
             <Sparkles className="w-2.5 h-2.5 text-[#F94500]" />
             UNSORTED RAW
           </span>
 
           <div className="flex items-center gap-1.5">
-            <span className="text-[10px] font-mono text-[#BCACCE] font-medium bg-black/30 px-2 py-0.5 rounded-md border border-[#4C177D]">
+            <span className="text-2xs font-mono tabular-nums text-[#BCACCE] font-bold bg-black/30 px-2 py-0.5 rounded-md border border-[#4C177D]">
               {folder.photoCount} files
             </span>
 
@@ -134,13 +134,13 @@ export const UnsortedFolderCard: React.FC<UnsortedFolderCardProps> = ({
         {/* Bottom Details & Sort Button */}
         <div className="flex items-end justify-between pt-1">
           <div className="flex flex-col">
-            <span className="text-[9px] font-extrabold uppercase tracking-widest text-[#BCACCE]">
+            <span className="font-heading text-2xs font-extrabold uppercase tracking-widest text-[#BCACCE]">
               FOLDER
             </span>
-            <span className="font-bold text-xs text-white truncate max-w-[140px]">
+            <span className="font-heading font-bold text-xs text-white truncate max-w-[140px]">
               {folder.name}
             </span>
-            <span className="text-[9px] font-mono text-[#BCACCE]">
+            <span className="font-mono tabular-nums text-2xs text-[#BCACCE]">
               {folder.size} • {folder.rawFormats}
             </span>
           </div>
@@ -151,7 +151,7 @@ export const UnsortedFolderCard: React.FC<UnsortedFolderCardProps> = ({
               if (onSortClick) onSortClick();
             }}
             title="Auto-Sort and Enhance this folder"
-            className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#F94500] hover:bg-[#D83C00] text-white text-[10px] font-bold transition-all active:scale-95 cursor-pointer shadow-sm"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#F94500] hover:bg-[#D83C00] text-white font-heading font-bold text-2xs tracking-wide transition-all active:scale-95 cursor-pointer shadow-sm"
           >
             <Play className="w-2.5 h-2.5 fill-current" />
             <span>Sort</span>

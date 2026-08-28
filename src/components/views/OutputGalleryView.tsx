@@ -68,25 +68,25 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#FFFDB4] text-[#23003F] uppercase tracking-wider font-mono">
+              <span className="font-heading text-2xs font-extrabold px-2 py-0.5 rounded-full bg-[#FFFDB4] text-[#23003F] uppercase tracking-wider font-mono">
                 Step 4 of 4
               </span>
-              <h2 className="text-xs font-bold text-[#23003F] dark:text-[#FFFDB4]">
+              <h2 className="font-heading text-xs font-bold text-[#23003F] dark:text-[#FFFDB4]">
                 Final Output &amp; Separation Review
               </h2>
             </div>
-            <p className="text-[11px] text-[#6B5B7E] dark:text-[#BCACCE] mt-0.5">
+            <p className="font-sans text-xs text-[#5A476E] dark:text-[#BCACCE] mt-0.5">
               All images have been leveled, color-corrected with Lightroom parameters, and separated from sub-optimal blur frames.
             </p>
           </div>
         </div>
 
-        {/* Real ZIP Folder Export Download Action */}
+        {/* Real ZIP Folder Export Download Action (Rule 7: High-Impact CTA) */}
         <div className="flex items-center gap-2">
           <button
             onClick={handleExportZip}
             disabled={items.length === 0 || isExporting}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-white font-bold text-xs transition-colors ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-white font-heading font-bold text-xs tracking-wide transition-all ${
               isExporting
                 ? 'bg-[#F94500]/70 cursor-wait'
                 : items.length > 0
@@ -125,15 +125,15 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
           {/* Main Kept Output Tab */}
           <button
             onClick={() => setOutputTab('main')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-heading text-xs font-bold transition-colors cursor-pointer ${
               outputTab === 'main'
                 ? 'bg-white dark:bg-[#2F0850] text-[#23003F] dark:text-[#FFFDB4] border border-[#E7E0EE] dark:border-[#5B228E]'
-                : 'text-[#6B5B7E] dark:text-[#BCACCE] hover:text-[#23003F] dark:hover:text-white'
+                : 'text-[#5A476E] dark:text-[#BCACCE] hover:text-[#23003F] dark:hover:text-white'
             }`}
           >
             <FolderCheck className="w-4 h-4 text-[#F94500]" />
             <span>Final Enhanced Output</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold bg-[#FFFDB4] text-[#23003F]">
+            <span className="text-2xs px-2 py-0.5 rounded-full font-mono tabular-nums font-bold bg-[#FFFDB4] text-[#23003F]">
               {mainItems.length}
             </span>
           </button>
@@ -141,21 +141,21 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
           {/* Separated _archive Folder Tab */}
           <button
             onClick={() => setOutputTab('archive')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-heading text-xs font-bold transition-colors cursor-pointer ${
               outputTab === 'archive'
                 ? 'bg-white dark:bg-[#2F0850] text-[#F94500] border border-[#E7E0EE] dark:border-[#5B228E]'
-                : 'text-[#6B5B7E] dark:text-[#BCACCE] hover:text-[#23003F] dark:hover:text-white'
+                : 'text-[#5A476E] dark:text-[#BCACCE] hover:text-[#23003F] dark:hover:text-white'
             }`}
           >
             <Archive className="w-4 h-4 text-[#F94500]" />
             <span>Separated `_archive/` Folder</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold bg-[#F94500]/15 text-[#F94500]">
+            <span className="text-2xs px-2 py-0.5 rounded-full font-mono tabular-nums font-bold bg-[#F94500]/15 text-[#F94500]">
               {archiveItems.length}
             </span>
           </button>
         </div>
 
-        <div className="text-[11px] font-mono text-[#BCACCE] pr-2">
+        <div className="text-2xs font-mono tabular-nums text-[#BCACCE] pr-2">
           Destination: {destinationDirectory}
         </div>
       </div>
@@ -167,8 +167,8 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
             <FolderOpen className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-[#23003F] dark:text-[#FFFDB4]">No output photos generated yet</h3>
-            <p className="text-xs text-[#6B5B7E] dark:text-[#BCACCE] mt-1 max-w-sm">
+            <h3 className="font-heading text-sm font-bold text-[#23003F] dark:text-[#FFFDB4]">No output photos generated yet</h3>
+            <p className="font-sans text-xs text-[#5A476E] dark:text-[#BCACCE] mt-1 max-w-sm">
               Please ingest photos in Step 1 and run the pipeline to view and download your organized collections.
             </p>
           </div>
@@ -198,11 +198,11 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
                   {/* Top Badges */}
                   <div className="absolute top-2 left-2 flex items-center gap-1 z-10">
                     {item.isArchived ? (
-                      <span className="bg-[#F94500] text-white font-extrabold text-[9px] px-2 py-0.5 rounded-full font-mono shadow-sm">
+                      <span className="bg-[#F94500] text-white font-heading font-extrabold text-2xs px-2 py-0.5 rounded-full shadow-sm">
                         _archive
                       </span>
                     ) : (
-                      <span className="bg-[#FFFDB4] text-[#23003F] font-extrabold text-[9px] px-2 py-0.5 rounded-full font-mono flex items-center gap-1 shadow-sm">
+                      <span className="bg-[#FFFDB4] text-[#23003F] font-heading font-extrabold text-2xs px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
                         <Sparkles className="w-2.5 h-2.5 text-[#F94500]" />
                         Enhanced
                       </span>
@@ -212,7 +212,7 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
                   {/* 1-Click Single Image Download Button */}
                   <button
                     onClick={() => handleDownloadSingle(item)}
-                    className="absolute top-2 right-2 z-10 p-1.5 rounded-lg bg-black/70 hover:bg-black text-white transition-colors flex items-center gap-1 text-[10px] font-bold backdrop-blur-sm cursor-pointer"
+                    className="absolute top-2 right-2 z-10 p-1.5 rounded-lg bg-black/70 hover:bg-black text-white transition-colors flex items-center gap-1 text-2xs font-bold backdrop-blur-sm cursor-pointer"
                     title="Download this image"
                   >
                     {hasDownloaded ? (
@@ -223,7 +223,7 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
                   </button>
 
                   {/* Bottom Stats Overlay */}
-                  <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between bg-black/75 backdrop-blur-sm text-white px-2 py-1 rounded-lg text-[10px] font-mono z-10">
+                  <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between bg-black/75 backdrop-blur-sm text-white px-2 py-1 rounded-lg text-2xs font-mono tabular-nums z-10">
                     <span className="flex items-center gap-1 text-[#FFFDB4]">
                       <Compass className="w-3 h-3 text-[#F94500]" />
                       {item.geometry.detectedAngleDeg > 0 ? '+' : ''}{item.geometry.detectedAngleDeg}° Leveled
@@ -237,16 +237,16 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
                 {/* Card Metadata & Lightroom Adjustments Summary */}
                 <div className="flex flex-col gap-2 pt-3">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-xs text-[#23003F] dark:text-[#FFFDB4] truncate max-w-[170px]">
+                    <span className="font-sans font-bold text-xs text-[#23003F] dark:text-[#FFFDB4] truncate max-w-[170px]">
                       {item.metadata.filename}
                     </span>
-                    <span className="text-[10px] font-mono text-[#BCACCE]">
+                    <span className="text-2xs font-mono tabular-nums text-[#BCACCE]">
                       {(item.metadata.fileSize / 1000000).toFixed(2)} MB
                     </span>
                   </div>
 
                   {/* Lightroom Parameters Pill */}
-                  <div className="bg-[#FAF8FD] dark:bg-[#2A0548] border border-[#E7E0EE] dark:border-[#4C177D] rounded-xl p-2 flex flex-col gap-1 text-[10px] font-mono">
+                  <div className="bg-[#FAF8FD] dark:bg-[#2A0548] border border-[#E7E0EE] dark:border-[#4C177D] rounded-xl p-2 flex flex-col gap-1 text-2xs font-mono tabular-nums">
                     <div className="flex items-center justify-between text-[#23003F] dark:text-[#FFFDB4]">
                       <span className="font-semibold flex items-center gap-1">
                         <Sliders className="w-3 h-3 text-[#F94500]" />
@@ -259,14 +259,14 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
                   </div>
 
                   {/* Target File Destination & Download Trigger */}
-                  <div className="pt-2 border-t border-[#E7E0EE] dark:border-[#4C177D] flex items-center justify-between text-[10px]">
-                    <span className="font-mono text-[#BCACCE] truncate max-w-[170px]">
+                  <div className="pt-2 border-t border-[#E7E0EE] dark:border-[#4C177D] flex items-center justify-between text-2xs">
+                    <span className="font-mono tabular-nums text-[#BCACCE] truncate max-w-[170px]">
                       {item.targetPath}
                     </span>
 
                     <button
                       onClick={() => handleDownloadSingle(item)}
-                      className="flex items-center gap-1 text-[#F94500] hover:text-[#D83C00] font-bold cursor-pointer transition-colors"
+                      className="flex items-center gap-1 font-heading text-[#F94500] hover:text-[#D83C00] font-bold cursor-pointer transition-colors"
                     >
                       <Download className="w-3 h-3" />
                       <span>Download</span>

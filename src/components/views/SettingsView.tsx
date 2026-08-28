@@ -43,13 +43,13 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         <div className="flex items-center justify-between pb-2 border-b border-[#E7E0EE] dark:border-[#4C177D]">
           <div className="flex items-center gap-2 text-xs font-bold text-[#23003F] dark:text-[#FFFDB4]">
             <Key className="w-4 h-4 text-[#F94500]" />
-            <span>Google Gemini Vision API Authentication</span>
+            <span className="font-heading">Google Gemini Vision API Authentication</span>
           </div>
-          <span className="text-[11px] text-[#BCACCE] font-mono">Gemini 2.5 Flash Vision</span>
+          <span className="text-2xs text-[#BCACCE] font-mono tabular-nums">Gemini 2.5 Flash Vision</span>
         </div>
 
         <div className="flex flex-col gap-2 text-xs">
-          <label className="text-[#23003F] dark:text-[#FFFDB4] font-semibold">API Secret Key</label>
+          <label className="font-heading font-semibold text-[#23003F] dark:text-[#FFFDB4]">API Secret Key</label>
           <div className="flex items-center gap-2">
             <input
               type="password"
@@ -59,12 +59,12 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 setTestStatus('idle');
               }}
               placeholder="AIzaSy..."
-              className="flex-1 bg-[#FAF8FD] dark:bg-[#2E074E] border border-[#E7E0EE] dark:border-[#4C177D] rounded-xl px-3 py-2 text-xs font-mono text-[#23003F] dark:text-white outline-none focus:border-[#F94500]"
+              className="flex-1 bg-[#FAF8FD] dark:bg-[#2E074E] border border-[#E7E0EE] dark:border-[#4C177D] rounded-xl px-3 py-2 text-xs font-mono tabular-nums text-[#23003F] dark:text-white outline-none focus:border-[#F94500]"
             />
             <button
               onClick={handleTestApiKey}
               disabled={testStatus === 'testing'}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white dark:bg-[#23003F] hover:bg-[#F3EFF9] dark:hover:bg-[#320857] border border-[#E7E0EE] dark:border-[#4C177D] text-xs font-bold text-[#23003F] dark:text-[#FFFDB4] transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white dark:bg-[#23003F] hover:bg-[#F3EFF9] dark:hover:bg-[#320857] border border-[#E7E0EE] dark:border-[#4C177D] font-heading text-xs font-bold text-[#23003F] dark:text-[#FFFDB4] transition-colors cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5 text-[#F94500]" />
               <span>{testStatus === 'testing' ? 'Testing...' : 'Validate Key'}</span>
@@ -72,13 +72,13 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           </div>
 
           {testStatus === 'valid' && (
-            <div className="flex items-center gap-1.5 text-[11px] text-[#F94500] font-semibold mt-1">
+            <div className="flex items-center gap-1.5 text-xs text-[#F94500] font-semibold mt-1">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>API key authenticated successfully for Gemini 2.5 Flash Vision.</span>
             </div>
           )}
           {testStatus === 'invalid' && (
-            <div className="flex items-center gap-1.5 text-[11px] text-[#F94500] font-semibold mt-1">
+            <div className="flex items-center gap-1.5 text-xs text-[#F94500] font-semibold mt-1">
               <AlertCircle className="w-3.5 h-3.5" />
               <span>Invalid API key or network error. Pipeline will use local EXIF fallback.</span>
             </div>
@@ -91,15 +91,15 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         <div className="flex items-center justify-between pb-2 border-b border-[#E7E0EE] dark:border-[#4C177D]">
           <div className="flex items-center gap-2 text-xs font-bold text-[#23003F] dark:text-[#FFFDB4]">
             <Cpu className="w-4 h-4 text-[#F94500]" />
-            <span>Multi-Threading Optimization</span>
+            <span className="font-heading">Multi-Threading Optimization</span>
           </div>
-          <span className="text-[11px] text-[#BCACCE] font-mono">Hardware Acceleration</span>
+          <span className="text-2xs text-[#BCACCE] font-mono tabular-nums">Hardware Acceleration</span>
         </div>
 
         <div className="grid grid-cols-2 gap-4 text-xs">
           <div className="flex flex-col gap-1.5">
-            <span className="text-[#23003F] dark:text-[#BCACCE] font-semibold">RAW Decoding Thread Pool</span>
-            <select className="bg-[#FAF8FD] dark:bg-[#2E074E] border border-[#E7E0EE] dark:border-[#4C177D] rounded-xl px-2.5 py-2 text-xs text-[#23003F] dark:text-white outline-none">
+            <span className="font-heading font-semibold text-[#23003F] dark:text-[#BCACCE]">RAW Decoding Thread Pool</span>
+            <select className="bg-[#FAF8FD] dark:bg-[#2E074E] border border-[#E7E0EE] dark:border-[#4C177D] rounded-xl px-2.5 py-2 text-xs font-sans text-[#23003F] dark:text-white outline-none">
               <option value="auto">Auto (8 Threads - Intel/AMD AVX2)</option>
               <option value="4">4 Dedicated Threads</option>
               <option value="16">16 High-Throughput Threads</option>
@@ -107,8 +107,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <span className="text-[#23003F] dark:text-[#BCACCE] font-semibold">Memory Heap Ceiling</span>
-            <select className="bg-[#FAF8FD] dark:bg-[#2E074E] border border-[#E7E0EE] dark:border-[#4C177D] rounded-xl px-2.5 py-2 text-xs text-[#23003F] dark:text-white outline-none">
+            <span className="font-heading font-semibold text-[#23003F] dark:text-[#BCACCE]">Memory Heap Ceiling</span>
+            <select className="bg-[#FAF8FD] dark:bg-[#2E074E] border border-[#E7E0EE] dark:border-[#4C177D] rounded-xl px-2.5 py-2 text-xs font-sans text-[#23003F] dark:text-white outline-none">
               <option value="1200">1.2 GB (Explicit GC every 50 frames)</option>
               <option value="2048">2.0 GB (High RAM workstations)</option>
             </select>
@@ -121,18 +121,18 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         <div className="flex items-center justify-between pb-2 border-b border-[#E7E0EE] dark:border-[#4C177D]">
           <div className="flex items-center gap-2 text-xs font-bold text-[#23003F] dark:text-[#FFFDB4]">
             <HardDrive className="w-4 h-4 text-[#F94500]" />
-            <span>Export Compression &amp; Format Rules</span>
+            <span className="font-heading">Export Compression &amp; Format Rules</span>
           </div>
-          <span className="text-[11px] text-[#BCACCE] font-mono">Non-Destructive Write</span>
+          <span className="text-2xs text-[#BCACCE] font-mono tabular-nums">Non-Destructive Write</span>
         </div>
 
         <div className="grid grid-cols-2 gap-4 text-xs">
           <div className="flex flex-col gap-1.5">
-            <span className="text-[#23003F] dark:text-[#BCACCE] font-semibold">Enhanced Image Format</span>
+            <span className="font-heading font-semibold text-[#23003F] dark:text-[#BCACCE]">Enhanced Image Format</span>
             <select
               value={config.outputFormat}
               onChange={(e) => onChangeConfig({ outputFormat: e.target.value as any })}
-              className="bg-[#FAF8FD] dark:bg-[#2E074E] border border-[#E7E0EE] dark:border-[#4C177D] rounded-xl px-2.5 py-2 text-xs text-[#23003F] dark:text-white outline-none"
+              className="bg-[#FAF8FD] dark:bg-[#2E074E] border border-[#E7E0EE] dark:border-[#4C177D] rounded-xl px-2.5 py-2 text-xs font-sans text-[#23003F] dark:text-white outline-none"
             >
               <option value="JPEG">JPEG (High Compatibility with EXIF)</option>
               <option value="WEBP">WebP (Maximum Compression Efficiency)</option>
@@ -142,8 +142,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-[#23003F] dark:text-[#BCACCE] font-semibold">JPEG Quality Level</span>
-              <span className="font-mono text-[#F94500] font-bold">{config.jpegQuality}%</span>
+              <span className="font-heading font-semibold text-[#23003F] dark:text-[#BCACCE]">JPEG Quality Level</span>
+              <span className="font-mono tabular-nums text-[#F94500] font-bold">{config.jpegQuality}%</span>
             </div>
             <input
               type="range"
@@ -175,13 +175,13 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             });
             alert('Settings restored to defaults.');
           }}
-          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white dark:bg-[#20003A] hover:bg-[#F3EFF9] dark:hover:bg-[#320857] border border-[#E7E0EE] dark:border-[#4C177D] text-xs font-semibold text-[#23003F] dark:text-[#FFFDB4] transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white dark:bg-[#20003A] hover:bg-[#F3EFF9] dark:hover:bg-[#320857] border border-[#E7E0EE] dark:border-[#4C177D] font-heading text-xs font-bold text-[#23003F] dark:text-[#FFFDB4] transition-colors cursor-pointer"
         >
           <RotateCcw className="w-3.5 h-3.5 text-[#BCACCE]" />
           <span>Restore Recommended Defaults</span>
         </button>
 
-        <span className="text-[11px] text-[#BCACCE] font-medium">Auto-saved to local secure storage</span>
+        <span className="font-sans text-xs text-[#BCACCE] font-medium">Auto-saved to local secure storage</span>
       </div>
     </div>
   );
