@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -7,33 +8,36 @@ export default {
   theme: {
     extend: {
       colors: {
-        brand: {
-          50: '#EFF6FF',
-          100: '#DBEAFE',
-          200: '#BFDBFE',
-          300: '#93C5FD',
-          400: '#60A5FA',
-          500: '#3B82F6',
-          600: '#2563EB',
-          700: '#1D4ED8',
-          800: '#1E40AF',
-          900: '#1E3A8A',
+        // User's Exact Custom Palette
+        palette: {
+          indigo: '#23003F',   // Dark Indigo
+          red: '#F94500',      // Red / Vibrant Orange-Red
+          purple: '#BCACCE',   // Light Purple / Lavender
+          yellow: '#FFFDB4',   // Light Yellow / Cream
         },
-        canvas: {
-          bg: '#FFFFFF',
-          card: '#FFFFFF',
-          sidebar: '#FFFFFF',
-          subtle: '#F8FAFC',
-          border: '#E2E8F0',
-          borderLight: '#F1F5F9',
+        indigo: {
+          950: '#17002B',
+          900: '#23003F', // Dark Indigo base
+          800: '#2F0850',
+          700: '#3D0E66',
+          600: '#541A88',
         },
-        slate: {
-          850: '#131D31',
-          950: '#090E17',
-        }
+        red: {
+          brand: '#F94500',
+          hover: '#DB3C00',
+          light: '#FFEDE5',
+        },
+        purple: {
+          lavender: '#BCACCE',
+          light: '#F4F1F8',
+          border: '#D5CBE0',
+        },
+        yellow: {
+          cream: '#FFFDB4',
+          light: '#FFFEEA',
+        },
       },
       fontFamily: {
-        // Apple San Francisco / SF Pro font for general text (matching "Apple Folder Ui" photo)
         sans: [
           '-apple-system',
           'BlinkMacSystemFont',
@@ -46,18 +50,12 @@ export default {
           'Arial',
           'sans-serif'
         ],
-        // Inter for numbers, stats, tabular data, and metrics
         mono: ['Inter', '-apple-system', 'system-ui', 'sans-serif'],
         num: ['Inter', '-apple-system', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
         none: 'none',
       },
-      borderRadius: {
-        '2xl': '1rem',
-        '3xl': '1.5rem',
-        '4xl': '2rem',
-      }
     },
   },
   plugins: [],

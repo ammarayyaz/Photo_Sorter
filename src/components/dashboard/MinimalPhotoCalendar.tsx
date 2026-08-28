@@ -81,15 +81,15 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
   const hoveredItems = hoveredDate ? photosByDate.get(hoveredDate) || [] : [];
 
   return (
-    <div className="relative bg-white border border-slate-200 rounded-2xl p-3 flex flex-col gap-2 select-none">
+    <div className="relative bg-white dark:bg-[#20003A] border border-[#E7E0EE] dark:border-[#4C177D] rounded-2xl p-3 flex flex-col gap-2 select-none transition-colors duration-200">
       {/* Calendar Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5">
-          <div className="w-6 h-6 rounded-lg bg-blue-50 text-[#1E60E6] flex items-center justify-center">
+          <div className="w-6 h-6 rounded-lg bg-[#F94500]/15 text-[#F94500] flex items-center justify-center">
             <CalendarIcon className="w-3.5 h-3.5" />
           </div>
           <div>
-            <h3 className="text-xs font-bold text-slate-900 leading-none">
+            <h3 className="text-xs font-bold text-[#23003F] dark:text-[#FFFDB4] leading-none">
               {monthNames[month]} {year}
             </h3>
           </div>
@@ -99,20 +99,20 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
         <div className="flex items-center gap-1">
           <button
             onClick={goToToday}
-            className="text-[10px] font-bold px-2 py-0.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+            className="text-[10px] font-bold px-2 py-0.5 rounded-lg text-[#BCACCE] hover:text-[#23003F] dark:hover:text-[#FFFDB4] hover:bg-[#F4F1F8] dark:hover:bg-[#320857] transition-colors cursor-pointer"
           >
             Today
           </button>
           <button
             onClick={prevMonth}
-            className="p-1 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition-colors"
+            className="p-1 rounded-lg hover:bg-[#F4F1F8] dark:hover:bg-[#320857] text-[#BCACCE] hover:text-[#23003F] dark:hover:text-[#FFFDB4] transition-colors cursor-pointer"
             title="Previous Month"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={nextMonth}
-            className="p-1 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-900 transition-colors"
+            className="p-1 rounded-lg hover:bg-[#F4F1F8] dark:hover:bg-[#320857] text-[#BCACCE] hover:text-[#23003F] dark:hover:text-[#FFFDB4] transition-colors cursor-pointer"
             title="Next Month"
           >
             <ChevronRight className="w-3.5 h-3.5" />
@@ -121,7 +121,7 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
       </div>
 
       {/* Weekday Labels */}
-      <div className="grid grid-cols-7 text-center text-[10px] font-bold text-slate-400">
+      <div className="grid grid-cols-7 text-center text-[10px] font-bold text-[#BCACCE]">
         <span>Su</span>
         <span>Mo</span>
         <span>Tu</span>
@@ -139,7 +139,7 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
           return (
             <div
               key={`prev-${i}`}
-              className="h-7 rounded-lg flex items-center justify-center text-[11px] font-mono text-slate-300"
+              className="h-7 rounded-lg flex items-center justify-center text-[11px] font-mono text-[#BCACCE]/40"
             >
               {dayNum}
             </div>
@@ -169,7 +169,6 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
                   const rect = e.currentTarget.getBoundingClientRect();
                   setHoveredDate(dateKey);
 
-                  // Position comfortably away from cursor with breathing room
                   const tooltipWidth = 265;
                   let xPos = rect.right + 20;
                   if (xPos + tooltipWidth > window.innerWidth - 16) {
@@ -190,14 +189,14 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
                   onSelectDate(isSelected ? null : dateKey);
                 }
               }}
-              className={`relative h-7 rounded-lg flex flex-col items-center justify-center text-[11px] font-mono transition-all ${
+              className={`relative h-7 rounded-lg flex flex-col items-center justify-center text-[11px] font-mono transition-all cursor-pointer ${
                 isSelected
-                  ? 'bg-[#1E60E6] text-white font-bold'
+                  ? 'bg-[#F94500] text-white font-bold'
                   : hasPhotos
-                  ? 'bg-blue-50 hover:bg-blue-100 text-[#1E60E6] font-bold cursor-pointer border border-blue-200'
+                  ? 'bg-[#FFFDB4]/40 dark:bg-[#FFFDB4]/20 text-[#23003F] dark:text-[#FFFDB4] font-bold border border-[#FFFDB4] hover:bg-[#FFFDB4]/70'
                   : isToday
-                  ? 'bg-slate-100 text-slate-900 font-bold'
-                  : 'text-slate-600 hover:bg-slate-50'
+                  ? 'bg-[#F4F1F8] dark:bg-[#320857] text-[#23003F] dark:text-[#FFFDB4] font-bold'
+                  : 'text-[#564867] dark:text-[#BCACCE] hover:bg-[#F4F1F8] dark:hover:bg-[#320857]'
               }`}
             >
               <span>{dayNum}</span>
@@ -207,8 +206,8 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
                 <span
                   className={`absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full flex items-center justify-center text-[8px] font-extrabold ${
                     isSelected
-                      ? 'bg-white text-[#1E60E6]'
-                      : 'bg-[#1E60E6] text-white'
+                      ? 'bg-white text-[#F94500]'
+                      : 'bg-[#F94500] text-white'
                   }`}
                 >
                   {datePhotos.length > 9 ? '9+' : datePhotos.length}
@@ -222,16 +221,16 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
       {/* Floating Hover Tooltip showing photo names and details */}
       {hoveredDate && hoveredItems.length > 0 && (
         <div
-          className="fixed z-50 bg-slate-900 text-white rounded-xl p-3 border border-slate-700 pointer-events-none w-64 animate-in fade-in zoom-in-95 duration-100"
+          className="fixed z-50 bg-[#23003F] text-white rounded-xl p-3 border border-[#4C177D] pointer-events-none w-64 animate-in fade-in zoom-in-95 duration-100"
           style={{
             left: `${Math.min(mousePos.x, window.innerWidth - 270)}px`,
             top: `${Math.min(mousePos.y, window.innerHeight - 240)}px`,
           }}
         >
           {/* Tooltip Header */}
-          <div className="flex items-center justify-between pb-2 border-b border-slate-800">
+          <div className="flex items-center justify-between pb-2 border-b border-[#4C177D]">
             <div className="flex items-center gap-1.5">
-              <CalendarIcon className="w-3.5 h-3.5 text-blue-400" />
+              <CalendarIcon className="w-3.5 h-3.5 text-[#FFFDB4]" />
               <span className="font-bold text-xs text-white">
                 {new Date(hoveredDate + 'T00:00:00').toLocaleDateString(undefined, {
                   month: 'short',
@@ -240,35 +239,35 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
                 })}
               </span>
             </div>
-            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-500/30 text-blue-300 font-bold">
+            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#F94500] text-white font-bold">
               {hoveredItems.length} photos
             </span>
           </div>
 
-          {/* List of Photo Names (Name-wise as requested) */}
+          {/* List of Photo Names */}
           <div className="flex flex-col gap-1.5 py-2">
-            <span className="text-[9px] font-extrabold uppercase tracking-wider text-slate-400">
+            <span className="text-[9px] font-extrabold uppercase tracking-wider text-[#BCACCE]">
               Uploaded Images on this Date:
             </span>
             <div className="flex flex-col gap-1 max-h-28 overflow-y-hidden">
               {hoveredItems.slice(0, 5).map((item) => (
                 <div
                   key={item.metadata.id}
-                  className="flex items-center justify-between text-[10px] bg-slate-800/80 px-2 py-1 rounded-lg border border-slate-700/50"
+                  className="flex items-center justify-between text-[10px] bg-[#320857] px-2 py-1 rounded-lg border border-[#4C177D]"
                 >
                   <div className="flex items-center gap-1.5 truncate max-w-[150px]">
-                    <ImageIcon className="w-3 h-3 text-blue-400 flex-shrink-0" />
-                    <span className="truncate text-slate-200 font-medium">
+                    <ImageIcon className="w-3 h-3 text-[#FFFDB4] flex-shrink-0" />
+                    <span className="truncate text-white font-medium">
                       {item.metadata.filename}
                     </span>
                   </div>
-                  <span className="font-mono text-[9px] text-slate-400 flex-shrink-0">
+                  <span className="font-mono text-[9px] text-[#BCACCE] flex-shrink-0">
                     {(item.metadata.fileSize / 1000000).toFixed(1)} MB
                   </span>
                 </div>
               ))}
               {hoveredItems.length > 5 && (
-                <span className="text-[9px] text-slate-400 text-center italic">
+                <span className="text-[9px] text-[#BCACCE] text-center italic">
                   + {hoveredItems.length - 5} more images
                 </span>
               )}
@@ -276,12 +275,12 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
           </div>
 
           {/* Tooltip Footer Total Size */}
-          <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-[10px] font-mono text-slate-400">
+          <div className="pt-2 border-t border-[#4C177D] flex items-center justify-between text-[10px] font-mono text-[#BCACCE]">
             <span className="flex items-center gap-1">
-              <HardDrive className="w-3 h-3 text-slate-500" />
+              <HardDrive className="w-3 h-3 text-[#BCACCE]" />
               Total Date Size
             </span>
-            <span className="text-white font-bold">
+            <span className="text-[#FFFDB4] font-bold">
               {(
                 hoveredItems.reduce((sum, i) => sum + i.metadata.fileSize, 0) / 1000000
               ).toFixed(2)}{' '}

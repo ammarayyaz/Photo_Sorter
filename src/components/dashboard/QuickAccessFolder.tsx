@@ -35,7 +35,7 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
         isActive ? 'scale-[1.02]' : 'hover:-translate-y-1'
       }`}
     >
-      {/* 1. Precise Folder Silhouette SVG with Smooth Tab Shoulder */}
+      {/* 1. Precise Folder Silhouette SVG */}
       <svg
         viewBox="0 0 280 160"
         className="w-full h-full absolute inset-0 transition-colors"
@@ -52,8 +52,8 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
              C 8,158 2,154 2,144
              V 18
              C 2,8 8,2 18,2 Z"
-          fill={isActive ? '#1E60E6' : '#F8FAFC'}
-          stroke={isActive ? '#1D4ED8' : '#E2E8F0'}
+          fill={isActive ? '#F94500' : '#FAF8FD'}
+          stroke={isActive ? '#D83C00' : '#E7E0EE'}
           strokeWidth="2"
           strokeLinejoin="round"
         />
@@ -61,11 +61,11 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
 
       {/* 2. Inner Folder Content Overlay */}
       <div className="relative z-10 w-full h-full flex flex-col justify-between p-4 pt-3.5 select-none">
-        {/* Top: SHARED WITH Label & Delete Action */}
+        {/* Top: ORGANIZED FOLDER Label & Delete Action */}
         <div className="flex items-center justify-between">
           <span
             className={`text-[9px] font-extrabold uppercase tracking-wider block ${
-              isActive ? 'text-white/90' : 'text-slate-500'
+              isActive ? 'text-white/90' : 'text-[#6B5B7E] dark:text-[#BCACCE]'
             }`}
           >
             ORGANIZED FOLDER
@@ -74,7 +74,7 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
           <div className="flex items-center gap-1.5">
             <span
               className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-md ${
-                isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
+                isActive ? 'bg-white text-[#F94500]' : 'bg-[#FFFDB4] text-[#23003F]'
               }`}
             >
               {folder.photoCount} photos
@@ -90,7 +90,7 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
                 className={`p-1 rounded-lg transition-colors cursor-pointer ${
                   isActive
                     ? 'hover:bg-white/20 text-white/80 hover:text-white'
-                    : 'hover:bg-rose-50 text-slate-400 hover:text-rose-600'
+                    : 'hover:bg-[#F94500]/20 text-[#BCACCE] hover:text-[#F94500]'
                 }`}
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -99,18 +99,18 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
           </div>
         </div>
 
-        {/* Middle: Icon or Avatars */}
+        {/* Middle: Icon / Size */}
         <div className="flex items-center gap-2 mt-1">
           <div
             className={`w-7 h-7 rounded-xl flex items-center justify-center font-bold text-xs ${
-              isActive ? 'bg-white/20 text-white' : 'bg-blue-50 text-[#1E60E6] border border-blue-200'
+              isActive ? 'bg-white/20 text-white' : 'bg-[#F94500]/15 text-[#F94500]'
             }`}
           >
             <Folder className="w-3.5 h-3.5" />
           </div>
           <span
-            className={`text-[10px] font-mono ${
-              isActive ? 'text-white/80' : 'text-slate-400'
+            className={`text-[10px] font-mono font-semibold ${
+              isActive ? 'text-white/80' : 'text-[#6B5B7E] dark:text-[#BCACCE]'
             }`}
           >
             {folder.size}
@@ -121,14 +121,14 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
         <div className="mt-auto pt-1">
           <span
             className={`text-[9px] font-extrabold uppercase tracking-widest block ${
-              isActive ? 'text-white/80' : 'text-slate-400'
+              isActive ? 'text-white/80' : 'text-[#BCACCE]'
             }`}
           >
             FOLDER
           </span>
           <div
             className={`font-bold text-xs truncate mt-0.5 ${
-              isActive ? 'text-white' : 'text-[#1E60E6]'
+              isActive ? 'text-white' : 'text-[#23003F] dark:text-[#FFFDB4]'
             }`}
           >
             {folder.name}

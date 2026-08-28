@@ -54,24 +54,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
       : 0;
 
   return (
-    <aside className="w-[260px] h-full flex flex-col bg-white select-none flex-shrink-0 border-r border-slate-200">
-      {/* 1. Top White Header with Logo & Brand */}
-      <div className="bg-white px-6 pt-5 pb-4 flex items-center justify-between">
+    <aside className="w-[260px] h-full flex flex-col bg-white dark:bg-[#17002B] select-none flex-shrink-0 border-r border-[#E7E0EE] dark:border-[#4C177D] transition-colors duration-200">
+      {/* 1. Top Header with Logo & Brand */}
+      <div className="bg-white dark:bg-[#17002B] px-6 pt-5 pb-4 flex items-center justify-between transition-colors">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-[#1E60E6] text-white flex items-center justify-center">
+          <div className="w-8 h-8 rounded-xl bg-[#F94500] text-white flex items-center justify-center shadow-sm">
             <Sparkles className="w-4 h-4" />
           </div>
-          <span className="font-extrabold text-lg text-[#1E60E6] tracking-tight">
+          <span className="font-extrabold text-lg text-[#23003F] dark:text-[#FFFDB4] tracking-tight">
             LuminaSort
           </span>
         </div>
       </div>
 
-      {/* 2. Main Curved Cobalt Blue Body */}
-      <div className="flex-1 bg-[#1E60E6] rounded-tr-[44px] p-5 flex flex-col justify-between text-white overflow-y-auto">
+      {/* 2. Main Curved Dark Indigo Body */}
+      <div className="flex-1 bg-[#23003F] dark:bg-[#20003A] rounded-tr-[44px] p-5 flex flex-col justify-between text-white overflow-y-auto border-t border-r border-[#4A1578]/50">
         <div className="flex flex-col gap-3">
-          {/* White Pill Action Button */}
-          <label className="w-full bg-white text-[#1E60E6] hover:bg-blue-50 font-bold text-xs py-2.5 px-4 rounded-full transition-colors active:scale-98 flex items-center justify-center gap-2 cursor-pointer">
+          {/* Vibrant Red/Orange Action Button */}
+          <label className="w-full bg-[#F94500] hover:bg-[#D83C00] text-white font-bold text-xs py-2.5 px-4 rounded-full transition-colors active:scale-98 flex items-center justify-center gap-2 cursor-pointer shadow-sm">
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>Upload New Files</span>
             <input
@@ -79,18 +79,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
               multiple
               accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.bmp,.tiff,.tif,.svg,.avif,.heic,.heif,.cr2,.cr3,.nef,.nrw,.arw,.srf,.sr2,.dng,.orf,.rw2,.pef,.ptx,.raf,.raw"
               className="hidden"
-              onChange={(e) => {
+              onChange={() => {
                 setActiveTab('step1-folders');
-                const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
-                if (fileInput && e.target.files) {
-                  // Trigger folder view upload
-                }
               }}
             />
           </label>
 
           {/* 4-Step Pipeline Navigation Menu */}
-          <div className="text-[10px] font-extrabold uppercase tracking-wider text-white/70 px-1 pt-1">
+          <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#BCACCE] px-1 pt-1">
             4-Step Photo Pipeline
           </div>
 
@@ -98,10 +94,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {/* Step 1: Ingest Folders */}
             <button
               onClick={() => setActiveTab('step1-folders')}
-              className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-colors text-left ${
+              className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-colors text-left cursor-pointer ${
                 activeTab === 'step1-folders'
-                  ? 'bg-white text-[#1E60E6] font-bold'
-                  : 'text-white/80 hover:text-white hover:bg-white/10'
+                  ? 'bg-white text-[#23003F] font-bold'
+                  : 'text-[#BCACCE] hover:text-white hover:bg-white/10'
               }`}
             >
               <div className="flex items-center gap-2.5">
@@ -109,10 +105,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <span>1. Ingest Folders</span>
               </div>
               <span
-                className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold ${
                   activeTab === 'step1-folders'
-                    ? 'bg-blue-100 text-[#1E60E6]'
-                    : 'bg-white/20 text-white'
+                    ? 'bg-[#FFFDB4] text-[#23003F]'
+                    : 'bg-white/20 text-[#FFFDB4]'
                 }`}
               >
                 {metrics.totalScanned > 0 ? metrics.totalScanned : items.length}
@@ -122,22 +118,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {/* Step 2: Blur & Motion Culling (Archive Separation) */}
             <button
               onClick={() => setActiveTab('step2-culling')}
-              className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-colors text-left ${
+              className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-colors text-left cursor-pointer ${
                 activeTab === 'step2-culling'
-                  ? 'bg-white text-[#1E60E6] font-bold'
-                  : 'text-white/80 hover:text-white hover:bg-white/10'
+                  ? 'bg-white text-[#23003F] font-bold'
+                  : 'text-[#BCACCE] hover:text-white hover:bg-white/10'
               }`}
             >
               <div className="flex items-center gap-2.5">
                 <Archive className="w-4 h-4 stroke-[2]" />
-                <span>2. Blur &amp; Motion Culling</span>
+                <span>2. Eye &amp; Motion Culling</span>
               </div>
               {metrics.framesCulled > 0 && (
                 <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
+                  className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold ${
                     activeTab === 'step2-culling'
-                      ? 'bg-amber-100 text-amber-800'
-                      : 'bg-amber-400 text-slate-900'
+                      ? 'bg-[#F94500] text-white'
+                      : 'bg-[#F94500] text-white'
                   }`}
                 >
                   {metrics.framesCulled}
@@ -148,10 +144,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {/* Step 3: Straighten & Lightroom Tone Tuning */}
             <button
               onClick={() => setActiveTab('step3-enhancement')}
-              className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-colors text-left ${
+              className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-colors text-left cursor-pointer ${
                 activeTab === 'step3-enhancement'
-                  ? 'bg-white text-[#1E60E6] font-bold'
-                  : 'text-white/80 hover:text-white hover:bg-white/10'
+                  ? 'bg-white text-[#23003F] font-bold'
+                  : 'text-[#BCACCE] hover:text-white hover:bg-white/10'
               }`}
             >
               <div className="flex items-center gap-2.5">
@@ -160,10 +156,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
               {metrics.imagesStraightened > 0 && (
                 <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
+                  className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold ${
                     activeTab === 'step3-enhancement'
-                      ? 'bg-blue-100 text-[#1E60E6]'
-                      : 'bg-white/20 text-white'
+                      ? 'bg-[#FFFDB4] text-[#23003F]'
+                      : 'bg-white/20 text-[#FFFDB4]'
                   }`}
                 >
                   {metrics.imagesStraightened}
@@ -174,10 +170,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {/* Step 4: Final Output Gallery */}
             <button
               onClick={() => setActiveTab('step4-output')}
-              className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-colors text-left ${
+              className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-colors text-left cursor-pointer ${
                 activeTab === 'step4-output'
-                  ? 'bg-white text-[#1E60E6] font-bold'
-                  : 'text-white/80 hover:text-white hover:bg-white/10'
+                  ? 'bg-white text-[#23003F] font-bold'
+                  : 'text-[#BCACCE] hover:text-white hover:bg-white/10'
               }`}
             >
               <div className="flex items-center gap-2.5">
@@ -185,10 +181,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <span>4. Output &amp; Review</span>
               </div>
               <span
-                className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
+                className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono font-bold ${
                   activeTab === 'step4-output'
-                    ? 'bg-emerald-100 text-emerald-800'
-                    : 'bg-white/20 text-white'
+                    ? 'bg-[#FFFDB4] text-[#23003F]'
+                    : 'bg-white/20 text-[#FFFDB4]'
                 }`}
               >
                 {items.filter((i) => !i.isArchived).length > 0
@@ -199,7 +195,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </nav>
 
           {/* Secondary Utilities */}
-          <div className="text-[10px] font-extrabold uppercase tracking-wider text-white/70 px-1 pt-2">
+          <div className="text-[10px] font-extrabold uppercase tracking-wider text-[#BCACCE] px-1 pt-2">
             Organize &amp; Settings
           </div>
 
@@ -207,10 +203,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {/* Shared With Me / Face Clusters */}
             <button
               onClick={() => setActiveTab('faces')}
-              className={`flex items-center justify-between px-3.5 py-2 rounded-xl transition-colors text-left ${
+              className={`flex items-center justify-between px-3.5 py-2 rounded-xl transition-colors text-left cursor-pointer ${
                 activeTab === 'faces'
-                  ? 'bg-white text-[#1E60E6] font-bold'
-                  : 'text-white/80 hover:text-white hover:bg-white/10'
+                  ? 'bg-white text-[#23003F] font-bold'
+                  : 'text-[#BCACCE] hover:text-white hover:bg-white/10'
               }`}
             >
               <div className="flex items-center gap-2.5">
@@ -218,7 +214,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 <span>Shared With Me</span>
               </div>
               {metrics.distinctPeopleCount > 0 && (
-                <span className="text-[10px] px-1.5 py-0.2 rounded-full font-mono bg-white/20 text-white">
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full font-mono bg-white/20 text-[#FFFDB4]">
                   {metrics.distinctPeopleCount}
                 </span>
               )}
@@ -227,10 +223,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {/* Settings & Backups */}
             <button
               onClick={() => setActiveTab('settings')}
-              className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl transition-colors text-left ${
+              className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl transition-colors text-left cursor-pointer ${
                 activeTab === 'settings'
-                  ? 'bg-white text-[#1E60E6] font-bold'
-                  : 'text-white/80 hover:text-white hover:bg-white/10'
+                  ? 'bg-white text-[#23003F] font-bold'
+                  : 'text-[#BCACCE] hover:text-white hover:bg-white/10'
               }`}
             >
               <RotateCcw className="w-4 h-4 stroke-[1.8]" />
@@ -240,24 +236,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* 3. Real Bottom Storage Details Section */}
-        <div className="flex flex-col gap-3 pt-3 border-t border-white/15 text-xs text-white">
-          <div className="text-[10px] font-bold tracking-wider text-white/70 uppercase">
+        <div className="flex flex-col gap-3 pt-3 border-t border-[#4A1578] text-xs text-white">
+          <div className="text-[10px] font-bold tracking-wider text-[#BCACCE] uppercase">
             Storage Details
           </div>
 
           {/* Real Storage Meter 1 */}
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center gap-2 text-white/90 text-[11px] font-medium">
-              <Cloud className="w-3.5 h-3.5" />
+              <Cloud className="w-3.5 h-3.5 text-[#BCACCE]" />
               <span>Storage</span>
             </div>
-            <div className="w-full bg-white/20 h-1.5 rounded-full overflow-hidden">
+            <div className="w-full bg-white/15 h-1.5 rounded-full overflow-hidden">
               <div
-                className="bg-white h-full rounded-full transition-all duration-300"
+                className="bg-[#F94500] h-full rounded-full transition-all duration-300"
                 style={{ width: `${usedPercentage}%` }}
               />
             </div>
-            <span className="text-[10px] text-white/85 font-mono">
+            <span className="text-[10px] text-[#BCACCE] font-mono">
               {formattedStorage} of 1 TB used
             </span>
           </div>
@@ -265,16 +261,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {/* Real Storage Meter 2: Photos */}
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center gap-2 text-white/90 text-[11px] font-medium">
-              <Image className="w-3.5 h-3.5" />
+              <Image className="w-3.5 h-3.5 text-[#BCACCE]" />
               <span>Photos</span>
             </div>
-            <div className="w-full bg-white/20 h-1.5 rounded-full overflow-hidden">
+            <div className="w-full bg-white/15 h-1.5 rounded-full overflow-hidden">
               <div
-                className="bg-white h-full rounded-full transition-all duration-300"
+                className="bg-[#FFFDB4] h-full rounded-full transition-all duration-300"
                 style={{ width: `${usedPercentage}%` }}
               />
             </div>
-            <span className="text-[10px] text-white/85 font-mono">
+            <span className="text-[10px] text-[#BCACCE] font-mono">
               {formattedStorage} of 1 TB used
             </span>
           </div>
@@ -282,7 +278,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {/* Upgrade Storage Link */}
           <button
             onClick={() => setActiveTab('settings')}
-            className="flex items-center gap-1 text-[11px] font-bold text-white hover:text-blue-100 transition-colors pt-1"
+            className="flex items-center gap-1 text-[11px] font-bold text-[#FFFDB4] hover:text-white transition-colors pt-1 cursor-pointer"
           >
             <span>Upgrade Storage</span>
             <ArrowUpRight className="w-3.5 h-3.5" />

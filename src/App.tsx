@@ -9,6 +9,7 @@ import { OutputGalleryView } from './components/views/OutputGalleryView';
 import { FaceClustersView } from './components/views/FaceClustersView';
 import { SettingsView } from './components/views/SettingsView';
 import { PhotoPipelineController } from './engine/pipeline';
+import { ThemeProvider } from './context/ThemeContext';
 import {
   saveSessionState,
   loadSessionState,
@@ -23,7 +24,7 @@ import {
   LogEntry,
 } from './engine/types';
 
-export const App: React.FC = () => {
+export const AppContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('step1-folders');
   const [currentFolderName, setCurrentFolderName] = useState<string>('My Uploaded Photos');
   const [folders, setFolders] = useState<
@@ -326,9 +327,9 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="w-screen h-screen m-0 p-0 bg-white flex overflow-hidden font-sans">
+    <div className="w-screen h-screen m-0 p-0 bg-white dark:bg-[#150027] flex overflow-hidden font-sans transition-colors duration-200">
       {/* Full viewport Edge-to-Edge Container without shadows */}
-      <div className="flex w-full h-full overflow-hidden bg-white">
+      <div className="flex w-full h-full overflow-hidden bg-white dark:bg-[#150027] transition-colors duration-200">
         {/* Column 1: Left Navigation Sidebar */}
         <Sidebar
           activeTab={activeTab}
@@ -339,7 +340,7 @@ export const App: React.FC = () => {
         />
 
         {/* Column 2: Center Content Area */}
-        <main className="flex-1 flex flex-col min-w-0 p-5 overflow-hidden bg-white">
+        <main className="flex-1 flex flex-col min-w-0 p-5 overflow-hidden bg-white dark:bg-[#150027] transition-colors duration-200">
           <Header
             activeTab={activeTab}
             status={status}
@@ -431,6 +432,14 @@ export const App: React.FC = () => {
         />
       </div>
     </div>
+  );
+};
+
+export const App: React.FC = () => {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 };
 
