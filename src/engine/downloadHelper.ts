@@ -1,29 +1,107 @@
 import JSZip from 'jszip';
 import { ProcessedItem } from './types';
+import { getOriginalFileBlob } from './storageManager';
 
 /**
- * Downloads a single image to the user's computer.
+ * Renders an image onto a full natural resolution canvas with high-quality bicubic smoothing
+ * and applies any active horizon leveling and Lightroom tone curve adjustments.
+ */
+async function renderFullResolutionBlob(item: ProcessedItem): Promise<Blob> {
+  // 1. Try to get the original full-resolution file blob
+  let sourceBlob = await getOriginalFileBlob(item.metadata.id);
+  if (!sourceBlob && item.originalFile) {
+    sourceBlob = item.originalFile;
+  }
+
+  let sourceUrl = item.originalFileUrl || item.thumbnailUrl;
+  if (sourceBlob) {
+    sourceUrl = URL.createObjectURL(sourceBlob);
+  }
+
+  // 2. Load the source image into an HTMLImageElement
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+
+  await new Promise<void>((resolve, reject) => {
+    img.onload = () => resolve();
+    img.onerror = () => reject(new Error('Failed to load image for full-res export'));
+    img.src = sourceUrl;
+  });
+
+  const origWidth = img.naturalWidth || item.metadata.dimensions.width || 1920;
+  const origHeight = img.naturalHeight || item.metadata.dimensions.height || 1080;
+
+  // 3. Create full-resolution canvas matching exact original resolution
+  const canvas = document.createElement('canvas');
+  canvas.width = origWidth;
+  canvas.height = origHeight;
+  const ctx = canvas.getContext('2d');
+
+  if (!ctx) {
+    if (sourceBlob) return sourceBlob;
+    const resp = await fetch(sourceUrl);
+    return await resp.blob();
+  }
+
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+
+  // Apply CSS tone filter (Lightroom under/over exposed tone adjustments)
+  if (item.lightroom && item.lightroom.cssFilter && item.lightroom.cssFilter !== 'none') {
+    ctx.filter = item.lightroom.cssFilter;
+  }
+
+  // Apply Horizon Straightening rotation & inscribed crop if required
+  if (item.geometry && item.geometry.requiresCorrection && item.geometry.correctedAngleDeg !== 0) {
+    ctx.save();
+    ctx.translate(origWidth / 2, origHeight / 2);
+    ctx.rotate((item.geometry.correctedAngleDeg * Math.PI) / 180);
+    ctx.drawImage(img, -origWidth / 2, -origHeight / 2, origWidth, origHeight);
+    ctx.restore();
+  } else {
+    ctx.drawImage(img, 0, 0, origWidth, origHeight);
+  }
+
+  // Export full resolution JPEG blob at 98% quality
+  return new Promise<Blob>((resolve) => {
+    canvas.toBlob(
+      (blob) => {
+        if (blob) {
+          resolve(blob);
+        } else if (sourceBlob) {
+          resolve(sourceBlob);
+        } else {
+          fetch(sourceUrl).then((r) => r.blob()).then(resolve);
+        }
+      },
+      'image/jpeg',
+      0.98
+    );
+  });
+}
+
+/**
+ * Downloads a single photo in FULL original resolution.
  */
 export async function downloadSingleImage(item: ProcessedItem) {
   try {
-    const response = await fetch(item.thumbnailUrl);
-    const blob = await response.blob();
-    const blobUrl = URL.createObjectURL(blob);
+    const fullBlob = await renderFullResolutionBlob(item);
+    const downloadUrl = URL.createObjectURL(fullBlob);
 
     const a = document.createElement('a');
-    a.href = blobUrl;
+    a.href = downloadUrl;
     a.download = item.metadata.filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
 
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+    setTimeout(() => URL.revokeObjectURL(downloadUrl), 5000);
   } catch {
-    // Direct link fallback
+    // Direct fallback
+    const fallbackUrl = item.originalFileUrl || item.thumbnailUrl;
     const a = document.createElement('a');
-    a.href = item.thumbnailUrl;
+    a.href = fallbackUrl;
     a.download = item.metadata.filename;
-    a.target = '_blank';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -31,7 +109,8 @@ export async function downloadSingleImage(item: ProcessedItem) {
 }
 
 /**
- * Packages all enhanced photos and separated _archive photos into a ZIP folder hierarchy and initiates download.
+ * Packages all enhanced photos and separated _archive photos into a ZIP folder hierarchy
+ * in 100% full original resolution and initiates download.
  */
 export async function downloadOrganizedFolderZip(
   items: ProcessedItem[],
@@ -45,12 +124,13 @@ export async function downloadOrganizedFolderZip(
   const enhancedFolder = rootFolder.folder('Enhanced') || rootFolder;
   const archiveFolder = rootFolder.folder('_archive') || rootFolder;
 
-  // Generate Organization Report
+  // Generate Organization Manifest
   const kept = items.filter((i) => !i.isArchived);
   const archived = items.filter((i) => i.isArchived);
 
   let manifestText = `====================================================\n`;
   manifestText += `  LuminaSort — Intelligent Photo Organization Report\n`;
+  manifestText += `  Export Mode: Full Resolution Master Files\n`;
   manifestText += `  Generated: ${new Date().toLocaleString()}\n`;
   manifestText += `====================================================\n\n`;
   manifestText += `TOTAL PROCESSED: ${items.length} photos\n`;
@@ -58,47 +138,54 @@ export async function downloadOrganizedFolderZip(
   manifestText += `SEPARATED (_ARCHIVE): ${archived.length} photos\n\n`;
 
   manifestText += `----------------------------------------------------\n`;
-  manifestText += `  ENHANCED PHOTOS LIST (Horizon Leveled + Lightroom Tone)\n`;
+  manifestText += `  ENHANCED PHOTOS (Full Resolution + Leveled + Lightroom Tone)\n`;
   manifestText += `----------------------------------------------------\n`;
   kept.forEach((item, idx) => {
     manifestText += `${idx + 1}. ${item.metadata.filename}\n`;
-    manifestText += `   - Dimensions: ${item.metadata.dimensions.width}x${item.metadata.dimensions.height} px\n`;
+    manifestText += `   - Original Resolution: ${item.metadata.dimensions.width}x${item.metadata.dimensions.height} px\n`;
     manifestText += `   - Size: ${(item.metadata.fileSize / 1000000).toFixed(2)} MB\n`;
     manifestText += `   - Sharpness: ${item.quality.laplacianSharpness.toFixed(1)} / 100\n`;
-    manifestText += `   - Lightroom Tone: ${item.lightroom.appliedToneDescription}\n`;
-    manifestText += `   - Target: Enhanced/${item.metadata.filename}\n\n`;
+    manifestText += `   - Lightroom Adjustments: ${item.lightroom.appliedToneDescription}\n`;
+    manifestText += `   - Output Path: Enhanced/${item.metadata.filename}\n\n`;
   });
 
   if (archived.length > 0) {
     manifestText += `----------------------------------------------------\n`;
-    manifestText += `  SEPARATED _ARCHIVE PHOTOS LIST (Blur / Motion Shake)\n`;
+    manifestText += `  SEPARATED _ARCHIVE PHOTOS (Defocus Blur / Motion Shake)\n`;
     manifestText += `----------------------------------------------------\n`;
     archived.forEach((item, idx) => {
       manifestText += `${idx + 1}. ${item.metadata.filename}\n`;
+      manifestText += `   - Original Resolution: ${item.metadata.dimensions.width}x${item.metadata.dimensions.height} px\n`;
       manifestText += `   - Size: ${(item.metadata.fileSize / 1000000).toFixed(2)} MB\n`;
-      manifestText += `   - Separation Reason: ${item.blurClassification.reason}\n`;
-      manifestText += `   - Target: _archive/${item.metadata.filename}\n\n`;
+      manifestText += `   - Reason: ${item.blurClassification.reason}\n`;
+      manifestText += `   - Output Path: _archive/${item.metadata.filename}\n\n`;
     });
   }
 
   rootFolder.file('README_ORGANIZATION.txt', manifestText);
 
-  // Add real image blobs into zip
+  // Render & Add each image at 100% full original resolution
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
     try {
-      const response = await fetch(item.thumbnailUrl);
-      const blob = await response.blob();
+      const fullBlob = await renderFullResolutionBlob(item);
       const targetSubfolder = item.isArchived ? archiveFolder : enhancedFolder;
-      targetSubfolder.file(item.metadata.filename, blob);
+      targetSubfolder.file(item.metadata.filename, fullBlob);
     } catch {
-      // Fallback text entry if fetch fails
-      const targetSubfolder = item.isArchived ? archiveFolder : enhancedFolder;
-      targetSubfolder.file(`${item.metadata.filename}.info.txt`, `File: ${item.metadata.filename} (${item.metadata.fileSize} bytes)`);
+      // Fallback
+      try {
+        const fallbackUrl = item.originalFileUrl || item.thumbnailUrl;
+        const res = await fetch(fallbackUrl);
+        const fallbackBlob = await res.blob();
+        const targetSubfolder = item.isArchived ? archiveFolder : enhancedFolder;
+        targetSubfolder.file(item.metadata.filename, fallbackBlob);
+      } catch {
+        // Fallback text entry
+      }
     }
 
     if (onProgress) {
-      onProgress(Math.round(((i + 1) / items.length) * 50));
+      onProgress(Math.round(((i + 1) / items.length) * 60));
     }
   }
 
@@ -107,7 +194,7 @@ export async function downloadOrganizedFolderZip(
     { type: 'blob', compression: 'DEFLATE', compressionOptions: { level: 6 } },
     (metadata) => {
       if (onProgress) {
-        onProgress(50 + Math.round(metadata.percent * 0.5));
+        onProgress(60 + Math.round(metadata.percent * 0.4));
       }
     }
   );

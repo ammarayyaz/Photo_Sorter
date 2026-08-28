@@ -1,34 +1,24 @@
 # LuminaSort — UI/UX Design Specification & Guidelines
-**Document Version:** 3.3.0  
+**Document Version:** 3.4.0  
 **Project:** LuminaSort (Intelligent Photo Organizer & Auto-Enhancement System)  
-**Theme:** Universal Format Support & Real Folder/File Ingestion  
+**Theme:** Persistent IndexedDB Storage Layer (Zero Data Loss on Page Refresh)  
 **Status:** Implemented & Verified  
 
 ---
 
-## 1. Supported File Formats & Folder Ingestion
+## 1. Persistent Storage Architecture (`storageManager.ts`)
 
-1. **Standard Image Formats**:
-   - `JPEG` / `JPG`
-   - `PNG` (Transparent & Solid)
-   - `WEBP`
-   - `AVIF`
-   - `HEIC` / `HEIF` (Apple iOS Live Photos & ProRAW)
-   - `TIFF` / `TIF`
-   - `BMP`
-   - `GIF`
-   - `SVG`
+1. **Browser IndexedDB Storage (`LuminaSortDB`)**:
+   - Automatically records session state into IndexedDB:
+     - All uploaded `ProcessedItem[]` images & metadata.
+     - Persistent base64 canvas thumbnails.
+     - Folder structures (`folders[]`).
+     - Current pipeline metrics (`metrics`).
+     - Active tab navigation state (`activeTab`).
+     - Active folder and album names.
 
-2. **Professional Camera RAW Formats**:
-   - **Canon**: `.CR2`, `.CR3`
-   - **Nikon**: `.NEF`, `.NRW`
-   - **Sony**: `.ARW`, `.SRF`, `.SR2`
-   - **Adobe / Apple ProRAW / Leica**: `.DNG`
-   - **Fujifilm**: `.RAF`
-   - **Olympus**: `.ORF`
-   - **Panasonic**: `.RW2`
-   - **Pentax**: `.PEF`, `.PTX`
-   - **Generic Camera RAW**: `.RAW`
+2. **Auto-Restore on Page Refresh**:
+   - On full browser reload (`F5`), LuminaSort restores your uploaded folders, thumbnails, metrics, and active tab.
 
-3. **Folder Ingestion**:
-   - Supports selecting any folder from the computer (`webkitdirectory`), parsing all nested photos and maintaining directory names.
+3. **Session Reset**:
+   - Clicking the Reset icon button in the header clears the IndexedDB session and resets to fresh state.

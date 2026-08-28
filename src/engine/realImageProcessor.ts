@@ -1,6 +1,7 @@
-import { ProcessedItem, ImageMetadata, FileFormat } from './types';
+import { ImageMetadata, ProcessedItem, FileFormat } from './types';
 import { calculateLightroomAdjustments, classifyBlurAndMotion } from './lightroomTone';
 import { calculateInscribedCrop } from './horizonCorrector';
+import { saveOriginalFileBlob } from './storageManager';
 
 /**
  * Maps any image or camera RAW file extension to standard FileFormat enum
@@ -263,6 +264,9 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
         pHash: '10101010101010101010101010101010',
       };
 
+      // Save full original resolution file to persistent storage
+      saveOriginalFileBlob(metadata.id, file);
+
       let persistentThumbnail = objectUrl;
       if (ctx) {
         try {
@@ -276,6 +280,8 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
         metadata,
         thumbnailUrl: persistentThumbnail,
         transformedThumbnailUrl: persistentThumbnail,
+        originalFileUrl: objectUrl,
+        originalFile: file,
         burstGroupId: `burst_${Math.floor(index / 3) + 1}`,
         isBurstWinner: !blurClass.isBlur,
         blurClassification: blurClass,

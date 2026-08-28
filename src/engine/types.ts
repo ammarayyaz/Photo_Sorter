@@ -128,6 +128,8 @@ export interface ProcessedItem {
   metadata: ImageMetadata;
   thumbnailUrl: string;
   transformedThumbnailUrl: string;
+  originalFileUrl?: string;
+  originalFile?: File;
   burstGroupId: string;
   isBurstWinner: boolean;
   blurClassification: BlurClassification;
