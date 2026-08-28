@@ -1,5 +1,5 @@
 import React from 'react';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Folder } from 'lucide-react';
 
 export interface FolderData {
   id: string;
@@ -31,30 +31,30 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`relative w-full aspect-[260/145] min-h-[135px] cursor-pointer transition-transform duration-150 group ${
-        isActive ? 'scale-[1.01]' : 'hover:-translate-y-0.5'
+      className={`relative w-full aspect-[280/160] min-h-[145px] cursor-pointer transition-all duration-200 group select-none ${
+        isActive ? 'scale-[1.02]' : 'hover:-translate-y-1'
       }`}
     >
-      {/* 1. Precise Folder Silhouette SVG */}
+      {/* 1. Precise Folder Silhouette SVG with Smooth Tab Shoulder */}
       <svg
-        viewBox="-1 -1 262 147"
+        viewBox="0 0 280 160"
         className="w-full h-full absolute inset-0 transition-colors"
       >
         <path
-          d="M 18,1
-             L 102,1
-             C 114,1 121,15 135,15
-             L 242,15
-             C 251,15 259,23 259,32
-             L 259,127
-             C 259,136 251,144 242,144
-             L 18,144
-             C 9,144 1,136 1,127
-             L 1,18
-             C 1,9 9,1 18,1 Z"
-          fill={isActive ? '#1E60E6' : '#F3F6FA'}
-          stroke={isActive ? '#1E60E6' : '#E2E8F0'}
-          strokeWidth="1.5"
+          d="M 18,2
+             H 95
+             C 106,2 112,18 124,18
+             H 262
+             C 272,18 278,24 278,34
+             V 144
+             C 278,154 272,158 262,158
+             H 18
+             C 8,158 2,154 2,144
+             V 18
+             C 2,8 8,2 18,2 Z"
+          fill={isActive ? '#1E60E6' : '#F8FAFC'}
+          stroke={isActive ? '#1D4ED8' : '#E2E8F0'}
+          strokeWidth="2"
           strokeLinejoin="round"
         />
       </svg>
@@ -68,50 +68,53 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
               isActive ? 'text-white/90' : 'text-slate-500'
             }`}
           >
-            SHARED WITH
+            ORGANIZED FOLDER
           </span>
 
-          {onDelete && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete();
-              }}
-              title="Delete this folder"
-              className={`p-1 rounded-lg transition-colors ${
-                isActive
-                  ? 'hover:bg-white/20 text-white/70 hover:text-white'
-                  : 'hover:bg-rose-50 text-slate-400 hover:text-rose-600'
+          <div className="flex items-center gap-1.5">
+            <span
+              className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-md ${
+                isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
               }`}
             >
-              <Trash2 className="w-3.5 h-3.5" />
-            </button>
-          )}
+              {folder.photoCount} photos
+            </span>
+
+            {onDelete && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete();
+                }}
+                title="Delete this folder"
+                className={`p-1 rounded-lg transition-colors cursor-pointer ${
+                  isActive
+                    ? 'hover:bg-white/20 text-white/80 hover:text-white'
+                    : 'hover:bg-rose-50 text-slate-400 hover:text-rose-600'
+                }`}
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
         </div>
 
-        {/* Overlapping Avatar Stack */}
-        <div className="flex items-center -space-x-1.5 mt-1">
-          {folder.avatars.map((av, idx) => (
-            <div
-              key={idx}
-              className={`w-7 h-7 rounded-full overflow-hidden flex items-center justify-center font-bold text-[10px] ring-2 ${
-                isActive ? 'ring-[#1E60E6] bg-white/25 text-white' : 'ring-[#F3F6FA] text-white'
-              }`}
-              title={av.name}
-            >
-              {av.avatarUrl ? (
-                <img
-                  src={av.avatarUrl}
-                  alt={av.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <span className={`${av.bg} w-full h-full flex items-center justify-center`}>
-                  {av.initials}
-                </span>
-              )}
-            </div>
-          ))}
+        {/* Middle: Icon or Avatars */}
+        <div className="flex items-center gap-2 mt-1">
+          <div
+            className={`w-7 h-7 rounded-xl flex items-center justify-center font-bold text-xs ${
+              isActive ? 'bg-white/20 text-white' : 'bg-blue-50 text-[#1E60E6] border border-blue-200'
+            }`}
+          >
+            <Folder className="w-3.5 h-3.5" />
+          </div>
+          <span
+            className={`text-[10px] font-mono ${
+              isActive ? 'text-white/80' : 'text-slate-400'
+            }`}
+          >
+            {folder.size}
+          </span>
         </div>
 
         {/* Bottom: FOLDER Label & Folder Name */}
