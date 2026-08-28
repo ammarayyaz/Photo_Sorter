@@ -168,7 +168,20 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
                 if (hasPhotos) {
                   const rect = e.currentTarget.getBoundingClientRect();
                   setHoveredDate(dateKey);
-                  setMousePos({ x: rect.left, y: rect.bottom + 6 });
+
+                  // Position comfortably away from cursor with breathing room
+                  const tooltipWidth = 265;
+                  let xPos = rect.right + 20;
+                  if (xPos + tooltipWidth > window.innerWidth - 16) {
+                    xPos = Math.max(16, rect.left - tooltipWidth - 20);
+                  }
+
+                  let yPos = rect.top - 10;
+                  if (yPos + 220 > window.innerHeight) {
+                    yPos = window.innerHeight - 230;
+                  }
+
+                  setMousePos({ x: xPos, y: yPos });
                 }
               }}
               onMouseLeave={() => setHoveredDate(null)}
