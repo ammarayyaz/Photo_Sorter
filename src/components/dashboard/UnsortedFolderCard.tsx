@@ -28,7 +28,7 @@ export const UnsortedFolderCard: React.FC<UnsortedFolderCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`relative w-full aspect-[260/175] min-h-[165px] cursor-pointer transition-transform duration-150 group ${
+      className={`relative w-full max-w-[320px] h-[175px] cursor-pointer transition-transform duration-150 group ${
         isSelected ? 'scale-[1.01]' : 'hover:-translate-y-0.5'
       }`}
     >
