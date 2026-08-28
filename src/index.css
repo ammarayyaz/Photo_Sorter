@@ -1,0 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-page: #FFFFFF;
+  --bg-white: #FFFFFF;
+  --bg-subtle: #F8FAFC;
+  --border-light: #E2E8F0;
+  
+  --color-primary: #1E60E6;
+  --color-primary-hover: #174EC4;
+  --color-primary-light: #EFF6FF;
+
+  --text-main: #0F172A;
+  --text-muted: #64748B;
+  --text-dim: #94A3B8;
+}
+
+/* Global Zero-Shadow Policy */
+*, *::before, *::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Primary Text Font: Apple San Francisco / SF Pro (Matching "Apple Folder Ui" Reference) */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #FFFFFF;
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow: hidden;
+}
+
+/* Numbers & Metrics Font: Inter with Tabular Figures */
+.font-mono,
+.font-num,
+[class*="font-mono"],
+[class*="font-num"],
+.tabular-nums {
+  font-family: 'Inter', -apple-system, system-ui, sans-serif !important;
+  font-feature-settings: 'tnum' 1, 'zero' 1, 'cv05' 1 !important;
+  letter-spacing: -0.01em;
+}
+
+/* Master App Container Frame — Fullscreen Edge to Edge */
+.app-master-container {
+  width: 100vw;
+  height: 100vh;
+  background-color: #FFFFFF;
+  display: flex;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Flat Folder Pocket Card Styling (Zero Shadows) */
+.folder-pocket-card {
+  position: relative;
+  background: #F8FAFC;
+  border-radius: 18px;
+  padding: 16px;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  border: 1px solid #E2E8F0;
+}
+
+.folder-pocket-card:hover {
+  background: #F1F5F9;
+  border-color: #CBD5E1;
+}
+
+.folder-pocket-card.active {
+  background: #1E60E6;
+  color: #FFFFFF;
+  border-color: #1E60E6;
+}
+
+/* Folder Paper Insert Effect */
+.folder-paper-insert {
+  position: absolute;
+  top: 8px;
+  left: 20px;
+  right: 20px;
+  height: 44px;
+  background: #FFFFFF;
+  border-radius: 12px 12px 4px 4px;
+  border: 1px solid #E2E8F0;
+  z-index: 1;
+}
+
+.folder-pocket-card.active .folder-paper-insert {
+  background: #EFF6FF;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.folder-pocket-front {
+  position: relative;
+  z-index: 2;
+  margin-top: 24px;
+}
+
+/* Minimal Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F8FAFC;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
