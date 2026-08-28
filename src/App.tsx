@@ -10,6 +10,11 @@ import { FaceClustersView } from './components/views/FaceClustersView';
 import { SettingsView } from './components/views/SettingsView';
 import { PhotoPipelineController } from './engine/pipeline';
 import {
+  saveSessionState,
+  loadSessionState,
+  clearSessionState
+} from './engine/storageManager';
+import {
   PipelineConfig,
   ProcessingStatus,
   ProcessedItem,
@@ -21,6 +26,15 @@ import {
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('step1-folders');
   const [currentFolderName, setCurrentFolderName] = useState<string>('My Uploaded Photos');
+  const [folders, setFolders] = useState<
+    Array<{
+      id: string;
+      name: string;
+      isSorted: boolean;
+      date: string;
+      items: ProcessedItem[];
+    }>
+  >([]);
 
   const [config, setConfig] = useState<PipelineConfig>({
     sourceDirectory: 'D:/Photos',
@@ -65,6 +79,7 @@ export const App: React.FC = () => {
 
   const pipelineRef = useRef<PhotoPipelineController | null>(null);
 
+  // 1. Restore persistent session from IndexedDB on startup
   useEffect(() => {
     pipelineRef.current = new PhotoPipelineController(config, (state) => {
       setStatus(state.status);
@@ -75,12 +90,45 @@ export const App: React.FC = () => {
       setLogs(state.logs);
     });
 
+    const initPersistence = async () => {
+      const saved = await loadSessionState();
+      if (saved && saved.items && saved.items.length > 0) {
+        setItems(saved.items);
+        if (saved.folders) setFolders(saved.folders);
+        if (saved.metrics) setMetrics(saved.metrics);
+        if (saved.currentFolderName) setCurrentFolderName(saved.currentFolderName);
+        if (saved.activeTab) setActiveTab(saved.activeTab as ActiveTab);
+        if (saved.config) setConfig(saved.config);
+        if (saved.items.length > 0) setActiveItem(saved.items[0]);
+
+        if (pipelineRef.current) {
+          pipelineRef.current.setItems(saved.items);
+        }
+      }
+    };
+
+    initPersistence();
+
     return () => {
       if (pipelineRef.current) {
         pipelineRef.current.cancel();
       }
     };
   }, []);
+
+  // 2. Auto-save session state whenever items, folders, metrics or tabs change
+  useEffect(() => {
+    if (items.length > 0) {
+      saveSessionState({
+        items,
+        folders,
+        metrics,
+        activeTab,
+        currentFolderName,
+        config,
+      });
+    }
+  }, [items, folders, metrics, activeTab, currentFolderName, config]);
 
   const handleConfigChange = (newConfig: Partial<PipelineConfig>) => {
     setConfig((prev) => {
@@ -93,11 +141,19 @@ export const App: React.FC = () => {
   };
 
   // When real user files are uploaded/dropped
-  const handleAddRealItems = (newItems: ProcessedItem[], folderName: string) => {
+  const handleAddRealItems = (
+    newItems: ProcessedItem[],
+    folderName: string,
+    newFolderObj?: any
+  ) => {
     const combined = [...newItems, ...items];
     setItems(combined);
     setActiveItem(newItems[0] || null);
     setCurrentFolderName(folderName || 'Imported Photos');
+
+    if (newFolderObj) {
+      setFolders((prev) => [newFolderObj, ...prev]);
+    }
 
     const under = combined.filter((i) => i.lightroom.exposureState === 'UNDER_EXPOSED').length;
     const over = combined.filter((i) => i.lightroom.exposureState === 'OVER_EXPOSED').length;
@@ -134,7 +190,8 @@ export const App: React.FC = () => {
     }
   };
 
-  const handleReset = () => {
+  const handleReset = async () => {
+    await clearSessionState();
     if (pipelineRef.current) {
       pipelineRef.current.cancel();
       pipelineRef.current = new PhotoPipelineController(config, (state) => {
@@ -148,6 +205,7 @@ export const App: React.FC = () => {
     }
     setStatus('IDLE');
     setItems([]);
+    setFolders([]);
     setActiveItem(null);
     setFaceClusters([]);
     setLogs([]);
@@ -236,6 +294,8 @@ export const App: React.FC = () => {
                 initialSubTab="unsorted"
                 metrics={metrics}
                 items={items}
+                folders={folders}
+                setFolders={setFolders}
                 faceClusters={faceClusters}
                 activeItem={activeItem}
                 onSelectItem={(item) => setActiveItem(item)}

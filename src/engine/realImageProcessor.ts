@@ -263,10 +263,19 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
         pHash: '10101010101010101010101010101010',
       };
 
+      let persistentThumbnail = objectUrl;
+      if (ctx) {
+        try {
+          persistentThumbnail = canvas.toDataURL('image/jpeg', 0.85);
+        } catch {
+          // Use objectUrl if toDataURL fails
+        }
+      }
+
       resolve({
         metadata,
-        thumbnailUrl: objectUrl,
-        transformedThumbnailUrl: objectUrl,
+        thumbnailUrl: persistentThumbnail,
+        transformedThumbnailUrl: persistentThumbnail,
         burstGroupId: `burst_${Math.floor(index / 3) + 1}`,
         isBurstWinner: !blurClass.isBlur,
         blurClassification: blurClass,

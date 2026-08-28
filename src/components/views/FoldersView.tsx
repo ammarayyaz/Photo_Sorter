@@ -20,10 +20,24 @@ interface FoldersViewProps {
   metrics?: PipelineMetrics;
   config?: PipelineConfig;
   items: ProcessedItem[];
+  folders?: Array<{
+    id: string;
+    name: string;
+    isSorted: boolean;
+    date: string;
+    items: ProcessedItem[];
+  }>;
+  setFolders?: React.Dispatch<React.SetStateAction<Array<{
+    id: string;
+    name: string;
+    isSorted: boolean;
+    date: string;
+    items: ProcessedItem[];
+  }>>>;
   faceClusters?: FaceCluster[];
   activeItem?: ProcessedItem | null;
   onSelectItem?: (item: ProcessedItem) => void;
-  onAddRealItems?: (newItems: ProcessedItem[], folderName: string) => void;
+  onAddRealItems?: (newItems: ProcessedItem[], folderName: string, newFolderObj?: any) => void;
   onChangeConfig: (newConfig: Partial<PipelineConfig>) => void;
   onStartPipeline: () => void;
 }
@@ -31,6 +45,8 @@ interface FoldersViewProps {
 export const FoldersView: React.FC<FoldersViewProps> = ({
   initialSubTab = 'unsorted',
   items: _items,
+  folders = [],
+  setFolders,
   faceClusters: _faceClusters = [],
   activeItem,
   onSelectItem,
@@ -41,17 +57,6 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
   const [subTab, setSubTab] = useState<'sorted' | 'unsorted'>(initialSubTab);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
-
-  // Real folders state (Empty by default until user uploads)
-  const [folders, setFolders] = useState<
-    Array<{
-      id: string;
-      name: string;
-      isSorted: boolean;
-      date: string;
-      items: ProcessedItem[];
-    }>
-  >([]);
 
   const [selectedFolderId, setSelectedFolderId] = useState<string>('');
 
@@ -85,12 +90,14 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
       items: processedRealItems,
     };
 
-    setFolders((prev) => [newFolder, ...prev]);
+    if (setFolders) {
+      setFolders((prev) => [newFolder, ...prev]);
+    }
     setSelectedFolderId(newFolderId);
     setSubTab('unsorted');
 
     if (onAddRealItems) {
-      onAddRealItems(processedRealItems, detectedFolderName);
+      onAddRealItems(processedRealItems, detectedFolderName, newFolder);
     }
 
     if (onSelectItem && processedRealItems.length > 0) {
