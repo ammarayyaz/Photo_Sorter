@@ -2,6 +2,7 @@ import { ImageMetadata, ProcessedItem, FileFormat } from './types';
 import { calculateLightroomAdjustments, classifyBlurAndMotion } from './lightroomTone';
 import { calculateInscribedCrop } from './horizonCorrector';
 import { saveOriginalFileBlob } from './storageManager';
+import { computeFacetDimensions } from './facetScorer';
 
 /**
  * Maps any image or camera RAW file extension to standard FileFormat enum
@@ -353,6 +354,15 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
         }
       }
 
+      // Compute Facet AI 9-Dimension Scoring Model
+      const facet = computeFacetDimensions(
+        subjectSharpness,
+        0,
+        detectedFaces.length > 0,
+        detectedFaces.length > 0 ? (eyeOpennessScore > 0.6 ? 12 : 3) : 10,
+        meanLuminance
+      );
+
       const lrAdjustments = calculateLightroomAdjustments(meanLuminance);
       const blurClass = classifyBlurAndMotion(
         subjectSharpness,
@@ -410,7 +420,8 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
           laplacianSharpness: subjectSharpness,
           faceQualityScore: detectedFaces.length > 0 ? Math.round(eyeOpennessScore * 100) : 85,
           compositionScore: 88,
-          compositeScore: Math.round(subjectSharpness * 0.6 + 35),
+          compositeScore: facet.facetCompositeScore,
+          facet,
         },
         geometry: {
           requiresCorrection: false,

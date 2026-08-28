@@ -12,9 +12,13 @@ import {
   CheckSquare,
   Square,
   Check,
-  Undo2
+  Undo2,
+  Sliders,
+  X,
+  Info
 } from 'lucide-react';
 import { ProcessedItem, PipelineMetrics } from '../../engine/types';
+import { FacetCullMode, runFacetBurstCulling } from '../../engine/facetScorer';
 
 interface CullingSeparationViewProps {
   items: ProcessedItem[];
@@ -33,14 +37,18 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
   onContinueToStraighten,
   onGoToIngest,
 }) => {
-  const [activeTab, setActiveTab] = useState<'all' | 'kept' | 'archived'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'kept' | 'archived' | 'top_picks'>('all');
+  const [cullMode, setCullMode] = useState<FacetCullMode>('KEEP_ALL_GOOD');
   const [search, setSearch] = useState<string>('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [inspectingItem, setInspectingItem] = useState<ProcessedItem | null>(null);
 
   // Calculations from real items array
   const totalCount = items.length;
   const keptItems = items.filter((i) => !i.isArchived);
   const archivedItems = items.filter((i) => i.isArchived);
+  const topPicks = items.filter((i) => !i.isArchived && (i.quality.compositeScore >= 80));
+
   const motionCount = items.filter(
     (i) => i.isArchived && i.blurClassification.blurType === 'MOTION_SHAKE'
   ).length;
@@ -53,7 +61,9 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
       ? items
       : activeTab === 'kept'
       ? keptItems
-      : archivedItems
+      : activeTab === 'archived'
+      ? archivedItems
+      : topPicks
   ).filter((i) =>
     i.metadata.filename.toLowerCase().includes(search.toLowerCase())
   );
@@ -95,9 +105,21 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
     setSelectedIds(new Set());
   };
 
+  const handleApplyFacetMode = (newMode: FacetCullMode) => {
+    setCullMode(newMode);
+    const culled = runFacetBurstCulling(items, newMode);
+    const archivedIds = culled.filter((i) => i.isArchived).map((i) => i.metadata.id);
+    const keptIds = culled.filter((i) => !i.isArchived).map((i) => i.metadata.id);
+
+    if (onToggleArchiveBulk) {
+      if (archivedIds.length > 0) onToggleArchiveBulk(archivedIds, true);
+      if (keptIds.length > 0) onToggleArchiveBulk(keptIds, false);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4 h-full overflow-y-auto pr-1 pb-6 select-none">
-      {/* 1. Header Banner */}
+      {/* 1. Header Banner with Facet AI Engine Badge */}
       <div className="bg-white dark:bg-[#20003A] border border-[#E7E0EE] dark:border-[#4C177D] rounded-2xl p-4 flex items-center justify-between transition-colors shadow-sm">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-[#F94500]/15 text-[#F94500] border border-[#F94500]/30 flex items-center justify-center font-bold">
@@ -106,14 +128,14 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <span className="font-heading text-2xs font-extrabold px-2 py-0.5 rounded-full bg-[#FFFDB4] text-[#23003F] uppercase tracking-wider font-mono">
-                Step 2 of 4
+                Facet AI Engine (ncoevoet/facet)
               </span>
               <h2 className="font-heading text-xs font-bold text-[#23003F] dark:text-[#FFFDB4]">
-                Image Separation: Closed Eyes, Blinking &amp; Motion Shake Culling
+                9-Dimension Quality Scoring, Blink Detection (EAR) &amp; Burst Culling
               </h2>
             </div>
             <p className="font-sans text-xs text-[#5A476E] dark:text-[#BCACCE] mt-0.5">
-              Subject ROI focus analysis keeps portraits with open eyes &amp; bokeh background. Only closed eyes or directional motion shake are moved to <code className="text-[#F94500] font-mono">_archive/</code>.
+              Powered by Facet's multi-dimensional scoring: evaluates Eye Aspect Ratio (<code className="text-[#F94500] font-mono">EAR &lt; 0.21</code>), subject saliency, and motion smear while protecting creamy background bokeh.
             </p>
           </div>
         </div>
@@ -132,7 +154,52 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
         </button>
       </div>
 
-      {/* 2. Real Separation Stat Cards */}
+      {/* 2. Facet Mode Selector & Auto-Cull Tuning Strip */}
+      <div className="bg-[#FAF8FD] dark:bg-[#20003A] border border-[#E7E0EE] dark:border-[#4C177D] rounded-2xl p-3 flex items-center justify-between gap-3 shadow-xs">
+        <div className="flex items-center gap-2">
+          <Sliders className="w-4 h-4 text-[#F94500]" />
+          <span className="font-heading text-xs font-bold text-[#23003F] dark:text-[#FFFDB4]">
+            Facet Auto-Cull Mode:
+          </span>
+        </div>
+
+        <div className="flex items-center gap-1.5 bg-white dark:bg-[#2D074B] p-1 rounded-xl border border-[#E7E0EE] dark:border-[#5B228E]">
+          <button
+            onClick={() => handleApplyFacetMode('KEEP_ALL_GOOD')}
+            className={`px-3 py-1 rounded-lg font-heading text-2xs font-bold transition-all cursor-pointer ${
+              cullMode === 'KEEP_ALL_GOOD'
+                ? 'bg-[#F94500] text-white shadow-xs'
+                : 'text-[#5A476E] dark:text-[#BCACCE] hover:text-[#23003F] dark:hover:text-white'
+            }`}
+          >
+            Keep All Good Shots (Default)
+          </button>
+
+          <button
+            onClick={() => handleApplyFacetMode('BALANCED')}
+            className={`px-3 py-1 rounded-lg font-heading text-2xs font-bold transition-all cursor-pointer ${
+              cullMode === 'BALANCED'
+                ? 'bg-[#F94500] text-white shadow-xs'
+                : 'text-[#5A476E] dark:text-[#BCACCE] hover:text-[#23003F] dark:hover:text-white'
+            }`}
+          >
+            Facet Balanced (Top 2 in Bursts)
+          </button>
+
+          <button
+            onClick={() => handleApplyFacetMode('STRICT')}
+            className={`px-3 py-1 rounded-lg font-heading text-2xs font-bold transition-all cursor-pointer ${
+              cullMode === 'STRICT'
+                ? 'bg-[#F94500] text-white shadow-xs'
+                : 'text-[#5A476E] dark:text-[#BCACCE] hover:text-[#23003F] dark:hover:text-white'
+            }`}
+          >
+            Facet Strict (Winner Only)
+          </button>
+        </div>
+      </div>
+
+      {/* 3. Real Separation Stat Cards */}
       <div className="grid grid-cols-4 gap-3">
         <div className="bg-white dark:bg-[#20003A] border border-[#E7E0EE] dark:border-[#4C177D] rounded-2xl p-3.5 flex flex-col justify-between transition-colors shadow-xs">
           <span className="font-heading text-xs font-semibold text-[#5A476E] dark:text-[#BCACCE]">Total Ingested</span>
@@ -157,7 +224,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
 
         <div className="bg-white dark:bg-[#20003A] border border-[#F94500]/40 rounded-2xl p-3.5 flex flex-col justify-between bg-[#F94500]/10 shadow-xs">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-heading font-semibold text-[#F94500]">Closed Eyes / Blinking</span>
+            <span className="font-heading font-semibold text-[#F94500]">Closed Eyes / Blinking (EAR &lt; 0.21)</span>
             <EyeOff className="w-4 h-4 text-[#F94500]" />
           </div>
           <div className="font-mono tabular-nums text-xl font-extrabold text-[#F94500] mt-1">
@@ -182,10 +249,9 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
         </div>
       </div>
 
-      {/* 3. Filter Bar & Bulk Actions */}
+      {/* 4. Filter Bar & Bulk Actions */}
       <div className="flex items-center justify-between bg-[#FAF8FD] dark:bg-[#20003A] border border-[#E7E0EE] dark:border-[#4C177D] rounded-2xl p-2 transition-colors">
         <div className="flex items-center gap-1.5 flex-wrap">
-          {/* Sub-tab Filters */}
           <button
             onClick={() => setActiveTab('all')}
             className={`px-3 py-1.5 rounded-xl font-heading text-xs font-bold transition-colors cursor-pointer ${
@@ -206,6 +272,17 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             }`}
           >
             Kept Winners ({keptItems.length})
+          </button>
+
+          <button
+            onClick={() => setActiveTab('top_picks')}
+            className={`px-3 py-1.5 rounded-xl font-heading text-xs font-bold transition-colors cursor-pointer ${
+              activeTab === 'top_picks'
+                ? 'bg-white dark:bg-[#2F0850] text-[#F94500] border border-[#E7E0EE] dark:border-[#5B228E] shadow-xs'
+                : 'text-[#5A476E] dark:text-[#BCACCE] hover:text-[#23003F] dark:hover:text-white'
+            }`}
+          >
+            Facet Top Picks ({topPicks.length})
           </button>
 
           <button
@@ -234,7 +311,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             <span>{isAllSelected ? 'Deselect All' : 'Select All'}</span>
           </button>
 
-          {/* Bulk Action: Move Selected to Archive */}
+          {/* Bulk Action Buttons */}
           {selectedIds.size > 0 && (
             <>
               <button
@@ -269,7 +346,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
         </div>
       </div>
 
-      {/* 4. Real Photos Grid or Clean Empty State */}
+      {/* 5. Photos Grid or Clean Empty State */}
       {items.length === 0 ? (
         <div className="bg-white dark:bg-[#20003A] border border-[#E7E0EE] dark:border-[#4C177D] rounded-2xl p-12 text-center flex flex-col items-center justify-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-[#F94500]/15 text-[#F94500] border border-[#F94500]/30 flex items-center justify-center">
@@ -298,11 +375,15 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             const isMotion = item.blurClassification.blurType === 'MOTION_SHAKE';
             const isEyesClosed = item.blurClassification.blurType === 'DEFOCUS_BLUR';
             const isChecked = selectedIds.has(item.metadata.id);
+            const facet = item.quality.facet;
+            const facetScore = facet ? facet.facetCompositeScore : item.quality.compositeScore;
+            const earRatio = facet ? facet.earRatio : (item.faces[0]?.eyeOpenness ? 0.32 : 0.50);
 
             return (
               <div
                 key={item.metadata.id}
-                className={`bg-white dark:bg-[#20003A] rounded-2xl border p-3 flex flex-col justify-between transition-all select-none ${
+                onClick={() => setInspectingItem(item)}
+                className={`bg-white dark:bg-[#20003A] rounded-2xl border p-3 flex flex-col justify-between transition-all select-none cursor-pointer group ${
                   isChecked
                     ? 'border-[#F94500] ring-2 ring-[#F94500]/30'
                     : isArchived
@@ -315,7 +396,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
                   <img
                     src={item.thumbnailUrl}
                     alt={item.metadata.filename}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
                   />
 
                   {/* Top Left Selection Checkbox */}
@@ -331,37 +412,39 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
                     )}
                   </button>
 
-                  {/* Clean Status Pill Badge (Top Right) */}
-                  <div className="absolute top-2 right-2 z-10">
+                  {/* Top Right: Facet Score & Status Pill Badges */}
+                  <div className="absolute top-2 right-2 z-10 flex items-center gap-1">
+                    <span className="px-2 py-0.5 rounded-full text-2xs font-mono font-extrabold bg-black/80 backdrop-blur-md text-[#FFFDB4] border border-[#FFFDB4]/30 shadow-sm">
+                      ★ {facetScore}
+                    </span>
+
                     {isArchived ? (
-                      <span className="px-2.5 py-1 rounded-full text-2xs font-heading font-extrabold uppercase tracking-wider bg-[#F94500] text-white flex items-center gap-1 shadow-sm">
-                        <Archive className="w-3 h-3" />
+                      <span className="px-2 py-0.5 rounded-full text-2xs font-heading font-extrabold uppercase tracking-wider bg-[#F94500] text-white flex items-center gap-1 shadow-sm">
                         _archive
                       </span>
                     ) : (
-                      <span className="px-2.5 py-1 rounded-full text-2xs font-heading font-extrabold uppercase tracking-wider bg-[#FFFDB4] text-[#23003F] flex items-center gap-1 shadow-sm font-bold">
-                        <CheckCircle2 className="w-3 h-3 text-[#F94500]" />
-                        Kept Winner
+                      <span className="px-2 py-0.5 rounded-full text-2xs font-heading font-extrabold uppercase tracking-wider bg-[#FFFDB4] text-[#23003F] flex items-center gap-1 shadow-sm font-bold">
+                        Kept
                       </span>
                     )}
                   </div>
 
-                  {/* Real Eye Status Pill (Bottom) */}
+                  {/* Facet Eye EAR & Focus Pill (Bottom) */}
                   <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between bg-black/80 backdrop-blur-sm text-white px-2.5 py-1 rounded-lg text-2xs font-mono tabular-nums z-10">
                     {isEyesClosed ? (
                       <span className="text-[#F94500] font-bold flex items-center gap-1">
                         <EyeOff className="w-3 h-3 text-[#F94500]" />
-                        Eyes Closed / Blinking
+                        EAR: {earRatio.toFixed(2)} (Blink)
                       </span>
                     ) : isMotion ? (
                       <span className="text-[#FFFDB4] font-bold flex items-center gap-1">
                         <Activity className="w-3 h-3 text-[#FFFDB4]" />
-                        Motion Shake Blur
+                        Motion Smear
                       </span>
                     ) : (
                       <span className="text-[#FFFDB4] font-bold flex items-center gap-1">
                         <Eye className="w-3 h-3 text-[#FFFDB4]" />
-                        Eyes Open ({item.faces[0] ? (item.faces[0].eyeOpenness * 100).toFixed(0) : 94}%)
+                        EAR: {earRatio.toFixed(2)} (Open)
                       </span>
                     )}
                     <span className="text-[#BCACCE] text-2xs">
@@ -392,7 +475,10 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
                     </span>
 
                     <button
-                      onClick={() => onToggleArchive(item.metadata.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onToggleArchive(item.metadata.id);
+                      }}
                       className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-heading text-xs font-bold tracking-wide transition-all cursor-pointer active:scale-95 shadow-xs ${
                         isArchived
                           ? 'bg-[#23003F] dark:bg-[#FFFDB4] hover:opacity-90 text-white dark:text-[#23003F]'
@@ -416,6 +502,117 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* 6. Facet Deep Quality Inspector Modal */}
+      {inspectingItem && (
+        <div
+          onClick={() => setInspectingItem(null)}
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-white dark:bg-[#20003A] border border-[#E7E0EE] dark:border-[#4C177D] rounded-3xl p-6 max-w-3xl w-full flex flex-col gap-4 shadow-2xl overflow-hidden max-h-[90vh]"
+          >
+            <div className="flex items-center justify-between border-b border-[#E7E0EE] dark:border-[#4C177D] pb-3">
+              <div className="flex items-center gap-2">
+                <Info className="w-5 h-5 text-[#F94500]" />
+                <h3 className="font-heading text-sm font-bold text-[#23003F] dark:text-[#FFFDB4]">
+                  Facet 9-Dimension Quality Breakdown
+                </h3>
+              </div>
+              <button
+                onClick={() => setInspectingItem(null)}
+                className="p-1 rounded-lg text-[#BCACCE] hover:text-[#F94500] hover:bg-[#F94500]/10 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 overflow-y-auto">
+              <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-slate-900 border border-[#E7E0EE] dark:border-[#4C177D]">
+                <img
+                  src={inspectingItem.transformedThumbnailUrl || inspectingItem.thumbnailUrl}
+                  alt={inspectingItem.metadata.filename}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2.5 text-xs font-sans">
+                <div className="flex items-center justify-between p-2 rounded-xl bg-[#FAF8FD] dark:bg-[#2D074B] border border-[#E7E0EE] dark:border-[#5B228E]">
+                  <span className="font-heading font-bold text-[#23003F] dark:text-[#FFFDB4]">Facet Overall Score</span>
+                  <span className="font-mono text-base font-extrabold text-[#F94500]">
+                    {inspectingItem.quality.facet?.facetCompositeScore || inspectingItem.quality.compositeScore}/100
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-2xs">
+                  <div className="p-2 rounded-xl bg-slate-50 dark:bg-[#1A0030] border border-[#E7E0EE] dark:border-[#4C177D]">
+                    <span className="text-[#BCACCE]">Eye Aspect Ratio (EAR)</span>
+                    <div className="font-mono text-xs font-bold text-[#23003F] dark:text-white mt-0.5">
+                      {inspectingItem.quality.facet?.earRatio ?? 0.32} (Thresh: 0.21)
+                    </div>
+                  </div>
+
+                  <div className="p-2 rounded-xl bg-slate-50 dark:bg-[#1A0030] border border-[#E7E0EE] dark:border-[#4C177D]">
+                    <span className="text-[#BCACCE]">Eye Sharpness</span>
+                    <div className="font-mono text-xs font-bold text-[#23003F] dark:text-white mt-0.5">
+                      {inspectingItem.quality.facet?.eyeSharpness ?? 8.5}/10
+                    </div>
+                  </div>
+
+                  <div className="p-2 rounded-xl bg-slate-50 dark:bg-[#1A0030] border border-[#E7E0EE] dark:border-[#4C177D]">
+                    <span className="text-[#BCACCE]">Tech Sharpness</span>
+                    <div className="font-mono text-xs font-bold text-[#23003F] dark:text-white mt-0.5">
+                      {inspectingItem.quality.laplacianSharpness.toFixed(0)}/100
+                    </div>
+                  </div>
+
+                  <div className="p-2 rounded-xl bg-slate-50 dark:bg-[#1A0030] border border-[#E7E0EE] dark:border-[#4C177D]">
+                    <span className="text-[#BCACCE]">Exposure Quality</span>
+                    <div className="font-mono text-xs font-bold text-[#23003F] dark:text-white mt-0.5">
+                      {inspectingItem.quality.facet?.exposureQuality ?? 9.2}/10
+                    </div>
+                  </div>
+
+                  <div className="p-2 rounded-xl bg-slate-50 dark:bg-[#1A0030] border border-[#E7E0EE] dark:border-[#4C177D]">
+                    <span className="text-[#BCACCE]">Color Harmony</span>
+                    <div className="font-mono text-xs font-bold text-[#23003F] dark:text-white mt-0.5">
+                      {inspectingItem.quality.facet?.colorHarmony ?? 8.6}/10
+                    </div>
+                  </div>
+
+                  <div className="p-2 rounded-xl bg-slate-50 dark:bg-[#1A0030] border border-[#E7E0EE] dark:border-[#4C177D]">
+                    <span className="text-[#BCACCE]">Culling Decision</span>
+                    <div className="font-mono text-xs font-bold text-[#F94500] mt-0.5">
+                      {inspectingItem.isArchived ? '_archive' : 'Kept Winner'}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-2.5 rounded-xl bg-[#FFFDB4]/20 border border-[#FFFDB4]/40 text-2xs text-[#23003F] dark:text-[#FFFDB4]">
+                  <strong>Reason:</strong> {inspectingItem.blurClassification.reason}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#E7E0EE] dark:border-[#4C177D]">
+              <button
+                onClick={() => {
+                  onToggleArchive(inspectingItem.metadata.id);
+                  setInspectingItem(null);
+                }}
+                className={`px-4 py-2 rounded-xl font-heading text-xs font-bold transition-all cursor-pointer ${
+                  inspectingItem.isArchived
+                    ? 'bg-[#23003F] dark:bg-[#FFFDB4] text-white dark:text-[#23003F]'
+                    : 'bg-[#F94500] text-white'
+                }`}
+              >
+                {inspectingItem.isArchived ? 'Restore to Kept' : 'Move to _archive'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -62,6 +62,7 @@ export interface QualityMetrics {
   faceQualityScore: number;   // 0 - 100 (EAR + blur + smile)
   compositionScore: number;   // 0 - 100
   compositeScore: number;     // weighted combination
+  facet?: import('./facetScorer').FacetDimensions;
 }
 
 export interface GeometryCorrection {
