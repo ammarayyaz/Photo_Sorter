@@ -185,34 +185,18 @@ export const App: React.FC = () => {
     if (activeItem && targetImageIds.has(activeItem.metadata.id)) {
       setActiveItem(updatedItems[0] || null);
     }
-    const nextFolderName = updatedFolders[0]?.name || 'All Uploaded Photos';
-    setCurrentFolderName(nextFolderName);
 
     const under = updatedItems.filter((i) => i.lightroom.exposureState === 'UNDER_EXPOSED').length;
     const over = updatedItems.filter((i) => i.lightroom.exposureState === 'OVER_EXPOSED').length;
     const blur = updatedItems.filter((i) => i.blurClassification.isBlur).length;
 
-    const nextMetrics = {
-      ...metrics,
+    setMetrics((prev) => ({
+      ...prev,
       totalScanned: updatedItems.length,
       underexposedCount: under,
       overexposedCount: over,
       defocusBlurCount: blur,
-    };
-    setMetrics(nextMetrics);
-
-    if (updatedItems.length === 0 && updatedFolders.length === 0) {
-      clearSessionState();
-    } else {
-      saveSessionState({
-        items: updatedItems,
-        folders: updatedFolders,
-        metrics: nextMetrics,
-        activeTab,
-        currentFolderName: nextFolderName,
-        config,
-      });
-    }
+    }));
 
     if (pipelineRef.current) {
       pipelineRef.current.setItems(updatedItems);
@@ -224,46 +208,28 @@ export const App: React.FC = () => {
     const deleteSet = new Set(imageIds);
     const updatedItems = items.filter((i) => !deleteSet.has(i.metadata.id));
 
-    const updatedFolders = folders
-      .map((f) => ({
-        ...f,
-        items: f.items.filter((i) => !deleteSet.has(i.metadata.id)),
-      }))
-      .filter((f) => f.items.length > 0);
+    const updatedFolders = folders.map((f) => ({
+      ...f,
+      items: f.items.filter((i) => !deleteSet.has(i.metadata.id)),
+    }));
 
     setItems(updatedItems);
     setFolders(updatedFolders);
     if (activeItem && deleteSet.has(activeItem.metadata.id)) {
       setActiveItem(updatedItems[0] || null);
     }
-    const nextFolderName = updatedFolders[0]?.name || 'All Uploaded Photos';
-    setCurrentFolderName(nextFolderName);
 
     const under = updatedItems.filter((i) => i.lightroom.exposureState === 'UNDER_EXPOSED').length;
     const over = updatedItems.filter((i) => i.lightroom.exposureState === 'OVER_EXPOSED').length;
     const blur = updatedItems.filter((i) => i.blurClassification.isBlur).length;
 
-    const nextMetrics = {
-      ...metrics,
+    setMetrics((prev) => ({
+      ...prev,
       totalScanned: updatedItems.length,
       underexposedCount: under,
       overexposedCount: over,
       defocusBlurCount: blur,
-    };
-    setMetrics(nextMetrics);
-
-    if (updatedItems.length === 0 && updatedFolders.length === 0) {
-      clearSessionState();
-    } else {
-      saveSessionState({
-        items: updatedItems,
-        folders: updatedFolders,
-        metrics: nextMetrics,
-        activeTab,
-        currentFolderName: nextFolderName,
-        config,
-      });
-    }
+    }));
 
     if (pipelineRef.current) {
       pipelineRef.current.setItems(updatedItems);

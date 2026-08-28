@@ -31,7 +31,7 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`relative w-full max-w-[320px] h-[145px] cursor-pointer transition-transform duration-150 group ${
+      className={`relative w-full aspect-[260/145] min-h-[135px] cursor-pointer transition-transform duration-150 group ${
         isActive ? 'scale-[1.01]' : 'hover:-translate-y-0.5'
       }`}
     >

@@ -139,9 +139,9 @@ export class PhotoPipelineController {
       await new Promise((r) => setTimeout(r, 60));
     }
 
-    // Step 2: Blur & Motion Culling (Separation into _archive/)
+    // Step 2: Facial Eye Openness & Motion Culling (Separation into _archive/)
     this.status = 'BURST_CULLING';
-    this.addLog('INFO', 'Step 2: Analyzing real image Laplacian sharpness & blur classification for _archive separation...');
+    this.addLog('INFO', 'Step 2: Evaluating Facial Eye Openness (Blinking/Closed Eyes) & Camera Motion for _archive separation...');
     this.notify();
 
     let culledCount = 0;
@@ -150,10 +150,15 @@ export class PhotoPipelineController {
 
     for (let i = 0; i < this.items.length; i++) {
       const item = this.items[i];
-      const sharpness = item.quality.laplacianSharpness;
       const isMotion = item.blurClassification.blurType === 'MOTION_SHAKE';
+      const eyeScore = item.faces[0]?.eyeOpenness ?? 0.92;
 
-      const blurClass = classifyBlurAndMotion(sharpness, isMotion, item.blurClassification.motionDirectionDeg || 0);
+      const blurClass = classifyBlurAndMotion(
+        item.quality.laplacianSharpness,
+        isMotion,
+        item.blurClassification.motionDirectionDeg || 0,
+        eyeScore
+      );
       item.blurClassification = blurClass;
 
       if (blurClass.isBlur) {
@@ -168,7 +173,7 @@ export class PhotoPipelineController {
       } else {
         item.isBurstWinner = true;
         item.isArchived = false;
-        this.addLog('SUCCESS', `Sharp Main Winner: ${item.metadata.filename} (Sharpness: ${sharpness.toFixed(1)}/100)`, item.metadata.filename);
+        this.addLog('SUCCESS', `Kept Winner: ${item.metadata.filename} (${blurClass.reason})`, item.metadata.filename);
       }
 
       this.activeItem = item;

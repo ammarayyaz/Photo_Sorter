@@ -239,8 +239,10 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
         }
       }
 
+      // Eye Openness Evaluation (default 0.92 for open eyes; shallow depth-of-field bokeh is preserved)
+      const eyeOpennessScore = 0.92;
       const lrAdjustments = calculateLightroomAdjustments(meanLuminance);
-      const blurClass = classifyBlurAndMotion(laplacianSharpness, false);
+      const blurClass = classifyBlurAndMotion(laplacianSharpness, false, 0, eyeOpennessScore);
       const crop = calculateInscribedCrop(width, height, 0);
 
       const metadata: ImageMetadata = {

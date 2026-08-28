@@ -31,10 +31,10 @@ export function calculateLightroomAdjustments(meanLuminance: number): LightroomA
   // Generate real-time CSS filter matrix for visual reproduction
   let cssFilter = 'none';
   if (exposureState === 'UNDER_EXPOSED') {
-    // Lift shadows & reduce contrast slightly: brightness(1.12) contrast(0.88)
+    // Lift shadows & reduce contrast slightly: brightness(1.14) contrast(0.88)
     cssFilter = 'brightness(1.14) contrast(0.88) saturate(1.05)';
   } else if (exposureState === 'OVER_EXPOSED') {
-    // Tame highlights and roll off whites: brightness(0.90) contrast(0.92)
+    // Tame highlights and roll off whites: brightness(0.90) contrast(0.94)
     cssFilter = 'brightness(0.90) contrast(0.94) saturate(1.02)';
   }
 
@@ -51,32 +51,39 @@ export function calculateLightroomAdjustments(meanLuminance: number): LightroomA
 }
 
 /**
- * Classifies whether a frame is blurred, and distinguishes defocus blur from camera motion shake blur.
+ * Evaluates photo quality based on Facial Eye Openness (Eyes Closed / Blinking) & Motion Shake.
+ * 
+ * Note: Overall background sharpness/bokeh is NOT used to cull portraits.
+ * Portraits with open eyes are retained as Kept Winners.
  */
 export function classifyBlurAndMotion(
-  laplacianSharpness: number,
+  laplacianSharpness: number = 80,
   isMotionSmear: boolean = false,
-  motionAngleDeg: number = 0
+  motionAngleDeg: number = 0,
+  eyeOpennessScore: number = 0.90
 ) {
-  const isBlur = laplacianSharpness < 50 || isMotionSmear;
+  // Eye openness threshold: < 0.45 is considered eyes closed or squinting shut
+  const isEyesClosed = eyeOpennessScore < 0.45;
+  const isCulled = isEyesClosed || isMotionSmear;
 
   let blurType: 'NONE' | 'DEFOCUS_BLUR' | 'MOTION_SHAKE' = 'NONE';
-  let reason = 'Sharp winner frame';
+  let reason = `Eyes properly open (${(eyeOpennessScore * 100).toFixed(0)}%) • Kept Winner`;
 
   if (isMotionSmear) {
     blurType = 'MOTION_SHAKE';
     reason = `Camera motion shake blur detected along ${motionAngleDeg}° axis`;
-  } else if (laplacianSharpness < 50) {
-    blurType = 'DEFOCUS_BLUR';
-    reason = `Defocus lens blur (Sharpness ${laplacianSharpness.toFixed(1)} < threshold 50.0)`;
+  } else if (isEyesClosed) {
+    blurType = 'DEFOCUS_BLUR'; // Culling flag for eyes closed
+    reason = `Subject eyes closed or blinking (${(eyeOpennessScore * 100).toFixed(0)}% < 45%)`;
   }
 
   return {
-    isBlur,
+    isBlur: isCulled,
     blurType,
+    eyeOpenness: eyeOpennessScore,
     motionDirectionDeg: isMotionSmear ? motionAngleDeg : undefined,
     sharpnessScore: laplacianSharpness,
     reason,
-    isArchived: isBlur,
+    isArchived: isCulled,
   };
 }

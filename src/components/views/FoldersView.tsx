@@ -74,8 +74,22 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
   const [selectedFolderId, setSelectedFolderId] = useState<string>('');
   const [selectedImageIds, setSelectedImageIds] = useState<Set<string>>(new Set());
 
-  // Strict folder mapping
-  const effectiveFolders = folders;
+  // Ensure there is always a folder structure even if images were uploaded without a folder
+  const effectiveFolders = useMemo(() => {
+    if (folders.length > 0) return folders;
+    if (_items.length > 0) {
+      return [
+        {
+          id: 'default_all_uploaded',
+          name: 'All Uploaded Photos',
+          isSorted: false,
+          date: new Date().toLocaleDateString(),
+          items: _items,
+        },
+      ];
+    }
+    return [];
+  }, [folders, _items]);
 
   // Handle Real Files Ingestion from Drag & Drop or Input
   const handleFilesSelected = async (fileList: FileList | null) => {
@@ -83,6 +97,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
     setIsAnalyzing(true);
 
     const filesArray = Array.from(fileList);
+    // Determine folder name from webkitRelativePath or use batch timestamp
     const firstRel = filesArray[0]?.webkitRelativePath;
     let detectedFolderName = 'My_Uploaded_Photos';
     if (firstRel && firstRel.includes('/')) {
@@ -171,10 +186,10 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
       };
     });
 
-  // Pick selected folder safely
+  // Pick selected folder or fallback to first folder
   const currentTabFolders = subTab === 'unsorted' ? unsortedFoldersList : sortedFoldersList;
   const currentTabFolderId = selectedFolderId || (currentTabFolders[0]?.id ?? '');
-  const selectedFolderObj = effectiveFolders.find((f) => f.id === currentTabFolderId);
+  const selectedFolderObj = effectiveFolders.find((f) => f.id === currentTabFolderId) || effectiveFolders[0];
 
   const currentFolderVisibleItems = useMemo(() => {
     if (!selectedFolderObj) return [];

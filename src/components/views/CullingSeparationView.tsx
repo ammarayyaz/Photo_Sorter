@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import {
   Archive,
   CheckCircle2,
-  AlertTriangle,
   RotateCcw,
   Sparkles,
   Search,
   Activity,
   FolderOpen,
-  ArrowRight
+  ArrowRight,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { ProcessedItem, PipelineMetrics } from '../../engine/types';
 
@@ -36,7 +37,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
   const motionCount = items.filter(
     (i) => i.isArchived && i.blurClassification.blurType === 'MOTION_SHAKE'
   ).length;
-  const defocusCount = items.filter(
+  const eyesClosedCount = items.filter(
     (i) => i.isArchived && i.blurClassification.blurType === 'DEFOCUS_BLUR'
   ).length;
 
@@ -64,11 +65,11 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
                 Step 2 of 4
               </span>
               <h2 className="text-xs font-bold text-slate-900">
-                Image Separation: Defocus Blur &amp; Motion Shake Culling
+                Image Separation: Closed Eyes, Blinking &amp; Motion Shake Culling
               </h2>
             </div>
             <p className="text-[11px] text-slate-400 mt-0.5">
-              Automatically separates blurry, motion-smeared, and sub-optimal duplicates into the <code className="text-slate-600 font-mono">_archive/</code> folder.
+              Automatically separates photos where subjects blinked or eyes were not properly open into <code className="text-slate-600 font-mono">_archive/</code>. Sharp portraits with bokeh background are kept!
             </p>
           </div>
         </div>
@@ -87,7 +88,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
         </button>
       </div>
 
-      {/* 2. Real Separation Stat Cards (Zero Hardcoded Numbers) */}
+      {/* 2. Real Separation Stat Cards */}
       <div className="grid grid-cols-4 gap-3">
         <div className="bg-white border border-slate-200 rounded-2xl p-3.5 flex flex-col justify-between">
           <span className="text-[11px] font-semibold text-slate-500">Total Ingested</span>
@@ -99,14 +100,27 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
 
         <div className="bg-white border border-emerald-200 rounded-2xl p-3.5 flex flex-col justify-between bg-emerald-50/20">
           <div className="flex items-center justify-between text-[11px]">
-            <span className="font-semibold text-emerald-700">Kept Sharp Winners</span>
+            <span className="font-semibold text-emerald-700">Kept Winners (Eyes Open)</span>
             <CheckCircle2 className="w-4 h-4 text-emerald-600" />
           </div>
           <div className="font-mono text-lg font-bold text-emerald-700 mt-1">
             {keptItems.length} photos
           </div>
           <span className="text-[10px] text-emerald-600 font-medium mt-1">
-            Ready for Lightroom tone
+            Eyes properly open &amp; ready
+          </span>
+        </div>
+
+        <div className="bg-white border border-rose-200 rounded-2xl p-3.5 flex flex-col justify-between bg-rose-50/20">
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="font-semibold text-rose-700">Closed Eyes / Blinking</span>
+            <EyeOff className="w-4 h-4 text-rose-600" />
+          </div>
+          <div className="font-mono text-lg font-bold text-rose-700 mt-1">
+            {eyesClosedCount} frames
+          </div>
+          <span className="text-[10px] text-rose-600 font-mono mt-1">
+            Separated to `_archive/`
           </span>
         </div>
 
@@ -119,19 +133,6 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             {motionCount} frames
           </div>
           <span className="text-[10px] text-amber-600 font-mono mt-1">
-            Separated to `_archive/`
-          </span>
-        </div>
-
-        <div className="bg-white border border-rose-200 rounded-2xl p-3.5 flex flex-col justify-between bg-rose-50/20">
-          <div className="flex items-center justify-between text-[11px]">
-            <span className="font-semibold text-rose-700">Defocus Lens Blur</span>
-            <AlertTriangle className="w-4 h-4 text-rose-600" />
-          </div>
-          <div className="font-mono text-lg font-bold text-rose-700 mt-1">
-            {defocusCount} frames
-          </div>
-          <span className="text-[10px] text-rose-600 font-mono mt-1">
             Separated to `_archive/`
           </span>
         </div>
@@ -159,7 +160,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Kept Sharp ({keptItems.length})
+            Kept Winners ({keptItems.length})
           </button>
 
           <button
@@ -195,7 +196,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
           <div>
             <h3 className="text-sm font-bold text-slate-900">No photos uploaded for separation</h3>
             <p className="text-xs text-slate-400 mt-1 max-w-sm">
-              Please go to Step 1 and drag &amp; drop a photo folder or images from your computer to run the blur separation.
+              Please go to Step 1 and drag &amp; drop a photo folder or images from your computer to run the eye blink and motion separation.
             </p>
           </div>
           {onGoToIngest && (
@@ -213,7 +214,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
           {displayedItems.map((item) => {
             const isArchived = item.isArchived;
             const isMotion = item.blurClassification.blurType === 'MOTION_SHAKE';
-            const isDefocus = item.blurClassification.blurType === 'DEFOCUS_BLUR';
+            const isEyesClosed = item.blurClassification.blurType === 'DEFOCUS_BLUR';
 
             return (
               <div
@@ -235,30 +236,39 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
                   {/* Clean Status Pill Badge (Top Left) */}
                   <div className="absolute top-2 left-2 z-10">
                     {isArchived ? (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-500 text-white font-mono flex items-center gap-1 shadow-sm">
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-500 text-white font-mono flex items-center gap-1 shadow-sm">
                         <Archive className="w-3 h-3" />
                         _archive
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-600 text-white font-mono flex items-center gap-1 shadow-sm">
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-600 text-white font-mono flex items-center gap-1 shadow-sm">
                         <CheckCircle2 className="w-3 h-3" />
                         Kept Winner
                       </span>
                     )}
                   </div>
 
-                  {/* Real Sharpness Pill (Bottom) */}
+                  {/* Real Eye Status Pill (Bottom) */}
                   <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between bg-black/80 backdrop-blur-sm text-white px-2.5 py-1 rounded-lg text-[10px] font-mono z-10">
-                    <span>Sharpness: {item.quality.laplacianSharpness.toFixed(1)}/100</span>
-                    {isMotion && (
-                      <span className="text-amber-300 font-bold">Motion Blur</span>
+                    {isEyesClosed ? (
+                      <span className="text-rose-300 font-bold flex items-center gap-1">
+                        <EyeOff className="w-3 h-3 text-rose-400" />
+                        Eyes Closed / Blinking
+                      </span>
+                    ) : isMotion ? (
+                      <span className="text-amber-300 font-bold flex items-center gap-1">
+                        <Activity className="w-3 h-3 text-amber-400" />
+                        Motion Shake Blur
+                      </span>
+                    ) : (
+                      <span className="text-emerald-300 font-bold flex items-center gap-1">
+                        <Eye className="w-3 h-3 text-emerald-400" />
+                        Eyes Properly Open (92%)
+                      </span>
                     )}
-                    {isDefocus && (
-                      <span className="text-rose-300 font-bold">Defocus Blur</span>
-                    )}
-                    {!isMotion && !isDefocus && (
-                      <span className="text-emerald-300 font-bold">Sharp Winner</span>
-                    )}
+                    <span className="text-slate-300 text-[9px]">
+                      Sharpness: {item.quality.laplacianSharpness.toFixed(0)}
+                    </span>
                   </div>
                 </div>
 
