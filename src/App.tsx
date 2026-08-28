@@ -20,6 +20,7 @@ import {
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('step1-folders');
+  const [currentFolderName, setCurrentFolderName] = useState<string>('My Uploaded Photos');
 
   const [config, setConfig] = useState<PipelineConfig>({
     sourceDirectory: 'D:/Photos',
@@ -74,8 +75,6 @@ export const App: React.FC = () => {
       setLogs(state.logs);
     });
 
-    // Fresh startup: Do NOT auto-run. Wait for real user folder/image selection.
-
     return () => {
       if (pipelineRef.current) {
         pipelineRef.current.cancel();
@@ -94,10 +93,11 @@ export const App: React.FC = () => {
   };
 
   // When real user files are uploaded/dropped
-  const handleAddRealItems = (newItems: ProcessedItem[], _folderName: string) => {
+  const handleAddRealItems = (newItems: ProcessedItem[], folderName: string) => {
     const combined = [...newItems, ...items];
     setItems(combined);
     setActiveItem(newItems[0] || null);
+    setCurrentFolderName(folderName || 'Imported Photos');
 
     const under = combined.filter((i) => i.lightroom.exposureState === 'UNDER_EXPOSED').length;
     const over = combined.filter((i) => i.lightroom.exposureState === 'OVER_EXPOSED').length;
@@ -110,11 +110,15 @@ export const App: React.FC = () => {
       overexposedCount: over,
       defocusBlurCount: blur,
     }));
+
+    if (pipelineRef.current) {
+      pipelineRef.current.setItems(combined);
+    }
   };
 
   const handleStart = () => {
     if (pipelineRef.current) {
-      pipelineRef.current.startPipeline();
+      pipelineRef.current.startPipeline(items);
     }
   };
 
@@ -147,6 +151,7 @@ export const App: React.FC = () => {
     setActiveItem(null);
     setFaceClusters([]);
     setLogs([]);
+    setCurrentFolderName('All Uploaded Photos');
     setMetrics({
       totalScanned: 0,
       currentProcessed: 0,
@@ -216,6 +221,7 @@ export const App: React.FC = () => {
           <Header
             activeTab={activeTab}
             status={status}
+            folderName={currentFolderName}
             hasGeminiKey={config.geminiApiKey.trim().length > 0}
             onStart={handleStart}
             onPause={handlePause}
@@ -250,6 +256,7 @@ export const App: React.FC = () => {
                 metrics={metrics}
                 onToggleArchive={handleToggleArchive}
                 onContinueToStraighten={() => setActiveTab('step3-enhancement')}
+                onGoToIngest={() => setActiveTab('step1-folders')}
               />
             )}
 

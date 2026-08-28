@@ -15,6 +15,7 @@ interface HeaderProps {
   activeTab: ActiveTab;
   status: ProcessingStatus;
   hasGeminiKey: boolean;
+  folderName?: string;
   onStart: () => void;
   onPause: () => void;
   onResume: () => void;
@@ -24,6 +25,7 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({
   activeTab,
   status,
+  folderName = 'All Uploaded Photos',
   hasGeminiKey: _hasGeminiKey,
   onStart,
   onPause,
@@ -60,7 +62,9 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-1.5 text-slate-500 font-semibold">
           <span className="text-blue-600 font-bold">{getTabBreadcrumb()}</span>
           <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-slate-900 font-bold">Wedding Session 2026</span>
+          <span className="text-slate-900 font-bold truncate max-w-[200px]">
+            {folderName}
+          </span>
         </div>
       </div>
 
