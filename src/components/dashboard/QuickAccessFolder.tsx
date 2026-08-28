@@ -31,7 +31,7 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`relative w-full aspect-[280/160] min-h-[145px] cursor-pointer transition-all duration-200 group select-none ${
+      className={`relative w-full max-w-[400px] aspect-[280/160] min-h-[145px] max-h-[220px] cursor-pointer transition-all duration-200 group select-none ${
         isActive ? 'scale-[1.02]' : 'hover:-translate-y-1'
       }`}
     >
@@ -52,7 +52,8 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
              C 8,158 2,154 2,144
              V 18
              C 2,8 8,2 18,2 Z"
-          fill={isActive ? '#F94500' : '#FAF8FD'}
+          fill={isActive ? '#F94500' : 'currentColor'}
+          className={isActive ? '' : 'text-[#FAF8FD] dark:text-[#23003F]'}
           stroke={isActive ? '#D83C00' : '#E7E0EE'}
           strokeWidth="2"
           strokeLinejoin="round"

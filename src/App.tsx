@@ -89,13 +89,34 @@ export const AppContent: React.FC = () => {
       setMetrics(state.metrics);
       setFaceClusters(state.faceClusters);
       setLogs(state.logs);
+
+      if (state.status === 'COMPLETED') {
+        setFolders((prev) =>
+          prev.map((f) => ({
+            ...f,
+            isSorted: true,
+          }))
+        );
+      }
     });
 
     const initPersistence = async () => {
       const saved = await loadSessionState();
       if (saved && saved.items && saved.items.length > 0) {
         setItems(saved.items);
-        if (saved.folders) setFolders(saved.folders);
+        if (saved.folders) {
+          // Clean up any duplicates in saved session
+          const uniqueFolders: typeof saved.folders = [];
+          const seen = new Set<string>();
+          for (const f of saved.folders) {
+            const key = `${f.id}_${f.name}`;
+            if (!seen.has(key)) {
+              seen.add(key);
+              uniqueFolders.push(f);
+            }
+          }
+          setFolders(uniqueFolders);
+        }
         if (saved.metrics) setMetrics(saved.metrics);
         if (saved.currentFolderName) setCurrentFolderName(saved.currentFolderName);
         if (saved.activeTab) setActiveTab(saved.activeTab as ActiveTab);
@@ -147,13 +168,33 @@ export const AppContent: React.FC = () => {
     folderName: string,
     newFolderObj?: any
   ) => {
-    const combined = [...newItems, ...items];
+    // Deduplicate items
+    const existingIds = new Set(items.map((i) => i.metadata.id));
+    const uniqueNew = newItems.filter((i) => !existingIds.has(i.metadata.id));
+    const combined = uniqueNew.length > 0 ? [...uniqueNew, ...items] : (items.length > 0 ? items : newItems);
+
     setItems(combined);
-    setActiveItem(newItems[0] || null);
+    setActiveItem(uniqueNew[0] || combined[0] || null);
     setCurrentFolderName(folderName || 'Imported Photos');
 
     if (newFolderObj) {
-      setFolders((prev) => [newFolderObj, ...prev]);
+      setFolders((prev) => {
+        const exists = prev.some((f) => f.id === newFolderObj.id || f.name === newFolderObj.name);
+        if (exists) {
+          return prev.map((f) => {
+            if (f.id === newFolderObj.id || f.name === newFolderObj.name) {
+              const currentItemIds = new Set(f.items.map((it) => it.metadata.id));
+              const fresh = newFolderObj.items.filter((it: ProcessedItem) => !currentItemIds.has(it.metadata.id));
+              return {
+                ...f,
+                items: [...fresh, ...f.items],
+              };
+            }
+            return f;
+          });
+        }
+        return [newFolderObj, ...prev];
+      });
     }
 
     const under = combined.filter((i) => i.lightroom.exposureState === 'UNDER_EXPOSED').length;
