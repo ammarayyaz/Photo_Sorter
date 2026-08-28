@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Sparkles } from 'lucide-react';
+import { Play, Sparkles, Trash2 } from 'lucide-react';
 
 export interface UnsortedFolderData {
   id: string;
@@ -15,6 +15,7 @@ interface UnsortedFolderCardProps {
   isSelected: boolean;
   onClick: () => void;
   onSortClick?: () => void;
+  onDelete?: () => void;
 }
 
 export const UnsortedFolderCard: React.FC<UnsortedFolderCardProps> = ({
@@ -22,6 +23,7 @@ export const UnsortedFolderCard: React.FC<UnsortedFolderCardProps> = ({
   isSelected,
   onClick,
   onSortClick,
+  onDelete,
 }) => {
   return (
     <div
@@ -30,7 +32,7 @@ export const UnsortedFolderCard: React.FC<UnsortedFolderCardProps> = ({
         isSelected ? 'scale-[1.01]' : 'hover:-translate-y-0.5'
       }`}
     >
-      {/* 1. Black Folder Back Shell (Safe Inset to Prevent Edge Slicing) */}
+      {/* 1. Black Folder Back Shell */}
       <svg
         viewBox="-1 -1 262 177"
         className="w-full h-full absolute inset-0"
@@ -78,17 +80,33 @@ export const UnsortedFolderCard: React.FC<UnsortedFolderCardProps> = ({
         </div>
       </div>
 
-      {/* 3. Black Front Pocket Flap (Zero Shadows) */}
+      {/* 3. Black Front Pocket Flap */}
       <div className="absolute left-[6px] right-[6px] bottom-[6px] top-[64px] bg-[#111827] rounded-[20px] border border-white/10 p-3.5 z-20 flex flex-col justify-between select-none">
-        {/* Top Info Strip */}
+        {/* Top Info Strip with Delete Trigger */}
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-1 text-[9px] font-extrabold uppercase tracking-wider text-blue-400 bg-blue-950 border border-blue-800/40 px-2 py-0.5 rounded-full">
             <Sparkles className="w-2.5 h-2.5" />
             UNSORTED RAW
           </span>
-          <span className="text-[10px] font-mono text-slate-400 font-medium">
-            {folder.photoCount} files
-          </span>
+
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] font-mono text-slate-400 font-medium">
+              {folder.photoCount} files
+            </span>
+
+            {onDelete && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete();
+                }}
+                title="Delete this folder"
+                className="p-1 rounded-lg hover:bg-rose-950/60 text-slate-500 hover:text-rose-400 transition-colors"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Debossed Subtle Lines on Pocket Face */}

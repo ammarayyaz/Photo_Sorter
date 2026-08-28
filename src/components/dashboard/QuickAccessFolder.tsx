@@ -1,4 +1,5 @@
 import React from 'react';
+import { Trash2 } from 'lucide-react';
 
 export interface FolderData {
   id: string;
@@ -18,12 +19,14 @@ interface QuickAccessFolderProps {
   folder: FolderData;
   isActive: boolean;
   onClick: () => void;
+  onDelete?: () => void;
 }
 
 export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
   folder,
   isActive,
   onClick,
+  onDelete,
 }) => {
   return (
     <div
@@ -32,7 +35,7 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
         isActive ? 'scale-[1.01]' : 'hover:-translate-y-0.5'
       }`}
     >
-      {/* 1. Precise Folder Silhouette SVG with Inset Margins to Prevent Edge Clipping */}
+      {/* 1. Precise Folder Silhouette SVG */}
       <svg
         viewBox="-1 -1 262 147"
         className="w-full h-full absolute inset-0 transition-colors"
@@ -58,8 +61,8 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
 
       {/* 2. Inner Folder Content Overlay */}
       <div className="relative z-10 w-full h-full flex flex-col justify-between p-4 pt-3.5 select-none">
-        {/* Top: SHARED WITH Label & Avatar Stack */}
-        <div>
+        {/* Top: SHARED WITH Label & Delete Action */}
+        <div className="flex items-center justify-between">
           <span
             className={`text-[9px] font-extrabold uppercase tracking-wider block ${
               isActive ? 'text-white/90' : 'text-slate-500'
@@ -68,30 +71,47 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
             SHARED WITH
           </span>
 
-          {/* Overlapping Avatar Stack */}
-          <div className="flex items-center -space-x-1.5 mt-2">
-            {folder.avatars.map((av, idx) => (
-              <div
-                key={idx}
-                className={`w-7 h-7 rounded-full overflow-hidden flex items-center justify-center font-bold text-[10px] ring-2 ${
-                  isActive ? 'ring-[#1E60E6] bg-white/25 text-white' : 'ring-[#F3F6FA] text-white'
-                }`}
-                title={av.name}
-              >
-                {av.avatarUrl ? (
-                  <img
-                    src={av.avatarUrl}
-                    alt={av.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span className={`${av.bg} w-full h-full flex items-center justify-center`}>
-                    {av.initials}
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
+          {onDelete && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete();
+              }}
+              title="Delete this folder"
+              className={`p-1 rounded-lg transition-colors ${
+                isActive
+                  ? 'hover:bg-white/20 text-white/70 hover:text-white'
+                  : 'hover:bg-rose-50 text-slate-400 hover:text-rose-600'
+              }`}
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+
+        {/* Overlapping Avatar Stack */}
+        <div className="flex items-center -space-x-1.5 mt-1">
+          {folder.avatars.map((av, idx) => (
+            <div
+              key={idx}
+              className={`w-7 h-7 rounded-full overflow-hidden flex items-center justify-center font-bold text-[10px] ring-2 ${
+                isActive ? 'ring-[#1E60E6] bg-white/25 text-white' : 'ring-[#F3F6FA] text-white'
+              }`}
+              title={av.name}
+            >
+              {av.avatarUrl ? (
+                <img
+                  src={av.avatarUrl}
+                  alt={av.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className={`${av.bg} w-full h-full flex items-center justify-center`}>
+                  {av.initials}
+                </span>
+              )}
+            </div>
+          ))}
         </div>
 
         {/* Bottom: FOLDER Label & Folder Name */}

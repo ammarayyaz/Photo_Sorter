@@ -118,7 +118,7 @@ export const App: React.FC = () => {
 
   // 2. Auto-save session state whenever items, folders, metrics or tabs change
   useEffect(() => {
-    if (items.length > 0) {
+    if (items.length > 0 || folders.length > 0) {
       saveSessionState({
         items,
         folders,
@@ -169,6 +169,70 @@ export const App: React.FC = () => {
 
     if (pipelineRef.current) {
       pipelineRef.current.setItems(combined);
+    }
+  };
+
+  // Delete an entire folder and its contents
+  const handleDeleteFolder = (folderId: string) => {
+    const targetFolder = folders.find((f) => f.id === folderId);
+    const targetImageIds = new Set(targetFolder ? targetFolder.items.map((i) => i.metadata.id) : []);
+
+    const updatedFolders = folders.filter((f) => f.id !== folderId);
+    const updatedItems = items.filter((i) => !targetImageIds.has(i.metadata.id));
+
+    setFolders(updatedFolders);
+    setItems(updatedItems);
+    if (activeItem && targetImageIds.has(activeItem.metadata.id)) {
+      setActiveItem(updatedItems[0] || null);
+    }
+
+    const under = updatedItems.filter((i) => i.lightroom.exposureState === 'UNDER_EXPOSED').length;
+    const over = updatedItems.filter((i) => i.lightroom.exposureState === 'OVER_EXPOSED').length;
+    const blur = updatedItems.filter((i) => i.blurClassification.isBlur).length;
+
+    setMetrics((prev) => ({
+      ...prev,
+      totalScanned: updatedItems.length,
+      underexposedCount: under,
+      overexposedCount: over,
+      defocusBlurCount: blur,
+    }));
+
+    if (pipelineRef.current) {
+      pipelineRef.current.setItems(updatedItems);
+    }
+  };
+
+  // Delete individual or bulk selected images
+  const handleDeleteImages = (imageIds: string[]) => {
+    const deleteSet = new Set(imageIds);
+    const updatedItems = items.filter((i) => !deleteSet.has(i.metadata.id));
+
+    const updatedFolders = folders.map((f) => ({
+      ...f,
+      items: f.items.filter((i) => !deleteSet.has(i.metadata.id)),
+    }));
+
+    setItems(updatedItems);
+    setFolders(updatedFolders);
+    if (activeItem && deleteSet.has(activeItem.metadata.id)) {
+      setActiveItem(updatedItems[0] || null);
+    }
+
+    const under = updatedItems.filter((i) => i.lightroom.exposureState === 'UNDER_EXPOSED').length;
+    const over = updatedItems.filter((i) => i.lightroom.exposureState === 'OVER_EXPOSED').length;
+    const blur = updatedItems.filter((i) => i.blurClassification.isBlur).length;
+
+    setMetrics((prev) => ({
+      ...prev,
+      totalScanned: updatedItems.length,
+      underexposedCount: under,
+      overexposedCount: over,
+      defocusBlurCount: blur,
+    }));
+
+    if (pipelineRef.current) {
+      pipelineRef.current.setItems(updatedItems);
     }
   };
 
@@ -300,6 +364,8 @@ export const App: React.FC = () => {
                 activeItem={activeItem}
                 onSelectItem={(item) => setActiveItem(item)}
                 onAddRealItems={handleAddRealItems}
+                onDeleteFolder={handleDeleteFolder}
+                onDeleteImages={handleDeleteImages}
                 config={config}
                 onChangeConfig={handleConfigChange}
                 onStartPipeline={() => {

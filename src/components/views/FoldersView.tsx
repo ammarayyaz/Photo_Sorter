@@ -4,11 +4,13 @@ import {
   FolderPlus,
   FileImage,
   Sparkles,
-  MoreHorizontal,
+  Trash2,
   Play,
   FolderCheck,
   FolderClock,
-  FolderOpen
+  FolderOpen,
+  CheckSquare,
+  Square
 } from 'lucide-react';
 import { ProcessedItem, PipelineConfig, PipelineMetrics, FaceCluster } from '../../engine/types';
 import { QuickAccessFolder, FolderData } from '../dashboard/QuickAccessFolder';
@@ -39,6 +41,8 @@ interface FoldersViewProps {
   activeItem?: ProcessedItem | null;
   onSelectItem?: (item: ProcessedItem) => void;
   onAddRealItems?: (newItems: ProcessedItem[], folderName: string, newFolderObj?: any) => void;
+  onDeleteFolder?: (folderId: string) => void;
+  onDeleteImages?: (imageIds: string[]) => void;
   onChangeConfig: (newConfig: Partial<PipelineConfig>) => void;
   onStartPipeline: () => void;
 }
@@ -52,6 +56,8 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
   activeItem,
   onSelectItem,
   onAddRealItems,
+  onDeleteFolder,
+  onDeleteImages,
   onChangeConfig,
   onStartPipeline,
 }) => {
@@ -61,6 +67,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
   const [selectedCalendarDate, setSelectedCalendarDate] = useState<string | null>(null);
 
   const [selectedFolderId, setSelectedFolderId] = useState<string>('');
+  const [selectedImageIds, setSelectedImageIds] = useState<Set<string>>(new Set());
 
   // Handle Real Files Ingestion from Drag & Drop or Input
   const handleFilesSelected = async (fileList: FileList | null) => {
@@ -158,6 +165,50 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
     });
 
   const selectedFolderObj = folders.find((f) => f.id === selectedFolderId) || folders[0];
+
+  const currentFolderVisibleItems = selectedFolderObj
+    ? selectedFolderObj.items.filter((item) =>
+        selectedCalendarDate ? item.metadata.timestamp.startsWith(selectedCalendarDate) : true
+      )
+    : [];
+
+  const handleToggleSelectAllImages = () => {
+    if (selectedImageIds.size === currentFolderVisibleItems.length && currentFolderVisibleItems.length > 0) {
+      setSelectedImageIds(new Set());
+    } else {
+      setSelectedImageIds(new Set(currentFolderVisibleItems.map((i) => i.metadata.id)));
+    }
+  };
+
+  const handleToggleImageSelection = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedImageIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const handleDeleteSelectedImages = () => {
+    if (selectedImageIds.size === 0) return;
+    if (onDeleteImages) {
+      onDeleteImages(Array.from(selectedImageIds));
+    }
+    setSelectedImageIds(new Set());
+  };
+
+  const handleDeleteSingle = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onDeleteImages) {
+      onDeleteImages([id]);
+    }
+    setSelectedImageIds((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  };
 
   return (
     <div className="flex flex-col gap-4 h-full overflow-y-auto pr-1 pb-6 select-none">
@@ -323,7 +374,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                 </span>
               </div>
               <span className="text-[11px] text-slate-400 font-medium">
-                Click on any folder to inspect its real properties
+                Click on any folder to inspect its properties or delete unwanted folders
               </span>
             </div>
 
@@ -342,6 +393,9 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                       }
                       onChangeConfig({ sourceDirectory: `D:/Photos/${folder.name}` });
                     }}
+                    onDelete={() => {
+                      if (onDeleteFolder) onDeleteFolder(folder.id);
+                    }}
                     onSortClick={() => {
                       onStartPipeline();
                     }}
@@ -359,7 +413,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
             )}
           </div>
 
-          {/* Files Preview in Selected Folder */}
+          {/* Files Preview in Selected Folder with Checkboxes & Delete Action Bar */}
           {selectedFolderObj && selectedFolderObj.items.length > 0 && (
             <div className="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col gap-3">
               <div className="flex items-center justify-between pb-2 border-b border-slate-100">
@@ -384,13 +438,38 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                   </div>
                 </div>
 
-                <button
-                  onClick={onStartPipeline}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1E60E6] hover:bg-blue-700 text-white font-bold text-xs transition-colors active:scale-98"
-                >
-                  <Play className="w-3.5 h-3.5 fill-current" />
-                  <span>Start Auto-Sorting &amp; Leveling</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  {/* Delete Selected Photos Button */}
+                  {selectedImageIds.size > 0 && (
+                    <button
+                      onClick={handleDeleteSelectedImages}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 text-xs font-bold transition-colors active:scale-98"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Delete Selected ({selectedImageIds.size})</span>
+                    </button>
+                  )}
+
+                  {/* Delete Entire Current Folder Button */}
+                  {onDeleteFolder && (
+                    <button
+                      onClick={() => onDeleteFolder(selectedFolderObj.id)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-rose-50 border border-slate-200 hover:border-rose-200 text-slate-600 hover:text-rose-600 text-xs font-bold transition-colors"
+                      title="Delete this entire folder and all its images"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Delete Folder</span>
+                    </button>
+                  )}
+
+                  <button
+                    onClick={onStartPipeline}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#1E60E6] hover:bg-blue-700 text-white font-bold text-xs transition-colors active:scale-98"
+                  >
+                    <Play className="w-3.5 h-3.5 fill-current" />
+                    <span>Start Auto-Sorting &amp; Leveling</span>
+                  </button>
+                </div>
               </div>
 
               {/* Calendar Filter Badge if Active */}
@@ -402,7 +481,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                       {selectedCalendarDate}
                     </span>
                     <span>
-                      ({selectedFolderObj.items.filter((item) => item.metadata.timestamp.startsWith(selectedCalendarDate)).length} photos)
+                      ({currentFolderVisibleItems.length} photos)
                     </span>
                   </div>
                   <button
@@ -414,11 +493,25 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                 </div>
               )}
 
-              {/* Real Files Table */}
+              {/* Real Files Table with Selection Checkboxes */}
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead>
                     <tr className="text-slate-400 border-b border-slate-100 font-semibold text-[11px]">
+                      {/* Select All Checkbox Column */}
+                      <th className="pb-2 pl-1 w-8">
+                        <button
+                          onClick={handleToggleSelectAllImages}
+                          className="flex items-center justify-center text-slate-400 hover:text-blue-600"
+                          title={selectedImageIds.size === currentFolderVisibleItems.length ? "Deselect all" : "Select all"}
+                        >
+                          {selectedImageIds.size > 0 && selectedImageIds.size === currentFolderVisibleItems.length ? (
+                            <CheckSquare className="w-4 h-4 text-[#1E60E6]" />
+                          ) : (
+                            <Square className="w-4 h-4" />
+                          )}
+                        </button>
+                      </th>
                       <th className="pb-2 pl-1">FILENAME</th>
                       <th className="pb-2">DIMENSIONS</th>
                       <th className="pb-2">LUMINANCE</th>
@@ -428,22 +521,34 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
-                    {selectedFolderObj.items
-                      .filter((item) =>
-                        selectedCalendarDate
-                          ? item.metadata.timestamp.startsWith(selectedCalendarDate)
-                          : true
-                      )
-                      .map((item) => {
-                      const isSelected = activeItem?.metadata.id === item.metadata.id;
+                    {currentFolderVisibleItems.map((item) => {
+                      const isSelectedRow = activeItem?.metadata.id === item.metadata.id;
+                      const isChecked = selectedImageIds.has(item.metadata.id);
+
                       return (
                         <tr
                           key={item.metadata.id}
                           onClick={() => onSelectItem && onSelectItem(item)}
                           className={`cursor-pointer transition-colors ${
-                            isSelected ? 'bg-blue-50/70 font-bold text-blue-900' : 'hover:bg-slate-50'
+                            isChecked
+                              ? 'bg-blue-50/80 font-bold text-blue-900'
+                              : isSelectedRow
+                              ? 'bg-slate-50 font-bold text-slate-900'
+                              : 'hover:bg-slate-50'
                           }`}
                         >
+                          {/* Row Checkbox */}
+                          <td className="py-2.5 pl-1" onClick={(e) => handleToggleImageSelection(item.metadata.id, e)}>
+                            <button className="flex items-center justify-center text-slate-400 hover:text-blue-600">
+                              {isChecked ? (
+                                <CheckSquare className="w-4 h-4 text-[#1E60E6]" />
+                              ) : (
+                                <Square className="w-4 h-4" />
+                              )}
+                            </button>
+                          </td>
+
+                          {/* Filename and Thumbnail */}
                           <td className="py-2.5 pl-1 flex items-center gap-2">
                             <div className="w-6 h-6 rounded-lg overflow-hidden bg-slate-900 flex-shrink-0 border border-slate-200">
                               <img
@@ -477,9 +582,14 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                             {(item.metadata.fileSize / 1000000).toFixed(2)} MB
                           </td>
 
+                          {/* Delete Single Image Action */}
                           <td className="py-2.5 pr-1 text-right">
-                            <button className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-                              <MoreHorizontal className="w-4 h-4" />
+                            <button
+                              onClick={(e) => handleDeleteSingle(item.metadata.id, e)}
+                              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                              title="Delete this image"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
                             </button>
                           </td>
                         </tr>
@@ -522,6 +632,9 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                         onSelectItem(fObj.items[0]);
                       }
                       onChangeConfig({ sourceDirectory: `D:/Photos/${folder.name}` });
+                    }}
+                    onDelete={() => {
+                      if (onDeleteFolder) onDeleteFolder(folder.id);
                     }}
                   />
                 ))}
