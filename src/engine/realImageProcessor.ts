@@ -394,7 +394,8 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
         isMotionSmear,
         motionAngleDeg,
         eyeOpennessScore,
-        detectedFaces.length > 0
+        detectedFaces.length > 0,
+        facet.facetCompositeScore
       );
       const crop = calculateInscribedCrop(width, height, 0);
 

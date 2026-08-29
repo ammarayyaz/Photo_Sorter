@@ -151,14 +151,15 @@ export class PhotoPipelineController {
     for (let i = 0; i < this.items.length; i++) {
       const item = this.items[i];
       const isMotion = item.blurClassification.blurType === 'MOTION_SHAKE';
-      const eyeScore = item.faces[0]?.eyeOpenness ?? 0.92;
+      const eyeScore = item.faces[0]?.eyeOpenness ?? (item.quality.facet?.eyesOpenScore ? item.quality.facet.eyesOpenScore / 10 : 0.92);
 
       const blurClass = classifyBlurAndMotion(
         item.quality.laplacianSharpness,
         isMotion,
         item.blurClassification.motionDirectionDeg || 0,
         eyeScore,
-        item.faces.length > 0
+        item.faces.length > 0,
+        item.quality.facet?.facetCompositeScore || item.quality.compositeScore
       );
       item.blurClassification = blurClass;
 

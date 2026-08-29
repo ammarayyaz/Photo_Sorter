@@ -54,39 +54,48 @@ export function calculateLightroomAdjustments(meanLuminance: number): LightroomA
  * Evaluates photo quality based on Subject ROI focus, Facial Eye Openness (Eyes Closed / Blinking) & Motion Shake.
  * 
  * Rules:
- * - Kept Winner: Subject is sharp and eyes are open (shallow depth-of-field / background bokeh is protected!).
- * - _archive: Only archived if subject eyes are closed (< 45%), true motion shake smear is detected, or subject is severely out of focus (< 28).
+ * - Kept Winner: Subject is sharp and eyes are wide open (shallow depth-of-field / background bokeh is protected!).
+ * - _archive: Archived if subject eyes are closed (< 45%), eyes are slightly closed/squinting (< 65%) with suboptimal focus (< 55/100), true motion shake smear is detected, or subject is severely out of focus (< 35).
  */
 export function classifyBlurAndMotion(
   subjectSharpness: number = 80,
   isMotionSmear: boolean = false,
   motionAngleDeg: number = 0,
   eyeOpennessScore: number = 0.90,
-  hasFace: boolean = true
+  hasFace: boolean = true,
+  compositeQualityScore?: number
 ) {
-  // 1. Defocus Blur: Only if subject ROI itself is completely out of focus (< 28)
-  const isDefocus = subjectSharpness < 28;
+  // 1. Defocus Blur: Out of focus subject (< 35)
+  const isDefocus = subjectSharpness < 35;
 
-  // 2. Eyes Closed / Blinking: Only if a face is detected and eye openness is < 0.45
-  const isEyesClosed = hasFace && eyeOpennessScore < 0.45;
+  // 2. Fully Closed Eyes / Blinking (< 45%)
+  const isFullyClosedEyes = hasFace && eyeOpennessScore < 0.45;
 
-  // 3. Overall Culling Decision
-  const isCulled = isEyesClosed || isMotionSmear || isDefocus;
+  // 3. Slightly Closed Eyes / Squinting (< 65%) with suboptimal focus (< 55) or mediocre quality (< 70)
+  const isSlightlyClosedEyes = hasFace && eyeOpennessScore < 0.65;
+  const isPoorFocusOrQuality = subjectSharpness < 55 || (compositeQualityScore !== undefined && compositeQualityScore < 70);
+  const isPartialBlinkWithPoorFocus = isSlightlyClosedEyes && isPoorFocusOrQuality;
+
+  // 4. Overall Culling Decision
+  const isCulled = isFullyClosedEyes || isPartialBlinkWithPoorFocus || isMotionSmear || isDefocus;
 
   let blurType: 'NONE' | 'DEFOCUS_BLUR' | 'MOTION_SHAKE' = 'NONE';
   let reason = hasFace
-    ? `Subject in focus & eyes open (${(eyeOpennessScore * 100).toFixed(0)}%) • Kept Winner`
-    : `Subject in focus (${subjectSharpness.toFixed(0)}/100) • Kept Winner`;
+    ? `Subject in focus (${subjectSharpness.toFixed(0)}/100) & eyes wide open (${(eyeOpennessScore * 100).toFixed(0)}%) • Kept Winner`
+    : `Subject in sharp focus (${subjectSharpness.toFixed(0)}/100) • Kept Winner`;
 
   if (isMotionSmear) {
     blurType = 'MOTION_SHAKE';
     reason = `Camera motion shake blur detected along ${motionAngleDeg}° axis`;
-  } else if (isEyesClosed) {
+  } else if (isFullyClosedEyes) {
     blurType = 'DEFOCUS_BLUR';
-    reason = `Subject eyes closed or blinking (${(eyeOpennessScore * 100).toFixed(0)}% < 45%)`;
+    reason = `Subject eyes closed / blinking (${(eyeOpennessScore * 100).toFixed(0)}% < 45%)`;
+  } else if (isPartialBlinkWithPoorFocus) {
+    blurType = 'DEFOCUS_BLUR';
+    reason = `Slightly closed eyes / squint (${(eyeOpennessScore * 100).toFixed(0)}%) with sub-optimal focus (${subjectSharpness.toFixed(0)}/100)`;
   } else if (isDefocus) {
     blurType = 'DEFOCUS_BLUR';
-    reason = `Subject out of focus (Sharpness ${subjectSharpness.toFixed(0)} < 28)`;
+    reason = `Subject out of focus (Sharpness ${subjectSharpness.toFixed(0)} < 35)`;
   }
 
   return {

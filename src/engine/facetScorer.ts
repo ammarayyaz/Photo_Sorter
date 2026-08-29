@@ -151,21 +151,28 @@ export function runFacetBurstCulling(
 
     sorted.forEach((item, index) => {
       const isMotion = item.blurClassification.blurType === 'MOTION_SHAKE';
-      const isEyesClosed = (item.quality as any).facetIsBlink || item.blurClassification.blurType === 'DEFOCUS_BLUR';
-      const isSevereDefocus = item.quality.laplacianSharpness < 28;
+      const ear = (item.quality.facet?.earRatio) ?? (item.faces[0]?.eyeOpenness ?? 0.32);
+      const isBlink = (item.quality.facet?.isBlink) || ear < 0.21;
+      const isSlightlyClosed = (item.faces && item.faces.length > 0) && (ear < 0.28 || item.faces[0]?.eyeOpenness < 0.65);
+      const isSuboptimalFocus = item.quality.laplacianSharpness < 55 || item.quality.compositeScore < 70;
+      const isPartialBlinkWithPoorFocus = isSlightlyClosed && isSuboptimalFocus;
+      const isSevereDefocus = item.quality.laplacianSharpness < 35;
 
       let isArchived = false;
-      let reason = `Facet Score: ${(item.quality as any).facetScore || item.quality.compositeScore}/100 • Subject Sharp & Eyes Open`;
+      let reason = `Facet Score: ${item.quality.facet?.facetCompositeScore || item.quality.compositeScore}/100 • Subject Sharp & Eyes Open`;
 
       if (isMotion) {
         isArchived = true;
         reason = `Facet Defect: Camera motion shake detected`;
-      } else if (isEyesClosed) {
+      } else if (isBlink) {
         isArchived = true;
-        reason = `Facet Defect: Subject blinked / eyes closed (EAR: ${(item.quality as any).facetEar || 0.16} < 0.21)`;
+        reason = `Facet Defect: Subject blinked / eyes closed (EAR: ${ear.toFixed(2)} < 0.21)`;
+      } else if (isPartialBlinkWithPoorFocus) {
+        isArchived = true;
+        reason = `Facet Defect: Slightly closed eyes (EAR: ${ear.toFixed(2)}) with sub-optimal focus (${item.quality.laplacianSharpness.toFixed(0)}/100)`;
       } else if (isSevereDefocus) {
         isArchived = true;
-        reason = `Facet Defect: Severe defocus blur (Tech Sharpness < 3.0)`;
+        reason = `Facet Defect: Severe defocus blur (Tech Sharpness < 3.5)`;
       } else if (mode === 'BALANCED' && sorted.length > 3 && index > 1) {
         // In Balanced mode, keep top 2 best variations in large bursts
         isArchived = true;
