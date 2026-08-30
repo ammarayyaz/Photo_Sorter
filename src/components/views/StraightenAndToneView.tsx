@@ -429,32 +429,33 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        {/* Top Actions: AI Straighten All + Auto-Level All + Proceed */}
+        <div className="flex items-center gap-2 flex-shrink-0">
           <button
             onClick={handleBatchGeminiAiStraightenAll}
             disabled={isAiAnalyzing || isAutoDetecting}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#D83C00]/10 hover:bg-[#D83C00]/20 text-[#D83C00] border border-[#D83C00]/30 font-heading font-bold text-xs tracking-wide transition-all cursor-pointer shadow-none"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#D83C00]/10 hover:bg-[#D83C00]/20 text-[#D83C00] border border-[#D83C00]/30 font-heading font-bold text-xs tracking-wide transition-all cursor-pointer shadow-none whitespace-nowrap flex-shrink-0"
             title="Scan all images with Gemini Vision AI to detect and level tilted photos"
           >
-            <Sparkles className={`w-3.5 h-3.5 ${isAiAnalyzing ? 'animate-spin' : ''}`} />
-            <span>{isAiAnalyzing ? 'AI Straightening...' : 'AI Straighten All'}</span>
+            <Sparkles className={`w-3.5 h-3.5 flex-shrink-0 ${isAiAnalyzing ? 'animate-spin' : ''}`} />
+            <span className="whitespace-nowrap">{isAiAnalyzing ? 'AI Straightening...' : 'AI Straighten All'}</span>
           </button>
 
           <button
             onClick={handleBatchStraightenAll}
             disabled={isAutoDetecting || isAiAnalyzing}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#181818] dark:hover:bg-[#222222] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] font-heading font-semibold text-xs tracking-wide transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#181818] dark:hover:bg-[#222222] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] font-heading font-bold text-xs tracking-wide transition-all cursor-pointer whitespace-nowrap flex-shrink-0"
           >
-            <Compass className="w-3.5 h-3.5 text-[#D83C00]" />
-            <span>Auto-Level All</span>
+            <Compass className="w-3.5 h-3.5 text-[#D83C00] flex-shrink-0" />
+            <span className="whitespace-nowrap">Auto-Level All</span>
           </button>
 
           <button
             onClick={onContinueToOutput}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#D83C00] hover:bg-[#B83300] text-white font-heading font-bold text-xs tracking-wide transition-all active:scale-98 cursor-pointer shadow-none"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#D83C00] hover:bg-[#B83300] text-white font-heading font-bold text-xs tracking-wide transition-all active:scale-98 cursor-pointer shadow-none whitespace-nowrap flex-shrink-0"
           >
-            <span>Proceed to Step 4: Batch Rename</span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <span className="whitespace-nowrap">Proceed to Step 4: Batch Rename</span>
+            <ArrowRight className="w-3.5 h-3.5 flex-shrink-0" />
           </button>
         </div>
       </div>
@@ -463,11 +464,11 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
       {unstraightenedTiltedPhotos.length > 0 ? (
         <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-3 px-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center font-bold">
+            <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center font-bold flex-shrink-0">
               <Compass className="w-4 h-4" />
             </div>
             <div>
-              <span className="font-heading font-bold text-xs text-amber-500">
+              <span className="font-heading font-bold text-xs text-amber-600 dark:text-amber-400">
                 {unstraightenedTiltedPhotos.length} Photo{unstraightenedTiltedPhotos.length > 1 ? 's' : ''} with Detected Tilt Need Straightening
               </span>
               <p className="text-2xs text-[#4B5563] dark:text-[#A1A1AA]">
@@ -479,19 +480,19 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
           <button
             onClick={handleBatchStraightenAll}
             disabled={isAutoDetecting}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-heading font-bold text-xs transition-all cursor-pointer shadow-none"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-heading font-bold text-xs transition-all cursor-pointer shadow-none whitespace-nowrap flex-shrink-0"
           >
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Straighten Tilted ({unstraightenedTiltedPhotos.length})</span>
+            <span className="whitespace-nowrap">Straighten Tilted ({unstraightenedTiltedPhotos.length})</span>
           </button>
         </div>
       ) : (
         <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-2.5 px-4 flex items-center justify-between text-2xs font-sans">
-          <span className="text-emerald-500 font-heading font-bold flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4" />
+          <span className="text-emerald-600 dark:text-emerald-400 font-heading font-bold flex items-center gap-1.5">
+            <CheckCircle2 className="w-4 h-4 flex-shrink-0 text-emerald-500" />
             All loaded photos are perfectly leveled &amp; verified straight (0.0° deviation).
           </span>
-          <span className="text-[#9CA3AF] font-mono tabular-nums">
+          <span className="text-[#4B5563] dark:text-[#A1A1AA] font-mono tabular-nums font-semibold">
             Active Engine: {algorithm === 'zoltanvin-hough' ? 'Zoltanvin HoughLines' : algorithm === 'hybrid-ensemble' ? 'Hybrid AI Ensemble' : algorithm === 'portrait-body' ? 'Portrait Body Lean' : 'Radon Profile'}
           </span>
         </div>
@@ -700,7 +701,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
         {/* Right 4 Cols: Precision Straighten Controls + Lightroom Sliders */}
         <div className="col-span-4 bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-4 flex flex-col justify-between gap-4 overflow-y-auto">
           {/* Section 1: Precision Straighten & Angle Controls */}
-          <div className="flex flex-col gap-3 pb-3 border-b border-[#E5E7EB] dark:border-[#27272A]">
+          <div className="flex flex-col gap-2.5 pb-3 border-b border-[#E5E7EB] dark:border-[#27272A]">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Compass className="w-4 h-4 text-[#D83C00]" />
@@ -708,28 +709,29 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                   Straighten &amp; Leveling
                 </span>
               </div>
+            </div>
 
-              <div className="flex items-center gap-1.5">
-                <button
-                  onClick={handleGeminiAiStraighten}
-                  disabled={isAiAnalyzing}
-                  className="flex items-center gap-1 text-2xs font-heading font-bold px-2 py-0.5 rounded-lg bg-[#D83C00] hover:bg-[#B83300] text-white cursor-pointer transition-colors shadow-none"
-                  title="Analyze image with Gemini AI Vision to detect if straight or tilted"
-                >
-                  <Sparkles className={`w-3 h-3 ${isAiAnalyzing ? 'animate-spin' : ''}`} />
-                  <span>{isAiAnalyzing ? 'AI Analyzing...' : 'AI Vision Scan'}</span>
-                </button>
+            {/* Action Buttons: AI Vision Scan + Auto-Detect */}
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={handleGeminiAiStraighten}
+                disabled={isAiAnalyzing}
+                className="flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-xl bg-[#D83C00] hover:bg-[#B83300] text-white font-heading font-bold text-2xs cursor-pointer transition-colors shadow-none whitespace-nowrap"
+                title="Analyze image with Gemini AI Vision to detect if straight or tilted"
+              >
+                <Sparkles className={`w-3.5 h-3.5 flex-shrink-0 ${isAiAnalyzing ? 'animate-spin' : ''}`} />
+                <span className="whitespace-nowrap">{isAiAnalyzing ? 'Analyzing...' : 'AI Vision Scan'}</span>
+              </button>
 
-                <button
-                  onClick={handleAutoDetect}
-                  disabled={isAutoDetecting || isAiAnalyzing}
-                  className="flex items-center gap-1 text-2xs font-heading font-bold px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-[#181818] hover:bg-slate-200 dark:hover:bg-[#222222] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] cursor-pointer transition-colors"
-                  title="Run local geometric line detection"
-                >
-                  <Wand2 className={`w-3 h-3 ${isAutoDetecting ? 'animate-spin' : ''}`} />
-                  <span>{isAutoDetecting ? 'Detecting...' : 'Auto-Detect'}</span>
-                </button>
-              </div>
+              <button
+                onClick={handleAutoDetect}
+                disabled={isAutoDetecting || isAiAnalyzing}
+                className="flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-xl bg-slate-100 dark:bg-[#181818] hover:bg-slate-200 dark:hover:bg-[#222222] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] font-heading font-bold text-2xs cursor-pointer transition-colors whitespace-nowrap"
+                title="Run local geometric line detection"
+              >
+                <Wand2 className={`w-3.5 h-3.5 flex-shrink-0 text-[#D83C00] ${isAutoDetecting ? 'animate-spin' : ''}`} />
+                <span className="whitespace-nowrap">{isAutoDetecting ? 'Detecting...' : 'Auto-Detect'}</span>
+              </button>
             </div>
 
             {/* Gemini AI Visual Straightness Verdict Card */}

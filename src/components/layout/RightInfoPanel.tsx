@@ -229,7 +229,7 @@ export const RightInfoPanel: React.FC<RightInfoPanelProps> = ({
           {displayItem ? (
             <div className="flex flex-wrap gap-1">
               {displayItem.occasion.occasion && (
-                <span className="px-2 py-0.5 rounded-full bg-[#181818] text-white border border-[#27272A] font-heading text-[10px] font-bold">
+                <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-[#1E1E1E] text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-[#333333] font-heading text-[10px] font-bold">
                   • {displayItem.occasion.occasion}
                 </span>
               )}
@@ -239,17 +239,17 @@ export const RightInfoPanel: React.FC<RightInfoPanelProps> = ({
                 </span>
               )}
               {displayItem.isArchived && (
-                <span className="px-2 py-0.5 rounded-full bg-red-500/15 text-red-500 border border-red-500/30 font-heading text-[10px] font-bold">
+                <span className="px-2 py-0.5 rounded-full bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30 font-heading text-[10px] font-bold">
                   • _archive
                 </span>
               )}
-              <span className="px-2 py-0.5 rounded-full bg-[#181818] text-white border border-[#27272A] font-heading text-[10px] font-bold">
+              <span className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-[#1E1E1E] text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-[#333333] font-heading text-[10px] font-bold">
                 • {displayItem.lightroom.exposureState.replace('_', ' ')}
               </span>
               {faceClusters.slice(0, 2).map((c) => (
                 <span
                   key={c.clusterId}
-                  className="px-2 py-0.5 rounded-full bg-[#181818] text-white border border-[#27272A] font-heading text-[10px] font-bold"
+                  className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-[#1E1E1E] text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-[#333333] font-heading text-[10px] font-bold"
                 >
                   • {c.name || `Person ${c.clusterId}`}
                 </span>
