@@ -117,10 +117,44 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
       const origH = selectedItem.metadata.dimensions.height || 1080;
       const crop = calculateInscribedCrop(origW, origH, roundedAngle);
 
+      // Dynamically render transformed thumbnail with canvas rotation and inscribed cropping
+      let transformedThumbnail = selectedItem.transformedThumbnailUrl || selectedItem.thumbnailUrl;
+      try {
+        const transCanvas = document.createElement('canvas');
+        const sW = 480;
+        const sH = Math.round((sW * origH) / origW) || 320;
+        transCanvas.width = sW;
+        transCanvas.height = sH;
+        const tCtx = transCanvas.getContext('2d');
+        if (tCtx) {
+          tCtx.imageSmoothingEnabled = true;
+          tCtx.imageSmoothingQuality = 'high';
+          const scale = crop.width > 0 ? Math.max(origW / crop.width, origH / crop.height) : 1.0;
+          const baseImg = new Image();
+          baseImg.crossOrigin = 'anonymous';
+          baseImg.src = activeFullResUrl || selectedItem.thumbnailUrl;
+          if (baseImg.complete && baseImg.naturalWidth > 0) {
+            tCtx.save();
+            tCtx.translate(sW / 2, sH / 2);
+            tCtx.rotate((roundedAngle * Math.PI) / 180);
+            tCtx.drawImage(
+              baseImg,
+              (-sW * scale) / 2,
+              (-sH * scale) / 2,
+              sW * scale,
+              sH * scale
+            );
+            tCtx.restore();
+            transformedThumbnail = transCanvas.toDataURL('image/jpeg', 0.88);
+          }
+        }
+      } catch {}
+
       const updatedList = items.map((item) => {
         if (item.metadata.id === selectedItem.metadata.id) {
           return {
             ...item,
+            transformedThumbnailUrl: transformedThumbnail,
             geometry: {
               ...item.geometry,
               detectedAngleDeg: Number((-roundedAngle).toFixed(1)),
@@ -141,7 +175,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
 
       onUpdateItems(updatedList);
     },
-    [items, onUpdateItems, selectedItem]
+    [activeFullResUrl, items, onUpdateItems, selectedItem]
   );
 
   // Auto-Detect AI horizon & portrait tilt button

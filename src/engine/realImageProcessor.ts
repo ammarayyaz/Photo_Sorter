@@ -180,9 +180,9 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
       const width = img.naturalWidth || 1920;
       const height = img.naturalHeight || 1080;
 
-      // Sample canvas for real pixel luminance and edge variance
-      const sampleWidth = 320;
-      const sampleHeight = Math.round((sampleWidth * height) / width) || 240;
+      // Sample canvas for real pixel luminance, Zoltanvin Hough lines, and edge variance
+      const sampleWidth = 480;
+      const sampleHeight = Math.round((sampleWidth * height) / width) || 320;
       const canvas = document.createElement('canvas');
       canvas.width = sampleWidth;
       canvas.height = sampleHeight;
@@ -382,14 +382,38 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
             });
           }
 
-          // 4. Calculate Real Horizon & Portrait Tilt Angle via Radon & Hough Line Projection
+          // 4. Calculate Real Horizon & Portrait Tilt Angle via Zoltanvin Hough Lines & Silhouette Inertia
           let faceTiltHint: number | null = null;
-          if (detectedFaces.length > 0 && skinPixelCount > 30) {
+          
+          // Sample top background / sky reference color
+          const skyR = (data[0] + data[(sampleWidth - 1) * 4]) / 2;
+          const skyG = (data[1] + data[(sampleWidth - 1) * 4 + 1]) / 2;
+          const skyB = (data[2] + data[(sampleWidth - 1) * 4 + 2]) / 2;
+
+          let fgCount = 0;
+          let fgSumX = 0;
+          let fgSumY = 0;
+          const isFg = new Uint8Array(pixelCount);
+
+          for (let i = 0; i < pixelCount; i++) {
+            const r = data[i * 4];
+            const g = data[i * 4 + 1];
+            const b = data[i * 4 + 2];
+            const diff = Math.hypot(r - skyR, g - skyG, b - skyB);
+            if (diff > 20 || isSkin[i] === 1) {
+              isFg[i] = 1;
+              fgCount++;
+              fgSumX += i % sampleWidth;
+              fgSumY += Math.floor(i / sampleWidth);
+            }
+          }
+
+          if (fgCount > 80) {
+            const avgX = fgSumX / fgCount;
+            const avgY = fgSumY / fgCount;
             let covXX = 0, covYY = 0, covXY = 0;
-            const avgX = skinCenterX / skinPixelCount;
-            const avgY = skinCenterY / skinPixelCount;
             for (let i = 0; i < pixelCount; i++) {
-              if (isSkin[i] === 1) {
+              if (isFg[i] === 1) {
                 const px = (i % sampleWidth) - avgX;
                 const py = Math.floor(i / sampleWidth) - avgY;
                 covXX += px * px;
@@ -412,7 +436,8 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
             sampleHeight,
             width,
             height,
-            faceTiltHint
+            faceTiltHint,
+            'zoltanvin-hough'
           );
         } catch {
           // Fallback if canvas read restriction occurs
