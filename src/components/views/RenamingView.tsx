@@ -450,13 +450,9 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
                     <span className="px-2 py-0.5 rounded-md text-2xs font-mono font-bold bg-black/80 text-white pointer-events-auto">
                       #{preview?.index}
                     </span>
-                    {isArchived ? (
+                    {isArchived && (
                       <span className="px-2 py-0.5 rounded-md text-2xs font-heading font-extrabold uppercase tracking-wider bg-red-600 text-white pointer-events-auto">
                         _archive
-                      </span>
-                    ) : (
-                      <span className="px-2 py-0.5 rounded-md text-2xs font-mono font-bold bg-black/80 text-[#FF8C61] pointer-events-auto">
-                        {preview?.folderName}
                       </span>
                     )}
                   </div>
