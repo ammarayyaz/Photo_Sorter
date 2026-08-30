@@ -15,10 +15,15 @@ import {
   Undo2,
   Sliders,
   X,
-  Info
+  Info,
+  Zap,
+  Key,
+  Loader2,
+  ExternalLink
 } from 'lucide-react';
-import { ProcessedItem, PipelineMetrics } from '../../engine/types';
+import { ProcessedItem, PipelineMetrics, PipelineConfig } from '../../engine/types';
 import { FacetCullMode, runFacetBurstCulling } from '../../engine/facetScorer';
+import { analyzeImageWithGeminiVision } from '../../engine/geminiCuller';
 
 interface CullingSeparationViewProps {
   items: ProcessedItem[];
@@ -27,6 +32,9 @@ interface CullingSeparationViewProps {
   onToggleArchiveBulk?: (itemIds: string[], archive: boolean) => void;
   onContinueToStraighten: () => void;
   onGoToIngest?: () => void;
+  geminiApiKey?: string;
+  onChangeConfig?: (newConfig: Partial<PipelineConfig>) => void;
+  onUpdateItems?: (items: ProcessedItem[]) => void;
 }
 
 export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
@@ -36,12 +44,20 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
   onToggleArchiveBulk,
   onContinueToStraighten,
   onGoToIngest,
+  geminiApiKey = '',
+  onChangeConfig,
+  onUpdateItems,
 }) => {
   const [activeTab, setActiveTab] = useState<'all' | 'kept' | 'archived' | 'top_picks'>('all');
   const [cullMode, setCullMode] = useState<FacetCullMode>('KEEP_ALL_GOOD');
   const [search, setSearch] = useState<string>('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [inspectingItem, setInspectingItem] = useState<ProcessedItem | null>(null);
+  const [apiKeyInput, setApiKeyInput] = useState<string>(geminiApiKey);
+  const [isScanningGemini, setIsScanningGemini] = useState<boolean>(false);
+  const [geminiProgress, setGeminiProgress] = useState<string>('');
+  const [geminiSingleLoading, setGeminiSingleLoading] = useState<boolean>(false);
+  const [geminiSingleResult, setGeminiSingleResult] = useState<string | null>(null);
 
   // Calculations from real items array
   const totalCount = items.length;
@@ -117,6 +133,107 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
     }
   };
 
+  const handleSaveApiKey = () => {
+    if (onChangeConfig) {
+      onChangeConfig({ geminiApiKey: apiKeyInput.trim() });
+    }
+  };
+
+  // Run Batch Gemini Vision Culling
+  const handleRunGeminiVisionScan = async () => {
+    const key = (apiKeyInput || geminiApiKey).trim();
+    if (!key) {
+      alert('Please paste your Google Gemini API Key first.');
+      return;
+    }
+
+    setIsScanningGemini(true);
+    const updatedItems = [...items];
+
+    for (let i = 0; i < updatedItems.length; i++) {
+      const it = updatedItems[i];
+      setGeminiProgress(`Scanning ${i + 1} of ${updatedItems.length}: ${it.metadata.filename}...`);
+      try {
+        const gRes = await analyzeImageWithGeminiVision(key, it);
+        const shouldArchive = gRes.recommendation === 'MOVE_TO_ARCHIVE';
+        
+        updatedItems[i] = {
+          ...it,
+          isArchived: shouldArchive,
+          isBurstWinner: !shouldArchive,
+          blurClassification: {
+            ...it.blurClassification,
+            isBlur: shouldArchive,
+            isArchived: shouldArchive,
+            reason: `Gemini Vision: ${gRes.reason}`,
+          },
+          quality: {
+            ...it.quality,
+            compositeScore: gRes.qualityScore,
+            facet: it.quality.facet ? {
+              ...it.quality.facet,
+              facetCompositeScore: gRes.qualityScore,
+              isBlink: gRes.eyesState === 'CLOSED_BLINKING' || gRes.eyesState === 'PARTIALLY_SQUINTING',
+              earRatio: gRes.eyeOpennessScore,
+            } : undefined,
+          },
+        };
+      } catch (err: any) {
+        console.warn(`Gemini scan error for ${it.metadata.filename}:`, err);
+      }
+    }
+
+    if (onUpdateItems) {
+      onUpdateItems(updatedItems);
+    }
+    setIsScanningGemini(false);
+    setGeminiProgress('');
+  };
+
+  // Run Single Item Gemini Scan in Modal
+  const handleScanInspectingItemWithGemini = async () => {
+    if (!inspectingItem) return;
+    const key = (apiKeyInput || geminiApiKey).trim();
+    if (!key) {
+      alert('Please enter your Gemini API Key in the top bar.');
+      return;
+    }
+
+    setGeminiSingleLoading(true);
+    setGeminiSingleResult(null);
+    try {
+      const res = await analyzeImageWithGeminiVision(key, inspectingItem);
+      const isArch = res.recommendation === 'MOVE_TO_ARCHIVE';
+      const updated = {
+        ...inspectingItem,
+        isArchived: isArch,
+        isBurstWinner: !isArch,
+        blurClassification: {
+          ...inspectingItem.blurClassification,
+          isBlur: isArch,
+          isArchived: isArch,
+          reason: `Gemini Vision: ${res.reason}`,
+        },
+        quality: {
+          ...inspectingItem.quality,
+          compositeScore: res.qualityScore,
+        },
+      };
+
+      setGeminiSingleResult(
+        `Gemini Vision Result: Eyes: ${res.eyesState} | Focus: ${res.subjectFocus} | Action: ${res.recommendation} — ${res.reason}`
+      );
+      setInspectingItem(updated);
+      if (onUpdateItems) {
+        onUpdateItems(items.map((i) => (i.metadata.id === updated.metadata.id ? updated : i)));
+      }
+    } catch (err: any) {
+      setGeminiSingleResult(`Gemini Error: ${err.message}`);
+    } finally {
+      setGeminiSingleLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4 h-full overflow-y-auto pr-1 pb-6 select-none">
       {/* 1. Header Banner with Facet AI Engine Badge */}
@@ -152,9 +269,88 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
           <Sparkles className="w-3.5 h-3.5" />
           <span>Proceed to Step 3: Straighten &amp; Tone</span>
         </button>
+      </div>      {/* 2. Google Gemini Vision AI Bar */}
+      <div className="bg-white dark:bg-[#20003A] border border-[#E7E0EE] dark:border-[#4C177D] rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3 shadow-xs">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-8 h-8 rounded-xl bg-[#F94500]/10 text-[#F94500] border border-[#F94500]/20 flex items-center justify-center flex-shrink-0 font-bold">
+            <Zap className="w-4 h-4" />
+          </div>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="font-heading text-xs font-bold text-[#23003F] dark:text-[#FFFDB4]">
+                Google Gemini Vision AI (Flash)
+              </span>
+              <span className="px-2 py-0.5 rounded-full text-2xs font-mono font-bold bg-[#FFFDB4] text-[#23003F]">
+                100% Free Multimodal
+              </span>
+            </div>
+            <p className="font-sans text-2xs text-[#5A476E] dark:text-[#BCACCE] mt-0.5 truncate">
+              {apiKeyInput || geminiApiKey
+                ? 'Ready to inspect subtle blinks, squinting eyelids & camera shake with high precision.'
+                : 'Paste your Google Gemini API key to run multimodal AI culling & expression inspection.'}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
+          <div className="flex items-center gap-1.5 bg-[#FAF8FD] dark:bg-[#2D074B] px-2.5 py-1 rounded-xl border border-[#E7E0EE] dark:border-[#5B228E]">
+            <Key className="w-3.5 h-3.5 text-[#BCACCE]" />
+            <input
+              type="password"
+              placeholder="Paste Gemini API Key (AIza...)"
+              value={apiKeyInput}
+              onChange={(e) => setApiKeyInput(e.target.value)}
+              onBlur={handleSaveApiKey}
+              className="bg-transparent font-mono text-xs text-[#23003F] dark:text-white placeholder:text-[#BCACCE] outline-none w-44"
+            />
+            {apiKeyInput !== geminiApiKey && apiKeyInput.length > 5 && (
+              <button
+                onClick={handleSaveApiKey}
+                className="px-2 py-0.5 rounded bg-[#F94500] text-white text-2xs font-bold font-heading hover:bg-[#D83C00] cursor-pointer"
+              >
+                Save
+              </button>
+            )}
+          </div>
+
+          <a
+            href="https://aistudio.google.com/app/apikey"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-1 text-2xs font-heading font-bold text-[#5A476E] dark:text-[#BCACCE] hover:text-[#F94500] transition-colors"
+          >
+            <span>Get Free Key</span>
+            <ExternalLink className="w-3 h-3" />
+          </a>
+
+          <button
+            onClick={handleRunGeminiVisionScan}
+            disabled={isScanningGemini || items.length === 0}
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-xl font-heading text-xs font-bold transition-all shadow-xs ${
+              isScanningGemini
+                ? 'bg-purple-600 text-white cursor-wait'
+                : apiKeyInput || geminiApiKey
+                ? 'bg-[#23003F] dark:bg-[#FFFDB4] text-white dark:text-[#23003F] hover:opacity-90 cursor-pointer active:scale-95'
+                : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-pointer'
+            }`}
+            title={apiKeyInput || geminiApiKey ? 'Run Gemini Vision AI Scan' : 'Paste API Key to run'}
+          >
+            {isScanningGemini ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <span>{geminiProgress || 'Scanning...'}</span>
+              </>
+            ) : (
+              <>
+                <Zap className="w-3.5 h-3.5 text-[#F94500]" />
+                <span>Run Gemini AI Scan</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
-      {/* 2. Facet Mode Selector & Auto-Cull Tuning Strip */}
+      {/* 3. Facet Mode Selector & Auto-Cull Tuning Strip */}
       <div className="bg-[#FAF8FD] dark:bg-[#20003A] border border-[#E7E0EE] dark:border-[#4C177D] rounded-2xl p-3 flex items-center justify-between gap-3 shadow-xs">
         <div className="flex items-center gap-2">
           <Sliders className="w-4 h-4 text-[#F94500]" />
@@ -594,10 +790,34 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
                 <div className="p-2.5 rounded-xl bg-[#FFFDB4]/20 border border-[#FFFDB4]/40 text-2xs text-[#23003F] dark:text-[#FFFDB4]">
                   <strong>Reason:</strong> {inspectingItem.blurClassification.reason}
                 </div>
+
+                {geminiSingleResult && (
+                  <div className="p-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-800 text-2xs text-purple-900 dark:text-purple-200">
+                    {geminiSingleResult}
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#E7E0EE] dark:border-[#4C177D]">
+            <div className="flex items-center justify-between gap-2 pt-2 border-t border-[#E7E0EE] dark:border-[#4C177D]">
+              <button
+                onClick={handleScanInspectingItemWithGemini}
+                disabled={geminiSingleLoading}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 dark:bg-purple-900/40 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300 font-heading text-xs font-bold transition-all cursor-pointer"
+              >
+                {geminiSingleLoading ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-[#F94500]" />
+                    <span>Analyzing with Gemini Vision...</span>
+                  </>
+                ) : (
+                  <>
+                    <Zap className="w-3.5 h-3.5 text-[#F94500]" />
+                    <span>⚡ Inspect with Gemini Vision AI</span>
+                  </>
+                )}
+              </button>
+
               <button
                 onClick={() => {
                   onToggleArchive(inspectingItem.metadata.id);

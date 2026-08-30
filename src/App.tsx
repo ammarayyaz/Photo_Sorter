@@ -456,6 +456,9 @@ export const AppContent: React.FC = () => {
                 onToggleArchiveBulk={handleBulkToggleArchive}
                 onContinueToStraighten={() => setActiveTab('step3-enhancement')}
                 onGoToIngest={() => setActiveTab('step1-folders')}
+                geminiApiKey={config.geminiApiKey}
+                onChangeConfig={handleConfigChange}
+                onUpdateItems={(updated) => setItems(updated)}
               />
             )}
 
