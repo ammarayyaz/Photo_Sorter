@@ -177,8 +177,14 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
               >
                 {/* Full Bleed Background Image with Lightroom CSS Filter */}
                 <img
-                  src={item.thumbnailUrl}
+                  src={item.transformedThumbnailUrl || item.thumbnailUrl}
                   alt={item.metadata.filename}
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (target.src !== item.thumbnailUrl && item.thumbnailUrl) {
+                      target.src = item.thumbnailUrl;
+                    }
+                  }}
                   style={{ filter: lr.cssFilter || 'none' }}
                   className="card-bg-image"
                   loading="lazy"

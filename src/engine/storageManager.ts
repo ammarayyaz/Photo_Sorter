@@ -102,10 +102,11 @@ export async function saveSessionState(data: {
     const tx = db.transaction(STORE_NAME, 'readwrite');
     const store = tx.objectStore(STORE_NAME);
 
-    // Strip in-memory non-serializable File handles before storing metadata
+    // Strip in-memory non-serializable File handles and ephemeral blob URLs before storing metadata
     const serializableItems = data.items.map((item) => ({
       ...item,
       originalFile: undefined,
+      originalFileUrl: item.originalFileUrl && !item.originalFileUrl.startsWith('blob:') ? item.originalFileUrl : '',
     }));
 
     const sessionObj: SessionData = {

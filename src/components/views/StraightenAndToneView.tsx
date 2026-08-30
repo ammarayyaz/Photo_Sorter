@@ -48,35 +48,36 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
 
   useEffect(() => {
     let isMounted = true;
+    let createdUrl = '';
+
     if (selectedItem) {
-      if (selectedItem.originalFileUrl && selectedItem.originalFileUrl.startsWith('blob:')) {
-        setActiveFullResUrl(selectedItem.originalFileUrl);
-      } else {
-        getOriginalFileBlob(selectedItem.metadata.id)
-          .then((blob: Blob | null) => {
-            if (isMounted) {
-              if (blob) {
-                const url = URL.createObjectURL(blob);
-                setActiveFullResUrl(url);
-              } else {
-                setActiveFullResUrl(
-                  selectedItem.transformedThumbnailUrl || selectedItem.thumbnailUrl || ''
-                );
-              }
-            }
-          })
-          .catch(() => {
-            if (isMounted) {
+      getOriginalFileBlob(selectedItem.metadata.id)
+        .then((blob: Blob | null) => {
+          if (isMounted) {
+            if (blob) {
+              createdUrl = URL.createObjectURL(blob);
+              setActiveFullResUrl(createdUrl);
+            } else {
               setActiveFullResUrl(
                 selectedItem.transformedThumbnailUrl || selectedItem.thumbnailUrl || ''
               );
             }
-          });
-      }
+          }
+        })
+        .catch(() => {
+          if (isMounted) {
+            setActiveFullResUrl(
+              selectedItem.transformedThumbnailUrl || selectedItem.thumbnailUrl || ''
+            );
+          }
+        });
     }
 
     return () => {
       isMounted = false;
+      if (createdUrl) {
+        URL.revokeObjectURL(createdUrl);
+      }
     };
   }, [selectedItem]);
 
@@ -414,6 +415,14 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
               <img
                 src={activeFullResUrl || selectedItem.transformedThumbnailUrl || selectedItem.thumbnailUrl}
                 alt="Straightened & Toned Preview"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (target.src !== selectedItem.transformedThumbnailUrl && selectedItem.transformedThumbnailUrl) {
+                    target.src = selectedItem.transformedThumbnailUrl;
+                  } else if (target.src !== selectedItem.thumbnailUrl && selectedItem.thumbnailUrl) {
+                    target.src = selectedItem.thumbnailUrl;
+                  }
+                }}
                 style={{
                   filter: lightroom.cssFilter || 'none',
                   transform: `rotate(${geometry.correctedAngleDeg}deg) scale(${previewScale * (isZoomed ? 1.5 : 1.0)})`,
@@ -440,6 +449,12 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                 <img
                   src={activeFullResUrl || selectedItem.thumbnailUrl}
                   alt="Original Raw Input"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (target.src !== selectedItem.thumbnailUrl && selectedItem.thumbnailUrl) {
+                      target.src = selectedItem.thumbnailUrl;
+                    }
+                  }}
                   className={`w-full h-full object-cover transition-transform duration-150 ${
                     isZoomed ? 'scale-150' : 'scale-100'
                   }`}
@@ -789,8 +804,14 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
             >
               <div className="aspect-[4/3] rounded-lg overflow-hidden bg-slate-900 relative">
                 <img
-                  src={item.thumbnailUrl}
+                  src={item.transformedThumbnailUrl || item.thumbnailUrl}
                   alt={item.metadata.filename}
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (target.src !== item.thumbnailUrl && item.thumbnailUrl) {
+                      target.src = item.thumbnailUrl;
+                    }
+                  }}
                   style={{ filter: item.lightroom?.cssFilter || 'none' }}
                   className="w-full h-full object-cover"
                 />

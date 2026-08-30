@@ -354,8 +354,14 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
               >
                 {/* Full Bleed Background Image */}
                 <img
-                  src={item.thumbnailUrl}
+                  src={item.transformedThumbnailUrl || item.thumbnailUrl}
                   alt={item.metadata.filename}
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (target.src !== item.thumbnailUrl && item.thumbnailUrl) {
+                      target.src = item.thumbnailUrl;
+                    }
+                  }}
                   className="card-bg-image"
                   loading="lazy"
                 />

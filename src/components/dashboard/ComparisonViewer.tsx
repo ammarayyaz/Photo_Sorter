@@ -69,6 +69,12 @@ export const ComparisonViewer: React.FC<ComparisonViewerProps> = ({
           <img
             src={activeItem.transformedThumbnailUrl || activeItem.thumbnailUrl}
             alt="Straightened Output"
+            onError={(e) => {
+              const target = e.currentTarget;
+              if (target.src !== activeItem.thumbnailUrl && activeItem.thumbnailUrl) {
+                target.src = activeItem.thumbnailUrl;
+              }
+            }}
             className={`w-full h-full object-cover transition-transform duration-300 ${
               isZoomed ? 'scale-150' : 'scale-100'
             }`}
@@ -88,6 +94,12 @@ export const ComparisonViewer: React.FC<ComparisonViewerProps> = ({
             <img
               src={activeItem.thumbnailUrl}
               alt="Original Input"
+              onError={(e) => {
+                const target = e.currentTarget;
+                if (target.src !== activeItem.transformedThumbnailUrl && activeItem.transformedThumbnailUrl) {
+                  target.src = activeItem.transformedThumbnailUrl;
+                }
+              }}
               className={`w-full h-full object-cover transition-transform duration-300 ${
                 isZoomed ? 'scale-150' : 'scale-100'
               }`}

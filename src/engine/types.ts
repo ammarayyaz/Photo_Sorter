@@ -131,7 +131,7 @@ export interface ProcessedItem {
   thumbnailUrl: string;
   transformedThumbnailUrl: string;
   originalFileUrl?: string;
-  originalFile?: File;
+  originalFile?: File | Blob;
   burstGroupId: string;
   isBurstWinner: boolean;
   blurClassification: BlurClassification;

@@ -436,8 +436,14 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
               >
                 {/* Full Bleed Background Image */}
                 <img
-                  src={item.thumbnailUrl}
+                  src={item.transformedThumbnailUrl || item.thumbnailUrl}
                   alt={item.metadata.filename}
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (target.src !== item.thumbnailUrl && item.thumbnailUrl) {
+                      target.src = item.thumbnailUrl;
+                    }
+                  }}
                   className="card-bg-image"
                   loading="lazy"
                 />
@@ -585,8 +591,14 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             <div className="grid grid-cols-2 gap-4 overflow-y-auto">
               <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-slate-900 border border-[#E5E7EB] dark:border-[#27272A]">
                 <img
-                  src={inspectingItem.originalFileUrl || inspectingItem.transformedThumbnailUrl || inspectingItem.thumbnailUrl}
+                  src={inspectingItem.transformedThumbnailUrl || inspectingItem.thumbnailUrl || inspectingItem.originalFileUrl}
                   alt={inspectingItem.metadata.filename}
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (target.src !== inspectingItem.thumbnailUrl && inspectingItem.thumbnailUrl) {
+                      target.src = inspectingItem.thumbnailUrl;
+                    }
+                  }}
                   className="w-full h-full object-cover"
                 />
               </div>

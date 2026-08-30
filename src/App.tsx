@@ -14,7 +14,8 @@ import { ThemeProvider } from './context/ThemeContext';
 import {
   saveSessionState,
   loadSessionState,
-  clearSessionState
+  clearSessionState,
+  getOriginalFileBlob
 } from './engine/storageManager';
 import {
   PipelineConfig,
@@ -106,7 +107,36 @@ export const AppContent: React.FC = () => {
     const initPersistence = async () => {
       const saved = await loadSessionState();
       if (saved && saved.items && saved.items.length > 0) {
-        setItems(saved.items);
+        // Re-hydrate any expired blob URLs from IndexedDB blob store
+        const rehydratedItems: ProcessedItem[] = await Promise.all(
+          saved.items.map(async (item: ProcessedItem): Promise<ProcessedItem> => {
+            const originalBlob = await getOriginalFileBlob(item.metadata.id);
+            let freshBlobUrl = '';
+            if (originalBlob) {
+              freshBlobUrl = URL.createObjectURL(originalBlob);
+            }
+
+            let validThumb = item.thumbnailUrl;
+            if (!validThumb || validThumb.startsWith('blob:')) {
+              validThumb = freshBlobUrl || item.thumbnailUrl;
+            }
+
+            let validTransformed = item.transformedThumbnailUrl;
+            if (!validTransformed || validTransformed.startsWith('blob:')) {
+              validTransformed = freshBlobUrl || item.transformedThumbnailUrl || validThumb;
+            }
+
+            return {
+              ...item,
+              originalFile: originalBlob || undefined,
+              originalFileUrl: freshBlobUrl || item.originalFileUrl,
+              thumbnailUrl: validThumb,
+              transformedThumbnailUrl: validTransformed,
+            };
+          })
+        );
+
+        setItems(rehydratedItems);
         if (saved.folders) {
           // Clean up any duplicates in saved session
           const uniqueFolders: typeof saved.folders = [];
@@ -128,10 +158,10 @@ export const AppContent: React.FC = () => {
         }
         if (saved.activeTab) setActiveTab(saved.activeTab as ActiveTab);
         if (saved.config) setConfig(saved.config);
-        if (saved.items.length > 0) setActiveItem(saved.items[0]);
+        if (rehydratedItems.length > 0) setActiveItem(rehydratedItems[0]);
 
         if (pipelineRef.current) {
-          pipelineRef.current.setItems(saved.items);
+          pipelineRef.current.setItems(rehydratedItems);
         }
       }
     };
