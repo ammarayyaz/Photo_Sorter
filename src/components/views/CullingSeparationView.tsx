@@ -426,36 +426,35 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
               <div
                 key={item.metadata.id}
                 onClick={() => setInspectingItem(item)}
-                className={`soft-blur-card min-h-[380px] flex flex-col justify-between ${
+                className={`bg-white dark:bg-[#111111] border rounded-2xl overflow-hidden flex flex-col justify-between cursor-pointer transition-colors ${
                   isChecked
-                    ? 'ring-2 ring-[#D83C00]'
+                    ? 'border-[#D83C00] ring-2 ring-[#D83C00]'
                     : isArchived
-                    ? 'ring-1 ring-red-500/40'
-                    : ''
+                    ? 'border-red-500/40'
+                    : 'border-[#E5E7EB] dark:border-[#27272A]'
                 }`}
               >
-                {/* Full Bleed Background Image */}
-                <img
-                  src={item.transformedThumbnailUrl || item.thumbnailUrl}
-                  alt={item.metadata.filename}
-                  onError={(e) => {
-                    const target = e.currentTarget;
-                    if (target.src !== item.thumbnailUrl && item.thumbnailUrl) {
-                      target.src = item.thumbnailUrl;
-                    }
-                  }}
-                  className="card-bg-image"
-                  loading="lazy"
-                />
+                {/* 1. Unobscured Clean Photo (No Blur · No Glow) */}
+                <div className="relative aspect-[4/3] w-full bg-slate-100 dark:bg-[#000000] overflow-hidden">
+                  <img
+                    src={item.transformedThumbnailUrl || item.thumbnailUrl}
+                    alt={item.metadata.filename}
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      if (target.src !== item.thumbnailUrl && item.thumbnailUrl) {
+                        target.src = item.thumbnailUrl;
+                      }
+                    }}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
 
-                {/* Foreground Content Layer (No Blur · No BG behind text) */}
-                <div className="card-foreground">
                   {/* Top Bar Floating Badges */}
-                  <div className="flex items-center justify-between z-10">
+                  <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
                     {/* Selection Checkbox */}
                     <button
                       onClick={(e) => handleToggleSelection(item.metadata.id, e)}
-                      className="p-1.5 rounded-xl bg-black/70 hover:bg-[#D83C00] text-white transition-colors cursor-pointer"
+                      className="p-1.5 rounded-lg bg-black/80 hover:bg-[#D83C00] text-white transition-colors cursor-pointer pointer-events-auto"
                       title={isChecked ? 'Deselect photo' : 'Select photo'}
                     >
                       {isChecked ? (
@@ -466,92 +465,92 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
                     </button>
 
                     {/* Top Right Badges */}
-                    <div className="flex items-center gap-1.5">
-                      <span className="px-2 py-0.5 rounded-full text-2xs font-mono font-extrabold bg-black/70 text-white">
+                    <div className="flex items-center gap-1.5 pointer-events-auto">
+                      <span className="px-2 py-0.5 rounded-md text-2xs font-mono font-extrabold bg-black/80 text-white">
                         ★ {facetScore}
                       </span>
                       {isArchived ? (
-                        <span className="px-2 py-0.5 rounded-full text-2xs font-heading font-extrabold uppercase tracking-wider bg-red-600 text-white">
+                        <span className="px-2 py-0.5 rounded-md text-2xs font-heading font-extrabold uppercase tracking-wider bg-red-600 text-white">
                           _archive
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 rounded-full text-2xs font-heading font-extrabold uppercase tracking-wider bg-[#D83C00] text-white">
+                        <span className="px-2 py-0.5 rounded-md text-2xs font-heading font-extrabold uppercase tracking-wider bg-[#D83C00] text-white">
                           Kept
                         </span>
                       )}
                     </div>
                   </div>
+                </div>
 
-                  {/* Bottom Content Area (No BG behind text) */}
-                  <div className="flex flex-col gap-1.5 z-10 mt-auto drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-                    {/* Eye EAR & Focus Row */}
-                    <div className="flex items-center justify-between text-2xs font-mono tabular-nums text-white">
-                      {isEyesClosed ? (
-                        <span className="text-red-400 font-bold flex items-center gap-1">
-                          <EyeOff className="w-3.5 h-3.5 text-red-400" />
-                          EAR: {earRatio.toFixed(2)} (Blink)
-                        </span>
-                      ) : isMotion ? (
-                        <span className="text-amber-300 font-bold flex items-center gap-1">
-                          <Activity className="w-3.5 h-3.5 text-amber-300" />
-                          Motion Smear
-                        </span>
+                {/* 2. Crisp Info Section BELOW Photo (No Blur · Zero Glow) */}
+                <div className="p-3.5 flex flex-col gap-2 bg-white dark:bg-[#111111]">
+                  {/* Eye EAR & Focus Row */}
+                  <div className="flex items-center justify-between text-2xs font-mono tabular-nums text-[#4B5563] dark:text-[#A1A1AA]">
+                    {isEyesClosed ? (
+                      <span className="text-red-600 dark:text-red-400 font-bold flex items-center gap-1">
+                        <EyeOff className="w-3.5 h-3.5 text-red-500" />
+                        EAR: {earRatio.toFixed(2)} (Blink)
+                      </span>
+                    ) : isMotion ? (
+                      <span className="text-amber-600 dark:text-amber-400 font-bold flex items-center gap-1">
+                        <Activity className="w-3.5 h-3.5 text-amber-500" />
+                        Motion Smear
+                      </span>
+                    ) : (
+                      <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                        <Eye className="w-3.5 h-3.5 text-emerald-500" />
+                        EAR: {earRatio.toFixed(2)} (Open)
+                      </span>
+                    )}
+                    <span className="text-slate-600 dark:text-slate-400 text-2xs font-bold">
+                      Focus: {item.quality.laplacianSharpness.toFixed(0)}/100
+                    </span>
+                  </div>
+
+                  {/* Filename & File Size */}
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <span className="font-heading font-bold text-xs text-[#111827] dark:text-white truncate max-w-[170px]" title={item.metadata.filename}>
+                        {item.metadata.filename}
+                      </span>
+                      <span className="text-2xs font-mono font-medium text-[#4B5563] dark:text-[#A1A1AA] tabular-nums">
+                        {(item.metadata.fileSize / 1000000).toFixed(2)} MB
+                      </span>
+                    </div>
+                    <p className="font-sans text-2xs text-[#6B7280] dark:text-[#9CA3AF] leading-tight truncate mt-0.5">
+                      {item.blurClassification.reason}
+                    </p>
+                  </div>
+
+                  {/* Action Footer: Destination & Button */}
+                  <div className="flex items-center justify-between pt-1 border-t border-[#E5E7EB] dark:border-[#222222] gap-2">
+                    <span className="text-2xs font-mono tabular-nums text-[#9CA3AF] truncate max-w-[90px]">
+                      {isArchived ? '/_archive/' : '/Kept/'}
+                    </span>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onToggleArchive(item.metadata.id);
+                      }}
+                      className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl font-heading text-xs font-bold tracking-wide transition-colors cursor-pointer ${
+                        isArchived
+                          ? 'bg-slate-100 hover:bg-slate-200 dark:bg-[#1E1E1E] dark:hover:bg-[#2A2A2A] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#333333]'
+                          : 'bg-[#D83C00] hover:bg-[#B83300] text-white'
+                      }`}
+                    >
+                      {isArchived ? (
+                        <>
+                          <Undo2 className="w-3.5 h-3.5" />
+                          <span>Restore to Kept</span>
+                        </>
                       ) : (
-                        <span className="text-emerald-300 font-bold flex items-center gap-1">
-                          <Eye className="w-3.5 h-3.5 text-emerald-300" />
-                          EAR: {earRatio.toFixed(2)} (Open)
-                        </span>
+                        <>
+                          <Archive className="w-3.5 h-3.5" />
+                          <span>Move to _archive</span>
+                        </>
                       )}
-                      <span className="text-white/80 text-2xs font-bold">
-                        Focus: {item.quality.laplacianSharpness.toFixed(0)}/100
-                      </span>
-                    </div>
-
-                    {/* Filename & File Size */}
-                    <div>
-                      <div className="flex items-center justify-between">
-                        <span className="font-sans font-bold text-sm text-white truncate max-w-[170px]">
-                          {item.metadata.filename}
-                        </span>
-                        <span className="text-2xs font-mono tabular-nums text-white/90 font-medium">
-                          {(item.metadata.fileSize / 1000000).toFixed(2)} MB
-                        </span>
-                      </div>
-                      <p className="font-sans text-2xs text-white/80 leading-tight truncate mt-0.5">
-                        {item.blurClassification.reason}
-                      </p>
-                    </div>
-
-                    {/* Action Footer: Destination & Button */}
-                    <div className="flex items-center justify-between pt-1 gap-2">
-                      <span className="text-2xs font-mono tabular-nums text-white/80 truncate max-w-[90px]">
-                        {isArchived ? '/_archive/' : '/Kept/'}
-                      </span>
-
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onToggleArchive(item.metadata.id);
-                        }}
-                        className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-full font-heading text-xs font-bold tracking-wide transition-colors cursor-pointer ${
-                          isArchived
-                            ? 'bg-black/70 hover:bg-black text-white'
-                            : 'bg-[#D83C00] hover:bg-[#B83300] text-white'
-                        }`}
-                      >
-                        {isArchived ? (
-                          <>
-                            <Undo2 className="w-3.5 h-3.5" />
-                            <span>Restore to Kept</span>
-                          </>
-                        ) : (
-                          <>
-                            <Archive className="w-3.5 h-3.5" />
-                            <span>Move to _archive</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
+                    </button>
                   </div>
                 </div>
               </div>

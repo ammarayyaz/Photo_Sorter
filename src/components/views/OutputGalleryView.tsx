@@ -173,42 +173,40 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
             return (
               <div
                 key={item.metadata.id}
-                className="soft-blur-card min-h-[380px] flex flex-col justify-between"
+                className="bg-white dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl overflow-hidden flex flex-col justify-between"
               >
-                {/* Full Bleed Background Image with Lightroom CSS Filter */}
-                <img
-                  src={item.transformedThumbnailUrl || item.thumbnailUrl}
-                  alt={item.metadata.filename}
-                  onError={(e) => {
-                    const target = e.currentTarget;
-                    if (target.src !== item.thumbnailUrl && item.thumbnailUrl) {
-                      target.src = item.thumbnailUrl;
-                    }
-                  }}
-                  style={{ filter: lr.cssFilter || 'none' }}
-                  className="card-bg-image"
-                  loading="lazy"
-                />
+                {/* 1. Unobscured Clean Photo (No Blur · No Glow · No Darkening) */}
+                <div className="relative aspect-[4/3] w-full bg-slate-100 dark:bg-[#000000] overflow-hidden">
+                  <img
+                    src={item.transformedThumbnailUrl || item.thumbnailUrl}
+                    alt={item.metadata.filename}
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      if (target.src !== item.thumbnailUrl && item.thumbnailUrl) {
+                        target.src = item.thumbnailUrl;
+                      }
+                    }}
+                    style={{ filter: lr.cssFilter || 'none' }}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
 
-                {/* Foreground Content Layer (No Blur · No BG behind text) */}
-                <div className="card-foreground">
-                  {/* Top Badges */}
-                  <div className="flex items-center justify-between z-10">
+                  {/* Minimal Top Badges */}
+                  <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
                     {item.isArchived ? (
-                      <span className="bg-red-600 text-white font-heading font-extrabold text-2xs px-2.5 py-0.5 rounded-full">
+                      <span className="bg-red-600 text-white font-heading font-extrabold text-2xs px-2.5 py-0.5 rounded-md pointer-events-auto">
                         _archive
                       </span>
                     ) : (
-                      <span className="bg-[#D83C00] text-white font-heading font-extrabold text-2xs px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                      <span className="bg-[#D83C00] text-white font-heading font-extrabold text-2xs px-2.5 py-0.5 rounded-md flex items-center gap-1 pointer-events-auto">
                         <Sparkles className="w-3 h-3 text-white" />
                         Enhanced
                       </span>
                     )}
 
-                    {/* 1-Click Single Image Download Button */}
                     <button
                       onClick={() => handleDownloadSingle(item)}
-                      className="p-1.5 rounded-xl bg-black/70 hover:bg-[#D83C00] text-white transition-colors flex items-center gap-1 text-2xs font-bold cursor-pointer"
+                      className="p-1.5 rounded-lg bg-black/80 hover:bg-[#D83C00] text-white transition-colors flex items-center gap-1 text-2xs font-bold cursor-pointer pointer-events-auto"
                       title="Download this image"
                     >
                       {hasDownloaded ? (
@@ -218,59 +216,56 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
                       )}
                     </button>
                   </div>
+                </div>
 
-                  {/* Bottom Content Area (No BG behind text) */}
-                  <div className="flex flex-col gap-1.5 z-10 mt-auto drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-                    {/* Leveling & Exposure Stat Row */}
-                    <div className="flex items-center justify-between text-2xs font-mono tabular-nums text-white">
-                      <span className="flex items-center gap-1 text-white font-bold">
-                        <Compass className="w-3 h-3 text-[#D83C00]" />
-                        {item.geometry.correctedAngleDeg !== 0
-                          ? `${item.geometry.correctedAngleDeg > 0 ? '+' : ''}${item.geometry.correctedAngleDeg.toFixed(1)}° Straightened`
-                          : 'Level 0.0°'}
-                      </span>
-                      <span className="text-white font-bold">
-                        {lr.exposureState.split('_')[0]}
-                      </span>
-                    </div>
+                {/* 2. Crisp Info Section BELOW Photo (No Blur · Zero Glow) */}
+                <div className="p-3.5 flex flex-col gap-2 bg-white dark:bg-[#111111]">
+                  {/* Filename & File Size */}
+                  <div className="flex items-center justify-between">
+                    <span className="font-heading font-bold text-xs text-[#111827] dark:text-white truncate max-w-[170px]" title={item.metadata.filename}>
+                      {item.metadata.filename}
+                    </span>
+                    <span className="text-2xs font-mono font-medium text-[#4B5563] dark:text-[#A1A1AA] tabular-nums">
+                      {(item.metadata.fileSize / 1000000).toFixed(2)} MB
+                    </span>
+                  </div>
 
-                    {/* Filename & File Size */}
-                    <div>
-                      <div className="flex items-center justify-between">
-                        <span className="font-sans font-bold text-sm text-white truncate max-w-[180px]">
-                          {item.metadata.filename}
-                        </span>
-                        <span className="text-2xs font-mono tabular-nums text-white/90 font-medium">
-                          {(item.metadata.fileSize / 1000000).toFixed(2)} MB
-                        </span>
-                      </div>
+                  {/* Stats Row */}
+                  <div className="flex items-center justify-between text-2xs font-mono tabular-nums text-[#4B5563] dark:text-[#A1A1AA]">
+                    <span className="flex items-center gap-1 font-semibold text-[#111827] dark:text-white">
+                      <Compass className="w-3 h-3 text-[#D83C00]" />
+                      {item.geometry.correctedAngleDeg !== 0
+                        ? `${item.geometry.correctedAngleDeg > 0 ? '+' : ''}${item.geometry.correctedAngleDeg.toFixed(1)}° Straightened`
+                        : 'Level 0.0°'}
+                    </span>
+                    <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-[#1E1E1E] text-slate-700 dark:text-slate-200 font-bold">
+                      {lr.exposureState.split('_')[0]}
+                    </span>
+                  </div>
 
-                      {/* Lightroom Tone Row */}
-                      <div className="mt-0.5 flex items-center justify-between text-2xs font-mono tabular-nums text-white">
-                        <span className="flex items-center gap-1 text-white/90">
-                          <Sliders className="w-3 h-3 text-[#D83C00]" />
-                          Lightroom Tone
-                        </span>
-                        <span className={isUnder || isOver ? 'text-[#FF8C61] font-bold' : 'text-white/80'}>
-                          {isUnder ? 'Contrast -20 / Shadows +20' : isOver ? 'Highlights -20 / Whites -20' : 'Balanced (0)'}
-                        </span>
-                      </div>
-                    </div>
+                  {/* Lightroom Tone Row */}
+                  <div className="flex items-center justify-between text-2xs font-mono tabular-nums text-[#4B5563] dark:text-[#A1A1AA] pt-1 border-t border-[#E5E7EB] dark:border-[#222222]">
+                    <span className="flex items-center gap-1">
+                      <Sliders className="w-3 h-3 text-[#D83C00]" />
+                      Tone:
+                    </span>
+                    <span className={isUnder || isOver ? 'text-[#D83C00] font-bold truncate max-w-[150px]' : 'text-slate-600 dark:text-slate-400 font-medium'}>
+                      {isUnder ? 'Contrast -20 / Shadows +20' : isOver ? 'Highlights -20 / Whites -20' : 'Balanced (0)'}
+                    </span>
+                  </div>
 
-                    {/* Action Footer: Destination & Download */}
-                    <div className="flex items-center justify-between pt-0.5 text-2xs">
-                      <span className="font-mono tabular-nums text-white/80 truncate max-w-[160px]">
-                        {item.targetPath}
-                      </span>
-
-                      <button
-                        onClick={() => handleDownloadSingle(item)}
-                        className="flex items-center gap-1 font-heading text-white hover:text-[#D83C00] font-bold cursor-pointer transition-colors"
-                      >
-                        <Download className="w-3.5 h-3.5 text-[#D83C00]" />
-                        <span>Download</span>
-                      </button>
-                    </div>
+                  {/* Download Action Footer */}
+                  <div className="flex items-center justify-between pt-1 text-2xs">
+                    <span className="font-mono tabular-nums text-[#9CA3AF] truncate max-w-[150px]" title={item.targetPath}>
+                      {item.targetPath}
+                    </span>
+                    <button
+                      onClick={() => handleDownloadSingle(item)}
+                      className="flex items-center gap-1 text-[#D83C00] hover:text-[#B83300] font-heading font-bold cursor-pointer transition-colors flex-shrink-0"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      <span>Download</span>
+                    </button>
                   </div>
                 </div>
               </div>

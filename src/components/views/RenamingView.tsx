@@ -428,66 +428,65 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
             return (
               <div
                 key={item.metadata.id}
-                className="soft-blur-card min-h-[360px] flex flex-col justify-between"
+                className="bg-white dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl overflow-hidden flex flex-col justify-between"
               >
-                {/* Full Bleed Background Image */}
-                <img
-                  src={item.transformedThumbnailUrl || item.thumbnailUrl}
-                  alt={item.metadata.filename}
-                  onError={(e) => {
-                    const target = e.currentTarget;
-                    if (target.src !== item.thumbnailUrl && item.thumbnailUrl) {
-                      target.src = item.thumbnailUrl;
-                    }
-                  }}
-                  className="card-bg-image"
-                  loading="lazy"
-                />
+                {/* 1. Unobscured Clean Photo (No Blur · No Glow) */}
+                <div className="relative aspect-[4/3] w-full bg-slate-100 dark:bg-[#000000] overflow-hidden">
+                  <img
+                    src={item.transformedThumbnailUrl || item.thumbnailUrl}
+                    alt={item.metadata.filename}
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      if (target.src !== item.thumbnailUrl && item.thumbnailUrl) {
+                        target.src = item.thumbnailUrl;
+                      }
+                    }}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
 
-                {/* Foreground Content Layer (No Blur · No BG behind text) */}
-                <div className="card-foreground">
                   {/* Top Bar Badges */}
-                  <div className="flex items-center justify-between z-10">
-                    <span className="px-2.5 py-0.5 rounded-full text-2xs font-mono font-bold bg-black/70 text-white">
+                  <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
+                    <span className="px-2 py-0.5 rounded-md text-2xs font-mono font-bold bg-black/80 text-white pointer-events-auto">
                       #{preview?.index}
                     </span>
                     {isArchived ? (
-                      <span className="px-2.5 py-0.5 rounded-full text-2xs font-heading font-extrabold uppercase tracking-wider bg-red-600 text-white">
+                      <span className="px-2 py-0.5 rounded-md text-2xs font-heading font-extrabold uppercase tracking-wider bg-red-600 text-white pointer-events-auto">
                         _archive
                       </span>
                     ) : (
-                      <span className="px-2.5 py-0.5 rounded-full text-2xs font-mono font-bold bg-black/70 text-[#FF8C61]">
+                      <span className="px-2 py-0.5 rounded-md text-2xs font-mono font-bold bg-black/80 text-[#FF8C61] pointer-events-auto">
                         {preview?.folderName}
                       </span>
                     )}
                   </div>
+                </div>
 
-                  {/* Bottom Content Area (No BG behind text) */}
-                  <div className="flex flex-col gap-1.5 z-10 mt-auto drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
-                    {/* Original Filename (Strikethrough) + File Size */}
-                    <div className="flex items-center justify-between text-2xs font-mono tabular-nums text-white/80">
-                      <span className="truncate max-w-[170px] line-through">
-                        {preview?.original}
+                {/* 2. Crisp Info Section BELOW Photo (No Blur · Zero Glow) */}
+                <div className="p-3.5 flex flex-col gap-2 bg-white dark:bg-[#111111]">
+                  {/* Original Filename (Strikethrough) + File Size */}
+                  <div className="flex items-center justify-between text-2xs font-mono tabular-nums text-[#4B5563] dark:text-[#A1A1AA]">
+                    <span className="truncate max-w-[170px] line-through">
+                      {preview?.original}
+                    </span>
+                    <span>{(item.metadata.fileSize / 1000000).toFixed(2)} MB</span>
+                  </div>
+
+                  {/* New Renamed Filename Highlight Row */}
+                  <div className="flex items-center justify-between pt-1 border-t border-[#E5E7EB] dark:border-[#222222]">
+                    <div className="flex items-center gap-1.5 truncate">
+                      <FileSignature className="w-3.5 h-3.5 text-[#D83C00] flex-shrink-0" />
+                      <span className="font-mono text-xs font-extrabold text-[#D83C00] truncate">
+                        {preview?.renamed}
                       </span>
-                      <span>{(item.metadata.fileSize / 1000000).toFixed(2)} MB</span>
                     </div>
-
-                    {/* New Renamed Filename Highlight Row */}
-                    <div className="flex items-center justify-between pt-0.5 text-white">
-                      <div className="flex items-center gap-1.5 truncate">
-                        <FileSignature className="w-3.5 h-3.5 text-[#D83C00] flex-shrink-0" />
-                        <span className="font-mono text-xs font-extrabold text-[#FF8C61] truncate">
-                          {preview?.renamed}
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => handleApplySingleRename(item.metadata.id)}
-                        className="px-2 py-0.5 rounded-lg bg-[#D83C00] hover:bg-[#B83300] text-white text-[10px] font-heading font-bold ml-2 transition-colors cursor-pointer shadow-none flex-shrink-0"
-                        title="Apply this new name to this photo"
-                      >
-                        {isSingleApplied ? '✓ Done' : 'Apply'}
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => handleApplySingleRename(item.metadata.id)}
+                      className="px-2.5 py-1 rounded-lg bg-[#D83C00] hover:bg-[#B83300] text-white text-[10px] font-heading font-bold ml-2 transition-colors cursor-pointer shadow-none flex-shrink-0"
+                      title="Apply this new name to this photo"
+                    >
+                      {isSingleApplied ? '✓ Done' : 'Apply'}
+                    </button>
                   </div>
                 </div>
               </div>
