@@ -52,9 +52,11 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
              C 8,158 2,154 2,144
              V 18
              C 2,8 8,2 18,2 Z"
-          fill={isActive ? '#D83C00' : 'currentColor'}
-          className={isActive ? '' : 'text-[#F9FAFB] dark:text-[#111827]'}
-          stroke={isActive ? '#D83C00' : '#E5E7EB dark:#27272A'}
+          className={`transition-colors ${
+            isActive
+              ? 'fill-[#B83300] dark:fill-[#B83300] stroke-[#D83C00] dark:stroke-[#FF8C61]'
+              : 'fill-[#F9FAFB] dark:fill-[#D83C00] stroke-[#E5E7EB] dark:stroke-[#B83300]'
+          }`}
           strokeWidth="2"
           strokeLinejoin="round"
         />
@@ -66,7 +68,9 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
         <div className="flex items-center justify-between">
           <span
             className={`font-heading text-2xs font-extrabold uppercase tracking-wider block ${
-              isActive ? 'text-white/90' : 'text-[#4B5563] dark:text-[#A1A1AA]'
+              isActive
+                ? 'text-white/90'
+                : 'text-[#4B5563] dark:text-white/80'
             }`}
           >
             ORGANIZED FOLDER
@@ -75,7 +79,9 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
           <div className="flex items-center gap-1.5">
             <span
               className={`font-mono tabular-nums text-2xs font-bold px-2 py-0.5 rounded-md ${
-                isActive ? 'bg-black/30 text-white' : 'bg-[#D83C00]/15 text-[#D83C00] dark:text-[#FF8C61]'
+                isActive
+                  ? 'bg-black/30 text-white'
+                  : 'bg-[#D83C00]/15 dark:bg-black/40 text-[#D83C00] dark:text-white border dark:border-white/20'
               }`}
             >
               {folder.photoCount} photos
@@ -91,7 +97,7 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
                 className={`p-1 rounded-lg transition-colors cursor-pointer ${
                   isActive
                     ? 'hover:bg-white/20 text-white/80 hover:text-white'
-                    : 'hover:bg-red-600/20 text-[#9CA3AF] hover:text-red-400'
+                    : 'hover:bg-red-600/20 text-[#9CA3AF] dark:text-white/80 hover:text-red-400 dark:hover:text-white'
                 }`}
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -104,14 +110,16 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
         <div className="flex items-center gap-2 mt-1">
           <div
             className={`w-7 h-7 rounded-xl flex items-center justify-center font-bold text-xs ${
-              isActive ? 'bg-white/20 text-white' : 'bg-[#D83C00]/15 text-[#D83C00]'
+              isActive
+                ? 'bg-white/20 text-white'
+                : 'bg-[#D83C00]/15 dark:bg-black/30 text-[#D83C00] dark:text-white'
             }`}
           >
             <Folder className="w-3.5 h-3.5" />
           </div>
           <span
             className={`font-mono tabular-nums text-2xs font-semibold ${
-              isActive ? 'text-white/80' : 'text-[#4B5563] dark:text-[#A1A1AA]'
+              isActive ? 'text-white/80' : 'text-[#4B5563] dark:text-white/90'
             }`}
           >
             {folder.size}
@@ -122,7 +130,7 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
         <div className="mt-auto pt-1">
           <span
             className={`font-heading text-2xs font-extrabold uppercase tracking-widest block ${
-              isActive ? 'text-white/80' : 'text-[#9CA3AF] dark:text-[#71717A]'
+              isActive ? 'text-white/80' : 'text-[#9CA3AF] dark:text-white/70'
             }`}
           >
             FOLDER
