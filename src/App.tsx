@@ -37,10 +37,10 @@ export const AppContent: React.FC = () => {
     }>
   >([]);
 
-  const [config, setConfig] = useState<PipelineConfig>({
+  const [config, setConfig] = useState<PipelineConfig>(() => ({
     sourceDirectory: 'D:/Photos',
     destinationDirectory: 'D:/Photos/Organized_Output',
-    geminiApiKey: '',
+    geminiApiKey: typeof window !== 'undefined' ? (localStorage.getItem('luminasort_gemini_key') || '') : '',
     autoStraighten: true,
     straightenThresholdDeg: 0.5,
     inscribedAutoCrop: true,
@@ -51,7 +51,7 @@ export const AppContent: React.FC = () => {
     faceClusteringSensitivity: 0.38,
     outputFormat: 'JPEG',
     jpegQuality: 92,
-  });
+  }));
 
   const [status, setStatus] = useState<ProcessingStatus>('IDLE');
   const [items, setItems] = useState<ProcessedItem[]>([]);
@@ -155,6 +155,11 @@ export const AppContent: React.FC = () => {
   const handleConfigChange = (newConfig: Partial<PipelineConfig>) => {
     setConfig((prev) => {
       const updated = { ...prev, ...newConfig };
+      if (newConfig.geminiApiKey !== undefined) {
+        try {
+          localStorage.setItem('luminasort_gemini_key', newConfig.geminiApiKey.trim());
+        } catch {}
+      }
       if (pipelineRef.current) {
         pipelineRef.current.updateConfig(updated);
       }
