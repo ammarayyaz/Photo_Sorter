@@ -54,6 +54,7 @@ export const AppContent: React.FC = () => {
   }));
 
   const [status, setStatus] = useState<ProcessingStatus>('IDLE');
+  const [cullingSubTab, setCullingSubTab] = useState<'all' | 'kept' | 'archived' | 'top_picks'>('all');
   const [items, setItems] = useState<ProcessedItem[]>([]);
   const [activeItem, setActiveItem] = useState<ProcessedItem | null>(null);
   const [faceClusters, setFaceClusters] = useState<FaceCluster[]>([]);
@@ -412,6 +413,8 @@ export const AppContent: React.FC = () => {
           status={status}
           metrics={metrics}
           items={items}
+          cullingSubTab={cullingSubTab}
+          onSelectCullingSubTab={(sub) => setCullingSubTab(sub)}
           onAddRealItems={handleAddRealItems}
         />
 
@@ -464,6 +467,8 @@ export const AppContent: React.FC = () => {
                 geminiApiKey={config.geminiApiKey}
                 onChangeConfig={handleConfigChange}
                 onUpdateItems={(updated) => setItems(updated)}
+                activeSubTab={cullingSubTab}
+                onChangeSubTab={(sub) => setCullingSubTab(sub)}
               />
             )}
 

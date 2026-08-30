@@ -10,7 +10,8 @@ import {
   Image,
   ArrowUpRight,
   Sparkles,
-  Plus
+  Plus,
+  EyeOff
 } from 'lucide-react';
 import { ProcessingStatus, PipelineMetrics, ProcessedItem } from '../../engine/types';
 import { analyzeRealImageFile } from '../../engine/realImageProcessor';
@@ -29,6 +30,8 @@ interface SidebarProps {
   status: ProcessingStatus;
   metrics: PipelineMetrics;
   items?: ProcessedItem[];
+  cullingSubTab?: 'all' | 'kept' | 'archived' | 'top_picks';
+  onSelectCullingSubTab?: (subTab: 'all' | 'kept' | 'archived' | 'top_picks') => void;
   onAddRealItems?: (newItems: ProcessedItem[], folderName: string, newFolderObj?: any) => void;
 }
 
@@ -37,6 +40,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   setActiveTab,
   metrics,
   items = [],
+  cullingSubTab = 'all',
+  onSelectCullingSubTab,
   onAddRealItems,
 }) => {
   // Real storage calculation from actual user ingested items
@@ -139,30 +144,94 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </button>
 
             {/* Step 2: Blur & Motion Culling (Archive Separation) */}
-            <button
-              onClick={() => setActiveTab('step2-culling')}
-              className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-colors text-left cursor-pointer ${
-                activeTab === 'step2-culling'
-                  ? 'bg-white text-[#23003F] font-bold'
-                  : 'text-[#BCACCE] hover:text-white hover:bg-white/10'
-              }`}
-            >
-              <div className="flex items-center gap-2.5">
-                <Archive className="w-4 h-4 stroke-[2]" />
-                <span className="font-sans">2. Eye &amp; Motion Culling</span>
-              </div>
-              {metrics.framesCulled > 0 && (
-                <span
-                  className={`text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums ${
-                    activeTab === 'step2-culling'
-                      ? 'bg-[#F94500] text-white'
-                      : 'bg-[#F94500] text-white'
-                  }`}
-                >
-                  {metrics.framesCulled}
-                </span>
+            <div className="flex flex-col gap-1">
+              <button
+                onClick={() => {
+                  setActiveTab('step2-culling');
+                  if (onSelectCullingSubTab) onSelectCullingSubTab('all');
+                }}
+                className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-colors text-left cursor-pointer ${
+                  activeTab === 'step2-culling' && (!cullingSubTab || cullingSubTab === 'all')
+                    ? 'bg-white text-[#23003F] font-bold'
+                    : 'text-[#BCACCE] hover:text-white hover:bg-white/10'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <Archive className="w-4 h-4 stroke-[2]" />
+                  <span className="font-sans">2. Eye &amp; Motion Culling</span>
+                </div>
+                {items.length > 0 && (
+                  <span
+                    className={`text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums ${
+                      activeTab === 'step2-culling' && (!cullingSubTab || cullingSubTab === 'all')
+                        ? 'bg-[#FFFDB4] text-[#23003F]'
+                        : 'bg-white/20 text-[#FFFDB4]'
+                    }`}
+                  >
+                    {items.length}
+                  </span>
+                )}
+              </button>
+
+              {/* Sub-menu: Kept & Archived */}
+              {(activeTab === 'step2-culling' || items.length > 0) && (
+                <div className="flex flex-col gap-1 pl-4 ml-2 border-l border-white/15 my-0.5">
+                  {/* Kept Sub-option */}
+                  <button
+                    onClick={() => {
+                      setActiveTab('step2-culling');
+                      if (onSelectCullingSubTab) onSelectCullingSubTab('kept');
+                    }}
+                    className={`flex items-center justify-between px-3 py-1.5 rounded-lg transition-colors text-left text-2xs cursor-pointer ${
+                      activeTab === 'step2-culling' && cullingSubTab === 'kept'
+                        ? 'bg-[#FFFDB4] text-[#23003F] font-bold'
+                        : 'text-[#BCACCE] hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#F94500]" />
+                      <span className="font-sans">Kept Photos</span>
+                    </div>
+                    <span
+                      className={`px-1.5 py-0.2 rounded font-mono font-bold text-2xs ${
+                        activeTab === 'step2-culling' && cullingSubTab === 'kept'
+                          ? 'bg-[#23003F] text-[#FFFDB4]'
+                          : 'bg-white/15 text-[#FFFDB4]'
+                      }`}
+                    >
+                      {items.filter((i) => !i.isArchived).length}
+                    </span>
+                  </button>
+
+                  {/* Archived Sub-option */}
+                  <button
+                    onClick={() => {
+                      setActiveTab('step2-culling');
+                      if (onSelectCullingSubTab) onSelectCullingSubTab('archived');
+                    }}
+                    className={`flex items-center justify-between px-3 py-1.5 rounded-lg transition-colors text-left text-2xs cursor-pointer ${
+                      activeTab === 'step2-culling' && cullingSubTab === 'archived'
+                        ? 'bg-[#F94500] text-white font-bold'
+                        : 'text-[#BCACCE] hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <EyeOff className="w-3.5 h-3.5" />
+                      <span className="font-sans">Archived (_archive)</span>
+                    </div>
+                    <span
+                      className={`px-1.5 py-0.2 rounded font-mono font-bold text-2xs ${
+                        activeTab === 'step2-culling' && cullingSubTab === 'archived'
+                          ? 'bg-black/30 text-white'
+                          : 'bg-white/15 text-[#FFFDB4]'
+                      }`}
+                    >
+                      {items.filter((i) => i.isArchived).length}
+                    </span>
+                  </button>
+                </div>
               )}
-            </button>
+            </div>
 
             {/* Step 3: Straighten & Lightroom Tone Tuning */}
             <button

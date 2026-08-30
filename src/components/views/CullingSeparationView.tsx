@@ -35,6 +35,8 @@ interface CullingSeparationViewProps {
   geminiApiKey?: string;
   onChangeConfig?: (newConfig: Partial<PipelineConfig>) => void;
   onUpdateItems?: (items: ProcessedItem[]) => void;
+  activeSubTab?: 'all' | 'kept' | 'archived' | 'top_picks';
+  onChangeSubTab?: (tab: 'all' | 'kept' | 'archived' | 'top_picks') => void;
 }
 
 export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
@@ -47,8 +49,15 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
   geminiApiKey = '',
   onChangeConfig,
   onUpdateItems,
+  activeSubTab,
+  onChangeSubTab,
 }) => {
-  const [activeTab, setActiveTab] = useState<'all' | 'kept' | 'archived' | 'top_picks'>('all');
+  const [internalActiveTab, setInternalActiveTab] = useState<'all' | 'kept' | 'archived' | 'top_picks'>('all');
+  const activeTab = activeSubTab || internalActiveTab;
+  const setActiveTab = (tab: 'all' | 'kept' | 'archived' | 'top_picks') => {
+    setInternalActiveTab(tab);
+    if (onChangeSubTab) onChangeSubTab(tab);
+  };
   const [cullMode, setCullMode] = useState<FacetCullMode>('KEEP_ALL_GOOD');
   const [search, setSearch] = useState<string>('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
