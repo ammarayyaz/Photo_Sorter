@@ -54,6 +54,7 @@ export const AppContent: React.FC = () => {
   }));
 
   const [status, setStatus] = useState<ProcessingStatus>('IDLE');
+  const [isInspectorCollapsed, setIsInspectorCollapsed] = useState<boolean>(true);
   const [cullingSubTab, setCullingSubTab] = useState<'all' | 'kept' | 'archived' | 'top_picks'>('all');
   const [items, setItems] = useState<ProcessedItem[]>([]);
   const [activeItem, setActiveItem] = useState<ProcessedItem | null>(null);
@@ -419,12 +420,14 @@ export const AppContent: React.FC = () => {
         />
 
         {/* Column 2: Center Content Area */}
-        <main className="flex-1 flex flex-col min-w-0 p-5 overflow-hidden bg-[#F8F9FA] dark:bg-[#000000] transition-colors duration-200">
+        <main className="flex-1 flex flex-col min-w-0 p-4 overflow-hidden bg-[#F8F9FA] dark:bg-[#000000] transition-colors duration-200">
           <Header
             activeTab={activeTab}
             status={status}
             folderName={currentFolderName}
             hasGeminiKey={config.geminiApiKey.trim().length > 0}
+            isInspectorCollapsed={isInspectorCollapsed}
+            onToggleInspector={() => setIsInspectorCollapsed((prev) => !prev)}
             onStart={handleStart}
             onPause={handlePause}
             onResume={handleResume}
@@ -515,6 +518,8 @@ export const AppContent: React.FC = () => {
           metrics={metrics}
           faceClusters={faceClusters}
           items={items}
+          isCollapsed={isInspectorCollapsed}
+          onToggleCollapse={() => setIsInspectorCollapsed((prev) => !prev)}
         />
       </div>
     </div>

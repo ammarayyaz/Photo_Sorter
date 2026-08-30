@@ -6,7 +6,8 @@ import {
   RotateCcw,
   Sparkles,
   Sun,
-  Moon
+  Moon,
+  Info
 } from 'lucide-react';
 import { ActiveTab } from './Sidebar';
 import { ProcessingStatus } from '../../engine/types';
@@ -17,6 +18,8 @@ interface HeaderProps {
   status: ProcessingStatus;
   hasGeminiKey: boolean;
   folderName?: string;
+  isInspectorCollapsed?: boolean;
+  onToggleInspector?: () => void;
   onStart: () => void;
   onPause: () => void;
   onResume: () => void;
@@ -28,6 +31,8 @@ export const Header: React.FC<HeaderProps> = ({
   status,
   folderName = 'All Uploaded Photos',
   hasGeminiKey: _hasGeminiKey,
+  isInspectorCollapsed,
+  onToggleInspector,
   onStart,
   onPause,
   onResume,
@@ -59,7 +64,7 @@ export const Header: React.FC<HeaderProps> = ({
     status !== 'ERROR';
 
   return (
-    <header className="flex items-center justify-between pb-4 select-none bg-transparent">
+    <header className="flex items-center justify-between pb-3 select-none bg-transparent">
       {/* 1. Left Breadcrumb Navigation */}
       <div className="flex items-center gap-2 text-xs">
         <div className="flex items-center gap-1.5">
@@ -73,6 +78,21 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* 2. Top Right Control Actions */}
       <div className="flex items-center gap-2">
+        {/* Info Inspector Toggle Button */}
+        {onToggleInspector && (
+          <button
+            onClick={onToggleInspector}
+            className={`p-1.5 rounded-xl border transition-colors cursor-pointer shadow-none ${
+              !isInspectorCollapsed
+                ? 'bg-[#D83C00]/15 text-[#D83C00] border-[#D83C00]/30'
+                : 'bg-white dark:bg-[#121212] hover:bg-slate-100 dark:hover:bg-[#1E1E1E] border-[#E5E7EB] dark:border-[#27272A] text-[#9CA3AF]'
+            }`}
+            title={isInspectorCollapsed ? 'Expand Info Inspector' : 'Collapse Info Inspector'}
+          >
+            <Info className="w-3.5 h-3.5" />
+          </button>
+        )}
+
         {/* Light / Dark Mode Toggle Button */}
         <button
           onClick={toggleTheme}
@@ -96,7 +116,7 @@ export const Header: React.FC<HeaderProps> = ({
         {status === 'IDLE' && (
           <button
             onClick={onStart}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-[#D83C00] hover:bg-[#B83300] text-white font-heading font-bold text-xs tracking-wide transition-all active:scale-98 cursor-pointer shadow-none"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#D83C00] hover:bg-[#B83300] text-white font-heading font-bold text-xs tracking-wide transition-all active:scale-98 cursor-pointer shadow-none"
           >
             <Play className="w-3 h-3 fill-current" />
             <span>Run 4-Step Pipeline</span>
@@ -106,7 +126,7 @@ export const Header: React.FC<HeaderProps> = ({
         {isRunning && (
           <button
             onClick={onPause}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-heading font-bold text-xs transition-colors cursor-pointer shadow-none"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-heading font-bold text-xs transition-colors cursor-pointer shadow-none"
           >
             <Pause className="w-3.5 h-3.5 fill-current" />
             <span>Pause</span>
@@ -116,7 +136,7 @@ export const Header: React.FC<HeaderProps> = ({
         {status === 'PAUSED' && (
           <button
             onClick={onResume}
-            className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-[#D83C00] hover:bg-[#B83300] text-white font-heading font-bold text-xs transition-colors cursor-pointer shadow-none"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#D83C00] hover:bg-[#B83300] text-white font-heading font-bold text-xs transition-colors cursor-pointer shadow-none"
           >
             <Play className="w-3.5 h-3.5 fill-current" />
             <span>Resume</span>
@@ -126,7 +146,7 @@ export const Header: React.FC<HeaderProps> = ({
         {status === 'COMPLETED' && (
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#D83C00]/15 dark:bg-[#D83C00]/20 text-[#D83C00] dark:text-[#FF8C61] border border-[#D83C00]/30 font-heading font-bold text-xs">
             <Sparkles className="w-3.5 h-3.5 text-[#D83C00]" />
-            <span>Pipeline Complete</span>
+            <span>Complete</span>
           </div>
         )}
 

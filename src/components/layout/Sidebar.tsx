@@ -7,8 +7,6 @@ import {
   Users,
   RotateCcw,
   Cloud,
-  Image,
-  ArrowUpRight,
   Sparkles,
   Plus,
   EyeOff
@@ -54,7 +52,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       ? totalBytes > 1000000000
         ? `${totalGb} GB`
         : `${totalMb} MB`
-      : '0.00 GB';
+      : '0 MB';
 
   const usedPercentage =
     totalBytes > 0
@@ -62,26 +60,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
       : 0;
 
   return (
-    <aside className="w-[260px] h-full flex flex-col bg-white dark:bg-[#0A0A0A] select-none flex-shrink-0 border-r border-[#E5E7EB] dark:border-[#222222] transition-colors duration-200">
-      {/* 1. Top Header with Logo & Brand */}
-      <div className="bg-white dark:bg-[#0A0A0A] px-6 pt-5 pb-4 flex items-center justify-between transition-colors">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-[#D83C00] text-white flex items-center justify-center shadow-none">
-            <Sparkles className="w-4 h-4" />
+    <aside className="w-[230px] h-full flex flex-col bg-white dark:bg-[#000000] select-none flex-shrink-0 border-r border-[#E5E7EB] dark:border-[#1E1E1E] transition-colors duration-200">
+      {/* 1. Sleek Minimal Logo Header */}
+      <div className="px-5 pt-4 pb-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-lg bg-[#D83C00] text-white flex items-center justify-center flex-shrink-0">
+            <Sparkles className="w-3.5 h-3.5" />
           </div>
-          <span className="font-heading font-extrabold text-lg text-[#111827] dark:text-white tracking-tight">
+          <span className="font-heading font-bold text-sm text-[#111827] dark:text-white tracking-tight">
             LuminaSort
           </span>
         </div>
       </div>
 
-      {/* 2. Main Curved Dark Black Body */}
-      <div className="flex-1 bg-[#111827] dark:bg-[#0D0D0D] rounded-tr-[44px] p-5 flex flex-col justify-between text-white overflow-y-auto border-t border-r border-transparent dark:border-[#222222]">
-        <div className="flex flex-col gap-3.5">
-          {/* High-Impact CTA Button */}
-          <label className="w-full bg-[#D83C00] hover:bg-[#B83300] text-white font-heading font-bold text-xs tracking-wide py-2.5 px-4 rounded-full transition-all active:scale-98 flex items-center justify-center gap-2 cursor-pointer shadow-none">
-            <Plus className="w-4 h-4 stroke-[2.5]" />
-            <span>Upload New Files</span>
+      {/* 2. Main Minimalist Dark Body (Zero Scrollbar) */}
+      <div className="flex-1 bg-[#F9FAFB] dark:bg-[#0A0A0A] rounded-tr-3xl p-3 flex flex-col justify-between text-[#111827] dark:text-white no-scrollbar overflow-hidden border-t border-r border-transparent dark:border-[#1A1A1A]">
+        <div className="flex flex-col gap-3">
+          {/* Minimalist Primary Upload CTA */}
+          <label className="w-full bg-[#D83C00] hover:bg-[#B83300] text-white font-heading font-bold text-xs tracking-wide py-2 px-3 rounded-xl transition-all active:scale-98 flex items-center justify-center gap-1.5 cursor-pointer shadow-none">
+            <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+            <span>Upload Photos</span>
             <input
               type="file"
               multiple
@@ -113,272 +111,228 @@ export const Sidebar: React.FC<SidebarProps> = ({
             />
           </label>
 
-          {/* 4-Step Pipeline Navigation Menu */}
-          <div className="font-heading text-2xs font-extrabold uppercase tracking-wider text-[#9CA3AF] dark:text-[#71717A] px-1 pt-1">
-            4-Step Photo Pipeline
-          </div>
+          {/* Pipeline Navigation Menu */}
+          <div className="flex flex-col gap-0.5">
+            <div className="font-heading text-[10px] font-bold uppercase tracking-wider text-[#9CA3AF] dark:text-[#71717A] px-2 pb-1">
+              Pipeline
+            </div>
 
-          <nav className="flex flex-col gap-1 text-xs font-semibold">
-            {/* Step 1: Ingest Folders */}
-            <button
-              onClick={() => setActiveTab('step1-folders')}
-              className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-colors text-left cursor-pointer ${
-                activeTab === 'step1-folders'
-                  ? 'bg-[#D83C00] text-white font-bold'
-                  : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
-              }`}
-            >
-              <div className="flex items-center gap-2.5">
-                <Folder className="w-4 h-4 stroke-[2]" />
-                <span className="font-sans">1. Ingest Folders</span>
-              </div>
-              <span
-                className={`text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums ${
-                  activeTab === 'step1-folders'
-                    ? 'bg-black/30 text-white'
-                    : 'bg-white/15 text-[#D1D5DB]'
-                }`}
-              >
-                {metrics.totalScanned > 0 ? metrics.totalScanned : items.length}
-              </span>
-            </button>
-
-            {/* Step 2: Blur & Motion Culling (Archive Separation) */}
-            <div className="flex flex-col gap-1">
+            <nav className="flex flex-col gap-0.5 text-xs font-medium">
+              {/* Step 1: Ingest Folders */}
               <button
-                onClick={() => {
-                  setActiveTab('step2-culling');
-                  if (onSelectCullingSubTab) onSelectCullingSubTab('all');
-                }}
-                className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-colors text-left cursor-pointer ${
-                  activeTab === 'step2-culling' && (!cullingSubTab || cullingSubTab === 'all')
-                    ? 'bg-[#D83C00] text-white font-bold'
-                    : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
+                onClick={() => setActiveTab('step1-folders')}
+                className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-colors text-left cursor-pointer ${
+                  activeTab === 'step1-folders'
+                    ? 'bg-[#D83C00] text-white font-semibold'
+                    : 'text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-white/5'
                 }`}
               >
-                <div className="flex items-center gap-2.5">
-                  <Archive className="w-4 h-4 stroke-[2]" />
-                  <span className="font-sans">2. Eye &amp; Motion Culling</span>
+                <div className="flex items-center gap-2">
+                  <Folder className="w-3.5 h-3.5 stroke-[1.8]" />
+                  <span className="font-sans text-xs">1. Ingest Folders</span>
                 </div>
-                {items.length > 0 && (
+                <span
+                  className={`text-[10px] px-1.5 py-0.2 rounded-md font-mono tabular-nums ${
+                    activeTab === 'step1-folders'
+                      ? 'bg-black/30 text-white'
+                      : 'bg-slate-200 dark:bg-white/10 text-[#4B5563] dark:text-[#A1A1AA]'
+                  }`}
+                >
+                  {metrics.totalScanned > 0 ? metrics.totalScanned : items.length}
+                </span>
+              </button>
+
+              {/* Step 2: Blur & Motion Culling */}
+              <div className="flex flex-col gap-0.5">
+                <button
+                  onClick={() => {
+                    setActiveTab('step2-culling');
+                    if (onSelectCullingSubTab) onSelectCullingSubTab('all');
+                  }}
+                  className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-colors text-left cursor-pointer ${
+                    activeTab === 'step2-culling' && (!cullingSubTab || cullingSubTab === 'all')
+                      ? 'bg-[#D83C00] text-white font-semibold'
+                      : 'text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-white/5'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Archive className="w-3.5 h-3.5 stroke-[1.8]" />
+                    <span className="font-sans text-xs">2. Eye &amp; Culling</span>
+                  </div>
+                  {items.length > 0 && (
+                    <span
+                      className={`text-[10px] px-1.5 py-0.2 rounded-md font-mono tabular-nums ${
+                        activeTab === 'step2-culling' && (!cullingSubTab || cullingSubTab === 'all')
+                          ? 'bg-black/30 text-white'
+                          : 'bg-slate-200 dark:bg-white/10 text-[#4B5563] dark:text-[#A1A1AA]'
+                      }`}
+                    >
+                      {items.length}
+                    </span>
+                  )}
+                </button>
+
+                {/* Sub-menu: Kept & Archived */}
+                {(activeTab === 'step2-culling' || items.length > 0) && (
+                  <div className="flex flex-col gap-0.5 pl-3 ml-2 border-l border-slate-200 dark:border-[#222222] my-0.5">
+                    {/* Kept Sub-option */}
+                    <button
+                      onClick={() => {
+                        setActiveTab('step2-culling');
+                        if (onSelectCullingSubTab) onSelectCullingSubTab('kept');
+                      }}
+                      className={`flex items-center justify-between px-2 py-1 rounded-md transition-colors text-left text-[11px] cursor-pointer ${
+                        activeTab === 'step2-culling' && cullingSubTab === 'kept'
+                          ? 'bg-[#D83C00] text-white font-medium'
+                          : 'text-[#6B7280] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-white/5'
+                      }`}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <CheckCircle2 className="w-3 h-3 text-[#D83C00] dark:text-[#FF8C61]" />
+                        <span>Kept</span>
+                      </div>
+                      <span className="font-mono text-[10px]">
+                        {items.filter((i) => !i.isArchived).length}
+                      </span>
+                    </button>
+
+                    {/* Archived Sub-option */}
+                    <button
+                      onClick={() => {
+                        setActiveTab('step2-culling');
+                        if (onSelectCullingSubTab) onSelectCullingSubTab('archived');
+                      }}
+                      className={`flex items-center justify-between px-2 py-1 rounded-md transition-colors text-left text-[11px] cursor-pointer ${
+                        activeTab === 'step2-culling' && cullingSubTab === 'archived'
+                          ? 'bg-[#27272A] text-white font-medium'
+                          : 'text-[#6B7280] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-white/5'
+                      }`}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <EyeOff className="w-3 h-3 text-red-500" />
+                        <span>_archive</span>
+                      </div>
+                      <span className="font-mono text-[10px]">
+                        {items.filter((i) => i.isArchived).length}
+                      </span>
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Step 3: Straighten & Tone */}
+              <button
+                onClick={() => setActiveTab('step3-enhancement')}
+                className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-colors text-left cursor-pointer ${
+                  activeTab === 'step3-enhancement'
+                    ? 'bg-[#D83C00] text-white font-semibold'
+                    : 'text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-white/5'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Compass className="w-3.5 h-3.5 stroke-[1.8]" />
+                  <span className="font-sans text-xs">3. Straighten</span>
+                </div>
+                {metrics.imagesStraightened > 0 && (
                   <span
-                    className={`text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums ${
-                      activeTab === 'step2-culling' && (!cullingSubTab || cullingSubTab === 'all')
+                    className={`text-[10px] px-1.5 py-0.2 rounded-md font-mono tabular-nums ${
+                      activeTab === 'step3-enhancement'
                         ? 'bg-black/30 text-white'
-                        : 'bg-white/15 text-[#D1D5DB]'
+                        : 'bg-slate-200 dark:bg-white/10 text-[#4B5563] dark:text-[#A1A1AA]'
                     }`}
                   >
-                    {items.length}
+                    {metrics.imagesStraightened}
                   </span>
                 )}
               </button>
 
-              {/* Sub-menu: Kept & Archived */}
-              {(activeTab === 'step2-culling' || items.length > 0) && (
-                <div className="flex flex-col gap-1 pl-4 ml-2 border-l border-white/15 dark:border-[#27272A] my-0.5">
-                  {/* Kept Sub-option */}
-                  <button
-                    onClick={() => {
-                      setActiveTab('step2-culling');
-                      if (onSelectCullingSubTab) onSelectCullingSubTab('kept');
-                    }}
-                    className={`flex items-center justify-between px-3 py-1.5 rounded-lg transition-colors text-left text-2xs cursor-pointer ${
-                      activeTab === 'step2-culling' && cullingSubTab === 'kept'
-                        ? 'bg-[#D83C00] text-white font-bold'
-                        : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#D83C00] dark:text-[#FF8C61]" />
-                      <span className="font-sans">Kept Photos</span>
-                    </div>
-                    <span
-                      className={`px-1.5 py-0.2 rounded font-mono font-bold text-2xs ${
-                        activeTab === 'step2-culling' && cullingSubTab === 'kept'
-                          ? 'bg-black/30 text-white'
-                          : 'bg-white/15 text-white'
-                      }`}
-                    >
-                      {items.filter((i) => !i.isArchived).length}
-                    </span>
-                  </button>
-
-                  {/* Archived Sub-option */}
-                  <button
-                    onClick={() => {
-                      setActiveTab('step2-culling');
-                      if (onSelectCullingSubTab) onSelectCullingSubTab('archived');
-                    }}
-                    className={`flex items-center justify-between px-3 py-1.5 rounded-lg transition-colors text-left text-2xs cursor-pointer ${
-                      activeTab === 'step2-culling' && cullingSubTab === 'archived'
-                        ? 'bg-[#27272A] text-white font-bold border border-[#3F3F46]'
-                        : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <EyeOff className="w-3.5 h-3.5" />
-                      <span className="font-sans">Archived (_archive)</span>
-                    </div>
-                    <span
-                      className={`px-1.5 py-0.2 rounded font-mono font-bold text-2xs ${
-                        activeTab === 'step2-culling' && cullingSubTab === 'archived'
-                          ? 'bg-black/40 text-white'
-                          : 'bg-white/15 text-white'
-                      }`}
-                    >
-                      {items.filter((i) => i.isArchived).length}
-                    </span>
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Step 3: Straighten & Lightroom Tone Tuning */}
-            <button
-              onClick={() => setActiveTab('step3-enhancement')}
-              className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-colors text-left cursor-pointer ${
-                activeTab === 'step3-enhancement'
-                  ? 'bg-[#D83C00] text-white font-bold'
-                  : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
-              }`}
-            >
-              <div className="flex items-center gap-2.5">
-                <Compass className="w-4 h-4 stroke-[2]" />
-                <span className="font-sans">3. Straighten &amp; Tone</span>
-              </div>
-              {metrics.imagesStraightened > 0 && (
-                <span
-                  className={`text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums ${
-                    activeTab === 'step3-enhancement'
-                      ? 'bg-black/30 text-white'
-                      : 'bg-white/15 text-[#D1D5DB]'
-                  }`}
-                >
-                  {metrics.imagesStraightened}
-                </span>
-              )}
-            </button>
-
-            {/* Step 4: Final Output Gallery */}
-            <button
-              onClick={() => setActiveTab('step4-output')}
-              className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-colors text-left cursor-pointer ${
-                activeTab === 'step4-output'
-                  ? 'bg-[#D83C00] text-white font-bold'
-                  : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
-              }`}
-            >
-              <div className="flex items-center gap-2.5">
-                <CheckCircle2 className="w-4 h-4 stroke-[2]" />
-                <span className="font-sans">4. Output &amp; Review</span>
-              </div>
-              <span
-                className={`text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums ${
+              {/* Step 4: Final Output Gallery */}
+              <button
+                onClick={() => setActiveTab('step4-output')}
+                className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-colors text-left cursor-pointer ${
                   activeTab === 'step4-output'
-                    ? 'bg-black/30 text-white'
-                    : 'bg-white/15 text-[#D1D5DB]'
+                    ? 'bg-[#D83C00] text-white font-semibold'
+                    : 'text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-white/5'
                 }`}
               >
-                {items.filter((i) => !i.isArchived).length > 0
-                  ? items.filter((i) => !i.isArchived).length
-                  : 'Ready'}
-              </span>
-            </button>
-          </nav>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 stroke-[1.8]" />
+                  <span className="font-sans text-xs">4. Review &amp; Export</span>
+                </div>
+                <span
+                  className={`text-[10px] px-1.5 py-0.2 rounded-md font-mono tabular-nums ${
+                    activeTab === 'step4-output'
+                      ? 'bg-black/30 text-white'
+                      : 'bg-slate-200 dark:bg-white/10 text-[#4B5563] dark:text-[#A1A1AA]'
+                  }`}
+                >
+                  {items.filter((i) => !i.isArchived).length}
+                </span>
+              </button>
+            </nav>
+          </div>
 
           {/* Secondary Utilities */}
-          <div className="font-heading text-2xs font-extrabold uppercase tracking-wider text-[#9CA3AF] dark:text-[#71717A] px-1 pt-2">
-            Organize &amp; Settings
+          <div className="flex flex-col gap-0.5 pt-1">
+            <div className="font-heading text-[10px] font-bold uppercase tracking-wider text-[#9CA3AF] dark:text-[#71717A] px-2 pb-1">
+              Organize
+            </div>
+
+            <nav className="flex flex-col gap-0.5 text-xs font-medium">
+              {/* Shared With Me / Face Clusters */}
+              <button
+                onClick={() => setActiveTab('faces')}
+                className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-colors text-left cursor-pointer ${
+                  activeTab === 'faces'
+                    ? 'bg-[#D83C00] text-white font-semibold'
+                    : 'text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-white/5'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Users className="w-3.5 h-3.5 stroke-[1.8]" />
+                  <span className="font-sans text-xs">Shared With Me</span>
+                </div>
+                {metrics.distinctPeopleCount > 0 && (
+                  <span className="text-[10px] px-1.5 py-0.2 rounded-md font-mono tabular-nums bg-[#D83C00]/20 text-[#D83C00] dark:text-[#FF8C61]">
+                    {metrics.distinctPeopleCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Settings & Backups */}
+              <button
+                onClick={() => setActiveTab('settings')}
+                className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg transition-colors text-left cursor-pointer ${
+                  activeTab === 'settings'
+                    ? 'bg-[#D83C00] text-white font-semibold'
+                    : 'text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-white/5'
+                }`}
+              >
+                <RotateCcw className="w-3.5 h-3.5 stroke-[1.8]" />
+                <span className="font-sans text-xs">Settings</span>
+              </button>
+            </nav>
           </div>
-
-          <nav className="flex flex-col gap-0.5 text-xs font-semibold">
-            {/* Shared With Me / Face Clusters */}
-            <button
-              onClick={() => setActiveTab('faces')}
-              className={`flex items-center justify-between px-3.5 py-2 rounded-xl transition-colors text-left cursor-pointer ${
-                activeTab === 'faces'
-                  ? 'bg-[#D83C00] text-white font-bold'
-                  : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
-              }`}
-            >
-              <div className="flex items-center gap-2.5">
-                <Users className="w-4 h-4 stroke-[1.8]" />
-                <span className="font-sans">Shared With Me</span>
-              </div>
-              {metrics.distinctPeopleCount > 0 && (
-                <span className="text-2xs px-2 py-0.5 rounded-full font-mono tabular-nums bg-white/20 text-white">
-                  {metrics.distinctPeopleCount}
-                </span>
-              )}
-            </button>
-
-            {/* Settings & Backups */}
-            <button
-              onClick={() => setActiveTab('settings')}
-              className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl transition-colors text-left cursor-pointer ${
-                activeTab === 'settings'
-                  ? 'bg-[#D83C00] text-white font-bold'
-                  : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
-              }`}
-            >
-              <RotateCcw className="w-4 h-4 stroke-[1.8]" />
-              <span className="font-sans">Backups &amp; Settings</span>
-            </button>
-          </nav>
         </div>
 
-        {/* 3. Real Bottom Storage Details Section */}
-        <div className="flex flex-col gap-3 pt-3 border-t border-white/10 dark:border-[#222222] text-xs text-white">
-          <div className="font-heading text-2xs font-bold tracking-wider text-[#9CA3AF] dark:text-[#71717A] uppercase">
-            Storage Details
+        {/* 3. Minimalist Single-Line Storage Footer */}
+        <div className="pt-2 border-t border-slate-200 dark:border-[#1A1A1A] flex flex-col gap-1.5 text-xs">
+          <div className="flex items-center justify-between text-[11px] font-medium text-[#6B7280] dark:text-[#A1A1AA]">
+            <span className="flex items-center gap-1">
+              <Cloud className="w-3 h-3 text-[#D83C00]" />
+              <span>Storage</span>
+            </span>
+            <span className="font-mono text-[10px] tabular-nums">
+              {formattedStorage} / 1 TB
+            </span>
           </div>
 
-          {/* Real Storage Meter 1 */}
-          <div className="flex flex-col gap-1.5">
-            <div className="flex items-center justify-between text-white/90 text-xs font-semibold">
-              <span className="flex items-center gap-1.5 font-sans">
-                <Cloud className="w-3.5 h-3.5 text-[#9CA3AF] dark:text-[#71717A]" />
-                Storage
-              </span>
-              <span className="font-mono tabular-nums text-2xs text-[#D1D5DB] dark:text-[#A1A1AA]">
-                {formattedStorage} / 1 TB
-              </span>
-            </div>
-            <div className="w-full bg-white/15 dark:bg-[#222222] h-1.5 rounded-full overflow-hidden">
-              <div
-                className="bg-[#D83C00] h-full rounded-full transition-all duration-300"
-                style={{ width: `${usedPercentage}%` }}
-              />
-            </div>
+          <div className="w-full bg-slate-200 dark:bg-[#1E1E1E] h-1 rounded-full overflow-hidden">
+            <div
+              className="bg-[#D83C00] h-full rounded-full transition-all duration-300"
+              style={{ width: `${usedPercentage}%` }}
+            />
           </div>
-
-          {/* Real Storage Meter 2: Photos */}
-          <div className="flex flex-col gap-1.5">
-            <div className="flex items-center justify-between text-white/90 text-xs font-semibold">
-              <span className="flex items-center gap-1.5 font-sans">
-                <Image className="w-3.5 h-3.5 text-[#9CA3AF] dark:text-[#71717A]" />
-                Photos
-              </span>
-              <span className="font-mono tabular-nums text-2xs text-[#D1D5DB] dark:text-[#A1A1AA]">
-                {items.length} Files
-              </span>
-            </div>
-            <div className="w-full bg-white/15 dark:bg-[#222222] h-1.5 rounded-full overflow-hidden">
-              <div
-                className="bg-[#D83C00] h-full rounded-full transition-all duration-300"
-                style={{ width: `${usedPercentage}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Upgrade Storage Link */}
-          <button
-            onClick={() => setActiveTab('settings')}
-            className="flex items-center gap-1 font-heading text-xs font-bold text-[#D83C00] dark:text-[#FF8C61] hover:underline transition-colors pt-1 cursor-pointer"
-          >
-            <span>Upgrade Storage</span>
-            <ArrowUpRight className="w-3.5 h-3.5" />
-          </button>
         </div>
       </div>
     </aside>

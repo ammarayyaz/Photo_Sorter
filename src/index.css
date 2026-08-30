@@ -102,20 +102,41 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   text-transform: uppercase;
 }
 
-/* Minimal Custom Scrollbar */
+/* Hide scrollbar completely for navbar/sidebar & specific containers */
+.no-scrollbar::-webkit-scrollbar,
+.no-scrollbar {
+  display: none !important;
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+/* Tiny Ultra-Minimalist Page Scrollbars (3px width) */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 3px;
+  height: 3px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
   background: rgba(161, 161, 170, 0.25);
-  border-radius: 4px;
+  border-radius: 9999px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(216, 60, 0, 0.6);
+  background: #D83C00;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(161, 161, 170, 0.25) transparent;
+}
+.dark * {
+  scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+}
+.no-scrollbar {
+  scrollbar-width: none !important;
 }
 
 /* Clean Focus Visibility */
