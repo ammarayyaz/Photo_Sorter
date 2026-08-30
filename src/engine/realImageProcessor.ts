@@ -1,6 +1,6 @@
 import { ImageMetadata, ProcessedItem, FileFormat } from './types';
 import { calculateLightroomAdjustments, classifyBlurAndMotion } from './lightroomTone';
-import { calculateInscribedCrop } from './horizonCorrector';
+import { detectHorizonAndTiltAngle, calculateInscribedCrop } from './horizonDetector';
 import { saveOriginalFileBlob } from './storageManager';
 import { computeFacetDimensions } from './facetScorer';
 
@@ -194,6 +194,13 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
       let motionAngleDeg = 0;
       let eyeOpennessScore = 0.90;
       let detectedFaces: import('./types').DetectedFace[] = [];
+      let geometry = {
+        requiresCorrection: false,
+        detectedAngleDeg: 0,
+        correctedAngleDeg: 0,
+        cropBox: { x: 0, y: 0, width, height },
+        cropLossPercentage: 0,
+      };
 
       if (ctx) {
         ctx.drawImage(img, 0, 0, sampleWidth, sampleHeight);
@@ -374,6 +381,15 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
               assignedClusterId: 'cluster_1',
             });
           }
+
+          // 4. Calculate Real Horizon & Tilt Angle via Radon & Hough Line Projection
+          geometry = detectHorizonAndTiltAngle(
+            gray,
+            sampleWidth,
+            sampleHeight,
+            width,
+            height
+          );
         } catch {
           // Fallback if canvas read restriction occurs
         }
@@ -397,7 +413,6 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
         detectedFaces.length > 0,
         facet.facetCompositeScore
       );
-      const crop = calculateInscribedCrop(width, height, 0);
 
       const metadata: ImageMetadata = {
         id: `img_${Date.now()}_${index}_${Math.random().toString(36).substring(2, 6)}`,
@@ -449,13 +464,7 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
           compositeScore: facet.facetCompositeScore,
           facet,
         },
-        geometry: {
-          requiresCorrection: false,
-          detectedAngleDeg: 0,
-          correctedAngleDeg: 0,
-          cropBox: { x: crop.x, y: crop.y, width: crop.width, height: crop.height },
-          cropLossPercentage: 0,
-        },
+        geometry,
         faces: detectedFaces,
         occasion: {
           occasion: detectedFaces.length > 0 ? 'Portrait Session' : 'Imported Photo Album',
