@@ -17,9 +17,7 @@ import {
   X,
   Info,
   Zap,
-  Key,
-  Loader2,
-  ExternalLink
+  Loader2
 } from 'lucide-react';
 import { ProcessedItem, PipelineMetrics, PipelineConfig } from '../../engine/types';
 import { FacetCullMode, runFacetBurstCulling } from '../../engine/facetScorer';
@@ -47,7 +45,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
   onContinueToStraighten,
   onGoToIngest,
   geminiApiKey = '',
-  onChangeConfig,
+  onChangeConfig: _onChangeConfig,
   onUpdateItems,
   activeSubTab,
   onChangeSubTab,
@@ -62,9 +60,6 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
   const [search, setSearch] = useState<string>('');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [inspectingItem, setInspectingItem] = useState<ProcessedItem | null>(null);
-  const [apiKeyInput, setApiKeyInput] = useState<string>(geminiApiKey);
-  const [isScanningGemini, setIsScanningGemini] = useState<boolean>(false);
-  const [geminiProgress, setGeminiProgress] = useState<string>('');
   const [geminiSingleLoading, setGeminiSingleLoading] = useState<boolean>(false);
   const [geminiSingleResult, setGeminiSingleResult] = useState<string | null>(null);
 
@@ -142,69 +137,12 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
     }
   };
 
-  const handleSaveApiKey = () => {
-    if (onChangeConfig) {
-      onChangeConfig({ geminiApiKey: apiKeyInput.trim() });
-    }
-  };
-
-  // Run Batch Gemini Vision Culling
-  const handleRunGeminiVisionScan = async () => {
-    const key = (apiKeyInput || geminiApiKey).trim();
-    if (!key) {
-      alert('Please paste your Google Gemini API Key first.');
-      return;
-    }
-
-    setIsScanningGemini(true);
-    const updatedItems = [...items];
-
-    for (let i = 0; i < updatedItems.length; i++) {
-      const it = updatedItems[i];
-      setGeminiProgress(`Scanning ${i + 1} of ${updatedItems.length}: ${it.metadata.filename}...`);
-      try {
-        const gRes = await analyzeImageWithGeminiVision(key, it);
-        const shouldArchive = gRes.recommendation === 'MOVE_TO_ARCHIVE';
-        
-        updatedItems[i] = {
-          ...it,
-          isArchived: shouldArchive,
-          isBurstWinner: !shouldArchive,
-          blurClassification: {
-            ...it.blurClassification,
-            isBlur: shouldArchive,
-            isArchived: shouldArchive,
-            reason: `Gemini Vision: ${gRes.reason}`,
-          },
-          quality: {
-            ...it.quality,
-            compositeScore: gRes.qualityScore,
-            facet: it.quality.facet ? {
-              ...it.quality.facet,
-              facetCompositeScore: gRes.qualityScore,
-              isBlink: gRes.eyesState === 'CLOSED_BLINKING' || gRes.eyesState === 'PARTIALLY_SQUINTING',
-              earRatio: gRes.eyeOpennessScore,
-            } : undefined,
-          },
-        };
-      } catch (err: any) {
-        console.warn(`Gemini scan error for ${it.metadata.filename}:`, err);
-      }
-    }
-
-    if (onUpdateItems) {
-      onUpdateItems(updatedItems);
-    }
-    setIsScanningGemini(false);
-    setGeminiProgress('');
-  };
-
   // Run Single Item Gemini Scan in Modal
   const handleScanInspectingItemWithGemini = async () => {
     if (!inspectingItem) return;
-    const key = (apiKeyInput || geminiApiKey).trim();
+    const key = geminiApiKey.trim();
     if (!key) {
-      alert('Please enter your Gemini API Key in the top bar.');
+      alert('Please enter your Gemini API Key in the Settings page.');
       return;
     }
 
@@ -272,78 +210,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
         </button>
       </div>
 
-      {/* 2. Google Gemini Vision AI Bar */}
-      <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3 shadow-none">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-8 h-8 rounded-xl bg-[#D83C00]/10 text-[#D83C00] border border-[#D83C00]/20 flex items-center justify-center flex-shrink-0 font-bold">
-            <Zap className="w-4 h-4" />
-          </div>
-          <div className="min-w-0">
-            <span className="font-heading text-xs font-bold text-[#111827] dark:text-white">
-              Google Gemini Vision AI (Flash)
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
-          <div className="flex items-center gap-1.5 bg-[#F9FAFB] dark:bg-[#181818] px-2.5 py-1 rounded-xl border border-[#E5E7EB] dark:border-[#27272A]">
-            <Key className="w-3.5 h-3.5 text-[#9CA3AF]" />
-            <input
-              type="password"
-              placeholder="Paste Gemini API Key (AIza... / AQ...)"
-              value={apiKeyInput}
-              onChange={(e) => setApiKeyInput(e.target.value)}
-              onBlur={handleSaveApiKey}
-              className="bg-transparent font-mono text-xs text-[#111827] dark:text-white placeholder:text-[#9CA3AF] outline-none w-48"
-            />
-            {apiKeyInput !== geminiApiKey && apiKeyInput.length > 5 && (
-              <button
-                onClick={handleSaveApiKey}
-                className="px-2 py-0.5 rounded bg-[#D83C00] text-white text-2xs font-bold font-heading hover:bg-[#B83300] cursor-pointer"
-              >
-                Save
-              </button>
-            )}
-          </div>
-
-          <a
-            href="https://aistudio.google.com/app/apikey"
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-1 text-2xs font-heading font-bold text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#D83C00] transition-colors"
-          >
-            <span>Get Free Key</span>
-            <ExternalLink className="w-3 h-3" />
-          </a>
-
-          <button
-            onClick={handleRunGeminiVisionScan}
-            disabled={isScanningGemini || items.length === 0}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-xl font-heading text-xs font-bold transition-all shadow-none ${
-              isScanningGemini
-                ? 'bg-purple-600 text-white cursor-wait'
-                : apiKeyInput || geminiApiKey
-                ? 'bg-[#D83C00] hover:bg-[#B83300] text-white cursor-pointer active:scale-95'
-                : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-pointer'
-            }`}
-            title={apiKeyInput || geminiApiKey ? 'Run Gemini Vision AI Scan' : 'Paste API Key to run'}
-          >
-            {isScanningGemini ? (
-              <>
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                <span>{geminiProgress || 'Scanning...'}</span>
-              </>
-            ) : (
-              <>
-                <Zap className="w-3.5 h-3.5 text-white" />
-                <span>Run Gemini AI Scan</span>
-              </>
-            )}
-          </button>
-        </div>
-      </div>
-
-      {/* 3. Facet Mode Selector & Auto-Cull Tuning Strip */}
+      {/* 2. Facet Mode Selector & Auto-Cull Tuning Strip */}
       <div className="bg-[#F9FAFB] dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-3 flex items-center justify-between gap-3 shadow-none">
         <div className="flex items-center gap-2">
           <Sliders className="w-4 h-4 text-[#D83C00]" />
