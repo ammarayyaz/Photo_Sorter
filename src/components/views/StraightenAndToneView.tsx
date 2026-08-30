@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Compass,
   Sliders,
@@ -10,6 +10,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { ProcessedItem, PipelineMetrics } from '../../engine/types';
+import { getOriginalFileBlob } from '../../engine/storageManager';
 
 interface StraightenAndToneViewProps {
   items: ProcessedItem[];
@@ -26,8 +27,32 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
   const [sliderPos, setSliderPos] = useState<number>(50);
   const [filterMode, setFilterMode] = useState<'all' | 'underexposed' | 'overexposed' | 'archive'>('all');
   const [isZoomed, setIsZoomed] = useState<boolean>(false);
+  const [activeFullResUrl, setActiveFullResUrl] = useState<string>('');
 
   const selectedItem = items.find((i) => i.metadata.id === selectedItemId) || items[0];
+
+  useEffect(() => {
+    let isMounted = true;
+    const fallback = selectedItem?.transformedThumbnailUrl || selectedItem?.thumbnailUrl || '';
+    setActiveFullResUrl(fallback);
+
+    if (selectedItem) {
+      getOriginalFileBlob(selectedItem.metadata.id).then((blob) => {
+        if (isMounted) {
+          if (blob) {
+            const url = URL.createObjectURL(blob);
+            setActiveFullResUrl(url);
+          } else if (selectedItem.originalFileUrl) {
+            setActiveFullResUrl(selectedItem.originalFileUrl);
+          }
+        }
+      });
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedItem]);
 
   const displayedList = items.filter((item) => {
     if (filterMode === 'underexposed') return item.lightroom.exposureState === 'UNDER_EXPOSED';
@@ -156,8 +181,16 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
             {/* Straightened & Lightroom Toned Output (Full Resolution) */}
             <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
               <img
-                src={selectedItem.originalFileUrl || selectedItem.transformedThumbnailUrl || selectedItem.thumbnailUrl}
+                src={activeFullResUrl || selectedItem.transformedThumbnailUrl || selectedItem.thumbnailUrl}
                 alt="Corrected Preview"
+                onError={(e) => {
+                  const target = e.currentTarget;
+                  if (target.src !== selectedItem.transformedThumbnailUrl && selectedItem.transformedThumbnailUrl) {
+                    target.src = selectedItem.transformedThumbnailUrl;
+                  } else if (target.src !== selectedItem.thumbnailUrl && selectedItem.thumbnailUrl) {
+                    target.src = selectedItem.thumbnailUrl;
+                  }
+                }}
                 style={{
                   filter: lightroom.cssFilter,
                 }}
@@ -178,8 +211,14 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
             >
               <div className="absolute inset-0 w-full h-full min-w-[600px] flex items-center justify-center pointer-events-none">
                 <img
-                  src={selectedItem.originalFileUrl || selectedItem.thumbnailUrl}
+                  src={activeFullResUrl || selectedItem.thumbnailUrl}
                   alt="Original Raw"
+                  onError={(e) => {
+                    const target = e.currentTarget;
+                    if (target.src !== selectedItem.thumbnailUrl && selectedItem.thumbnailUrl) {
+                      target.src = selectedItem.thumbnailUrl;
+                    }
+                  }}
                   className={`w-full h-full object-cover transition-transform duration-200 ${
                     isZoomed ? 'scale-150' : 'scale-100'
                   }`}
