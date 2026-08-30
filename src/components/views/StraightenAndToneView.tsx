@@ -148,8 +148,8 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
         img.src = sourceUrl;
       });
 
-      const sampleWidth = 320;
-      const sampleHeight = Math.round((sampleWidth * img.naturalHeight) / img.naturalWidth) || 240;
+      const sampleWidth = 480;
+      const sampleHeight = Math.round((sampleWidth * (img.naturalHeight || 320)) / (img.naturalWidth || 480)) || 320;
       const canvas = document.createElement('canvas');
       canvas.width = sampleWidth;
       canvas.height = sampleHeight;
@@ -168,8 +168,8 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
           gray,
           sampleWidth,
           sampleHeight,
-          img.naturalWidth,
-          img.naturalHeight
+          img.naturalWidth || sampleWidth,
+          img.naturalHeight || sampleHeight
         );
 
         handleApplyAngle(detectedGeom.correctedAngleDeg);

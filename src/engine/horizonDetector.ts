@@ -96,39 +96,45 @@ export function detectHorizonAndTiltAngle(
   let totalEdgeEnergy = 0;
   let edgeCount = 0;
 
-  // 1. Compute Sobel Edge Gradients & Cardinal Deviation Mapping
-  // Evaluates both Horizontal (horizons, floors) and Vertical (trees, people, walls) edges
+  // 1. Compute Sobel Edge Gradients & Canonical Angular Deviation Mapping
+  // Evaluates both Horizontal (horizons, floors) and Vertical (trees, body silhouettes, architecture)
   for (let y = 2; y < sampleHeight - 2; y++) {
     for (let x = 2; x < sampleWidth - 2; x++) {
       const idx = y * sampleWidth + x;
-      
-      // Sobel kernel for gradient components
+
+      // Sobel 3x3 kernel
       const dx =
         (gray[idx + 1] - gray[idx - 1]) * 2 +
         (gray[idx - sampleWidth + 1] - gray[idx - sampleWidth - 1]) +
-        (gray[idx + sampleWidth + 1] - gray[idx + sampleWidth - 1]);
+        (gray[idx + sampleWidth + 1] - gray[idx - sampleWidth - 1]);
 
       const dy =
         (gray[idx + sampleWidth] - gray[idx - sampleWidth]) * 2 +
-        (gray[idx + sampleWidth + 1] - gray[idx + sampleWidth + 1]) +
+        (gray[idx + sampleWidth + 1] - gray[idx - sampleWidth + 1]) +
         (gray[idx + sampleWidth - 1] - gray[idx - sampleWidth - 1]);
 
       const magSq = dx * dx + dy * dy;
 
-      // Filter out low-contrast texture noise
-      if (magSq > 120) {
+      // Filter out low-contrast background noise (magSq > 25)
+      if (magSq > 25) {
         const mag = Math.sqrt(magSq);
-        let gradAngle = (Math.atan2(dy, dx) * 180) / Math.PI;
-        if (gradAngle < 0) gradAngle += 180; // [0, 180)
+        let phi = (Math.atan2(dy, dx) * 180) / Math.PI; // [-180, 180]
+        if (phi < 0) phi += 180;
+        while (phi >= 180) phi -= 180; // [0, 180)
 
-        // Deviation from nearest cardinal axis (0° or 90°) -> range [-45°, +45°]
-        let tilt = gradAngle % 90;
-        if (tilt > 45) tilt -= 90;
+        // Measure angular deviation from nearest cardinal normal (0° for vertical, 90° for horizontal)
+        const tiltFromVertical = phi > 90 ? phi - 180 : phi; // [-90, 90]
+        const tiltFromHorizontal = phi - 90; // [-90, 90]
+
+        const tilt =
+          Math.abs(tiltFromVertical) <= Math.abs(tiltFromHorizontal)
+            ? tiltFromVertical
+            : tiltFromHorizontal;
 
         if (tilt >= minAngle && tilt <= maxAngle) {
           const binIdx = Math.round((tilt - minAngle) / step);
           if (binIdx >= 0 && binIdx < numBins) {
-            // Emphasize prominent clean silhouette edges with mag^1.25
+            // Emphasize prominent silhouette and horizon lines with mag^1.25
             const weight = Math.pow(mag, 1.25);
             angleBins[binIdx] += weight;
             totalEdgeEnergy += weight;
@@ -139,11 +145,11 @@ export function detectHorizonAndTiltAngle(
     }
   }
 
-  // If a portrait face tilt hint was detected, reinforce that angular bin
+  // If a portrait body / face orientation hint was detected, reinforce that angular bin
   if (typeof faceTiltHint === 'number' && !isNaN(faceTiltHint) && Math.abs(faceTiltHint) <= 45) {
     const hintBinIdx = Math.round((faceTiltHint - minAngle) / step);
     if (hintBinIdx >= 0 && hintBinIdx < numBins && totalEdgeEnergy > 0) {
-      angleBins[hintBinIdx] += totalEdgeEnergy * 0.15;
+      angleBins[hintBinIdx] += totalEdgeEnergy * 0.25;
     }
   }
 
@@ -158,13 +164,12 @@ export function detectHorizonAndTiltAngle(
     smoothedBins[i] = s;
   }
 
-  // Copy edge bins
   smoothedBins[0] = angleBins[0];
   smoothedBins[1] = angleBins[1];
   smoothedBins[numBins - 2] = angleBins[numBins - 2];
   smoothedBins[numBins - 1] = angleBins[numBins - 1];
 
-  // 3. Compute statistical baseline (Mean & StdDev for Signal-to-Noise Ratio)
+  // 3. Baseline statistics
   let sum = 0;
   for (let i = 0; i < numBins; i++) sum += smoothedBins[i];
   const mean = sum / numBins;
@@ -189,10 +194,14 @@ export function detectHorizonAndTiltAngle(
 
   const rawDetectedAngle = Number((minAngle + peakBinIdx * step).toFixed(1));
   const snr = stdDev > 0 ? (peakEnergy - mean) / stdDev : 0;
-  const confidence = Math.min(1.0, Math.max(0.0, snr / 3.5));
+  const confidence = Math.min(1.0, Math.max(0.0, snr / 3.0));
 
-  // Threshold: Require clear statistical significance (SNR >= 1.6) and tilt >= 0.5°
-  const requiresCorrection = Math.abs(rawDetectedAngle) >= 0.5 && snr >= 1.6 && edgeCount > 50;
+  // Threshold: Accept peak when tilt >= 0.5° with clear statistical significance or prominence
+  const requiresCorrection =
+    Math.abs(rawDetectedAngle) >= 0.5 &&
+    (snr >= 1.15 || (mean > 0 && peakEnergy >= mean * 1.15)) &&
+    edgeCount > 25;
+
   const finalDetectedAngle = requiresCorrection ? rawDetectedAngle : 0.0;
   const correctedAngleDeg = -finalDetectedAngle;
 
