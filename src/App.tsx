@@ -5,6 +5,7 @@ import { RightInfoPanel } from './components/layout/RightInfoPanel';
 import { FoldersView } from './components/views/FoldersView';
 import { CullingSeparationView } from './components/views/CullingSeparationView';
 import { StraightenAndToneView } from './components/views/StraightenAndToneView';
+import { RenamingView } from './components/views/RenamingView';
 import { OutputGalleryView } from './components/views/OutputGalleryView';
 import { FaceClustersView } from './components/views/FaceClustersView';
 import { SettingsView } from './components/views/SettingsView';
@@ -490,12 +491,22 @@ export const AppContent: React.FC = () => {
               <StraightenAndToneView
                 items={items}
                 metrics={metrics}
-                onContinueToOutput={() => setActiveTab('step4-output')}
+                onContinueToOutput={() => setActiveTab('step4-renaming')}
               />
             )}
 
-            {/* Step 4: Final Output Gallery & Hierarchy Review */}
-            {activeTab === 'step4-output' && (
+            {/* Step 4: Batch Image Renaming */}
+            {activeTab === 'step4-renaming' && (
+              <RenamingView
+                items={items}
+                folders={folders}
+                onUpdateItems={(updated) => setItems(updated)}
+                onContinueToOutput={() => setActiveTab('step5-output')}
+              />
+            )}
+
+            {/* Step 5: Final Output Gallery & Hierarchy Review */}
+            {activeTab === 'step5-output' && (
               <OutputGalleryView
                 items={items}
                 metrics={metrics}

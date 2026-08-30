@@ -10,7 +10,8 @@ import {
   Sparkles,
   Plus,
   EyeOff,
-  ArrowUpRight
+  ArrowUpRight,
+  FileSignature
 } from 'lucide-react';
 import { ProcessingStatus, PipelineMetrics, ProcessedItem } from '../../engine/types';
 import { analyzeRealImageFile } from '../../engine/realImageProcessor';
@@ -19,7 +20,8 @@ export type ActiveTab =
   | 'step1-folders'
   | 'step2-culling'
   | 'step3-enhancement'
-  | 'step4-output'
+  | 'step4-renaming'
+  | 'step5-output'
   | 'faces'
   | 'settings';
 
@@ -112,10 +114,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
             />
           </label>
 
-          {/* 4-Step Pipeline Section */}
+          {/* 5-Step Pipeline Section */}
           <div className="flex flex-col gap-1">
             <div className="font-heading text-2xs font-extrabold uppercase tracking-wider text-[#9CA3AF] dark:text-[#71717A] px-1 pt-1">
-              4-Step Photo Pipeline
+              5-Step Photo Pipeline
             </div>
 
             <nav className="flex flex-col gap-1 text-xs font-semibold">
@@ -259,22 +261,48 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 )}
               </button>
 
-              {/* Step 4: Final Output Gallery */}
+              {/* Step 4: Batch Renaming */}
               <button
-                onClick={() => setActiveTab('step4-output')}
+                onClick={() => setActiveTab('step4-renaming')}
                 className={`flex items-center justify-between px-3 py-2 rounded-xl transition-colors text-left cursor-pointer ${
-                  activeTab === 'step4-output'
+                  activeTab === 'step4-renaming'
+                    ? 'bg-[#D83C00] text-white font-bold'
+                    : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
+                }`}
+              >
+                <div className="flex items-center gap-2.5">
+                  <FileSignature className="w-4 h-4 stroke-[2]" />
+                  <span className="font-sans">4. Batch Rename</span>
+                </div>
+                {items.length > 0 && (
+                  <span
+                    className={`text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums ${
+                      activeTab === 'step4-renaming'
+                        ? 'bg-black/30 text-white'
+                        : 'bg-white/15 text-[#D1D5DB]'
+                    }`}
+                  >
+                    {items.length}
+                  </span>
+                )}
+              </button>
+
+              {/* Step 5: Final Output Gallery */}
+              <button
+                onClick={() => setActiveTab('step5-output')}
+                className={`flex items-center justify-between px-3 py-2 rounded-xl transition-colors text-left cursor-pointer ${
+                  activeTab === 'step5-output'
                     ? 'bg-[#D83C00] text-white font-bold'
                     : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
                 }`}
               >
                 <div className="flex items-center gap-2.5">
                   <CheckCircle2 className="w-4 h-4 stroke-[2]" />
-                  <span className="font-sans">4. Output &amp; Review</span>
+                  <span className="font-sans">5. Output &amp; Review</span>
                 </div>
                 <span
                   className={`text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums ${
-                    activeTab === 'step4-output'
+                    activeTab === 'step5-output'
                       ? 'bg-black/30 text-white'
                       : 'bg-white/15 text-[#D1D5DB]'
                   }`}

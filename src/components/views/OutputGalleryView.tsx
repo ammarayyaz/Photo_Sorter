@@ -68,7 +68,7 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
           </div>
           <div>
             <h2 className="font-heading text-xs font-bold text-[#111827] dark:text-white">
-              Final Output &amp; Separation Review
+              Step 5: Final Output &amp; Separation Review
             </h2>
           </div>
         </div>

@@ -110,7 +110,7 @@ export class PhotoPipelineController {
     this.isPaused = false;
     this.items = [...itemsToProcess];
     this.status = 'INGESTING';
-    this.addLog('INFO', `Starting 4-Step Pipeline for ${this.items.length} real uploaded photos...`);
+    this.addLog('INFO', `Starting 5-Step Pipeline for ${this.items.length} real uploaded photos...`);
 
     this.metrics.totalScanned = this.items.length;
     this.metrics.currentProcessed = 0;
@@ -277,7 +277,7 @@ export class PhotoPipelineController {
     this.metrics.processingSpeedFps = Number((this.items.length / Math.max(elapsed, 0.1)).toFixed(1));
 
     this.status = 'COMPLETED';
-    this.addLog('SUCCESS', `4-Step Pipeline Completed for ${this.items.length} real photos (${culledCount} archived, ${straightenedCount} straightened, ${underCount} underexposed, ${overCount} overexposed).`);
+    this.addLog('SUCCESS', `5-Step Pipeline Completed for ${this.items.length} real photos (${culledCount} archived, ${straightenedCount} straightened, ${underCount} underexposed, ${overCount} overexposed).`);
     this.notify();
   }
 

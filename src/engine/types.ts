@@ -19,6 +19,7 @@ export type FileFormat =
 export interface ImageMetadata {
   id: string;
   filename: string;
+  originalFilename?: string;
   originalPath: string;
   fileSize: number; // in bytes
   format: FileFormat;

@@ -109,7 +109,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
           onClick={onContinueToOutput}
           className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#D83C00] hover:bg-[#B83300] text-white font-heading font-bold text-xs tracking-wide transition-all active:scale-98 cursor-pointer shadow-none"
         >
-          <span>Proceed to Step 4: Final Output</span>
+          <span>Proceed to Step 4: Batch Rename</span>
           <ArrowRight className="w-3.5 h-3.5" />
         </button>
       </div>

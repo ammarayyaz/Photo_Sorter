@@ -48,8 +48,10 @@ export const Header: React.FC<HeaderProps> = ({
         return 'Step 2: Eye & Motion Culling (_archive)';
       case 'step3-enhancement':
         return 'Step 3: Horizon Leveling & Lightroom Tone';
-      case 'step4-output':
-        return 'Step 4: Final Output Gallery & Review';
+      case 'step4-renaming':
+        return 'Step 4: Batch Image Renaming';
+      case 'step5-output':
+        return 'Step 5: Final Output Gallery & Review';
       case 'faces':
         return 'Shared With Me (Face Clusters)';
       case 'settings':
@@ -123,7 +125,7 @@ export const Header: React.FC<HeaderProps> = ({
             className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#D83C00] hover:bg-[#B83300] text-white font-heading font-bold text-xs tracking-wide transition-all active:scale-98 cursor-pointer shadow-none"
           >
             <Play className="w-3 h-3 fill-current" />
-            <span>Run 4-Step Pipeline</span>
+            <span>Run 5-Step Pipeline</span>
           </button>
         )}
 
