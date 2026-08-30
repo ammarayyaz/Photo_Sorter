@@ -5,33 +5,32 @@
 @tailwind utilities;
 
 :root {
-  /* User 4-Color Palette Constants */
-  --palette-indigo: #23003F;
-  --palette-red: #F94500;
-  --palette-purple: #BCACCE;
-  --palette-yellow: #FFFDB4;
+  /* Brand Palette Constants */
+  --palette-primary: #D83C00;
+  --palette-primary-hover: #B83300;
+  --palette-primary-light: #FFEDE5;
 
-  /* Light Theme (Maximum Contrast & Clean Legibility) */
-  --bg-page: #FFFFFF;
-  --bg-surface: #FAF8FD;
+  /* Light Theme */
+  --bg-page: #F8F9FA;
+  --bg-surface: #FFFFFF;
   --bg-card: #FFFFFF;
-  --border-app: #E7E0EE;
-  --text-main: #23003F;
-  --text-muted: #5A476E;
-  --text-dim: #8F7D9E;
-  --primary-accent: #F94500;
+  --border-app: #E5E7EB;
+  --text-main: #111827;
+  --text-muted: #4B5563;
+  --text-dim: #9CA3AF;
+  --primary-accent: #D83C00;
 }
 
 .dark {
-  /* Dark Theme (Maximum Contrast & Crisp Visibility) */
-  --bg-page: #150027;
-  --bg-surface: #20003A;
-  --bg-card: #2B054D;
-  --border-app: #4C177D;
+  /* Pure True Black Dark Theme */
+  --bg-page: #000000;
+  --bg-surface: #0A0A0A;
+  --bg-card: #121212;
+  --border-app: #27272A;
   --text-main: #FFFFFF;
-  --text-muted: #BCACCE;
-  --text-dim: #9480A6;
-  --primary-accent: #F94500;
+  --text-muted: #A1A1AA;
+  --text-dim: #71717A;
+  --primary-accent: #D83C00;
 }
 
 /* Global Zero-Shadow Policy */
@@ -77,23 +76,23 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   letter-spacing: -0.01em;
 }
 
-/* Typography Rule 7: High-Impact Clear CTA Buttons */
+/* High-Impact Clear CTA Buttons */
 .cta-button-primary {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 700;
   letter-spacing: 0.01em;
-  background-color: #F94500;
+  background-color: #D83C00;
   color: #FFFFFF;
   transition: transform 0.1s ease, background-color 0.15s ease;
 }
 .cta-button-primary:hover {
-  background-color: #D83C00;
+  background-color: #B83300;
 }
 .cta-button-primary:active {
   transform: scale(0.98);
 }
 
-/* Typography Rule 5: Small Uppercase Tags & Section Headers */
+/* Small Uppercase Tags & Section Headers */
 .label-tag-uppercase {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 800;
@@ -112,15 +111,15 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(188, 172, 206, 0.4);
+  background: rgba(161, 161, 170, 0.25);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(188, 172, 206, 0.7);
+  background: rgba(216, 60, 0, 0.6);
 }
 
 /* Clean Focus Visibility */
 *:focus-visible {
-  outline: 2px solid #F94500;
+  outline: 2px solid #D83C00;
   outline-offset: 2px;
 }

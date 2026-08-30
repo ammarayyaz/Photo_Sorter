@@ -46,7 +46,7 @@ export const PipelineProgress: React.FC<PipelineProgressProps> = ({
   };
 
   return (
-    <div className="bg-base-surface border border-base-border rounded-xl p-3.5 select-none">
+    <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-3.5 select-none">
       {/* Stages Progress Indicator */}
       <div className="grid grid-cols-5 gap-2 mb-3">
         {stages.map((stage) => {
@@ -56,16 +56,16 @@ export const PipelineProgress: React.FC<PipelineProgressProps> = ({
           return (
             <div
               key={stage.id}
-              className={`flex items-center gap-2 p-2 rounded-lg border text-xs transition-all ${
+              className={`flex items-center gap-2 p-2 rounded-xl border text-xs transition-all ${
                 stageState === 'active'
-                  ? 'bg-accent-subtle border-accent-border text-accent-cyan font-semibold'
+                  ? 'bg-[#D83C00]/15 border-[#D83C00]/40 text-[#D83C00] dark:text-[#FF8C61] font-semibold'
                   : stageState === 'completed'
-                  ? 'bg-base-elevated border-base-border text-text-primary'
-                  : 'bg-base-card border-base-border text-text-dim'
+                  ? 'bg-slate-100 dark:bg-[#181818] border-[#E5E7EB] dark:border-[#27272A] text-[#111827] dark:text-white'
+                  : 'bg-white dark:bg-[#121212] border-[#E5E7EB] dark:border-[#27272A] text-[#9CA3AF]'
               }`}
             >
-              <Icon className={`w-3.5 h-3.5 ${stageState === 'active' ? 'text-accent-cyan animate-pulse' : ''}`} />
-              <span className="truncate text-[11px]">{stage.label}</span>
+              <Icon className={`w-3.5 h-3.5 ${stageState === 'active' ? 'text-[#D83C00] animate-pulse' : ''}`} />
+              <span className="truncate text-xs">{stage.label}</span>
             </div>
           );
         })}
@@ -75,7 +75,7 @@ export const PipelineProgress: React.FC<PipelineProgressProps> = ({
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-text-primary">
+            <span className="font-semibold text-[#111827] dark:text-white">
               {status === 'COMPLETED'
                 ? 'All Photos Processed & Sorted'
                 : activeItem
@@ -83,31 +83,31 @@ export const PipelineProgress: React.FC<PipelineProgressProps> = ({
                 : 'Pipeline Idle'}
             </span>
             {activeItem && (
-              <span className="text-[11px] text-text-secondary font-mono">
+              <span className="text-2xs text-[#9CA3AF] font-mono">
                 ({metrics.currentProcessed} / {metrics.totalScanned})
               </span>
             )}
           </div>
 
-          <div className="flex items-center gap-3 text-[11px] text-text-secondary font-mono">
+          <div className="flex items-center gap-3 text-2xs text-[#9CA3AF] font-mono">
             <span className="flex items-center gap-1">
-              <Clock className="w-3 h-3 text-text-dim" />
+              <Clock className="w-3 h-3 text-[#9CA3AF]" />
               {metrics.elapsedTimeSec}s elapsed
             </span>
             {metrics.estimatedTimeRemainingSec > 0 && status !== 'COMPLETED' && (
-              <span className="flex items-center gap-1 text-accent-cyan">
+              <span className="flex items-center gap-1 text-[#D83C00]">
                 <Zap className="w-3 h-3" />
                 ~{metrics.estimatedTimeRemainingSec}s remaining
               </span>
             )}
-            <span className="font-bold text-accent-cyan">{percentage}%</span>
+            <span className="font-bold text-[#D83C00]">{percentage}%</span>
           </div>
         </div>
 
         {/* Bar */}
-        <div className="w-full bg-base-elevated h-2 rounded-full overflow-hidden border border-base-border">
+        <div className="w-full bg-[#E5E7EB] dark:bg-[#181818] h-2 rounded-full overflow-hidden border border-[#E5E7EB] dark:border-[#27272A]">
           <div
-            className="bg-accent-cyan h-full transition-all duration-300 rounded-full"
+            className="bg-[#D83C00] h-full transition-all duration-300 rounded-full"
             style={{ width: `${percentage}%` }}
           />
         </div>

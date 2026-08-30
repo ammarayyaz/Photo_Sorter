@@ -246,17 +246,17 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
   return (
     <div className="flex flex-col gap-4 h-full overflow-y-auto pr-1 pb-6 select-none">
       {/* 1. Header Banner with Facet AI Engine Badge */}
-      <div className="bg-white dark:bg-[#20003A] border border-[#E7E0EE] dark:border-[#4C177D] rounded-2xl p-4 flex items-center justify-between transition-colors shadow-sm">
+      <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-4 flex items-center justify-between transition-colors shadow-none">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#F94500]/15 text-[#F94500] border border-[#F94500]/30 flex items-center justify-center font-bold">
+          <div className="w-10 h-10 rounded-xl bg-[#D83C00]/15 text-[#D83C00] border border-[#D83C00]/30 flex items-center justify-center font-bold">
             <Archive className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="font-heading text-xs font-bold text-[#23003F] dark:text-[#FFFDB4]">
+            <h2 className="font-heading text-xs font-bold text-[#111827] dark:text-white">
               9-Dimension Quality Scoring, Blink Detection (EAR) &amp; Burst Culling
             </h2>
-            <p className="font-sans text-xs text-[#5A476E] dark:text-[#BCACCE] mt-0.5">
-              Powered by Facet multi-dimensional scoring: evaluates Eye Aspect Ratio (<code className="text-[#F94500] font-mono">EAR &lt; 0.21</code>), subject saliency, and motion smear while protecting background bokeh.
+            <p className="font-sans text-xs text-[#4B5563] dark:text-[#A1A1AA] mt-0.5">
+              Powered by Facet multi-dimensional scoring: evaluates Eye Aspect Ratio (<code className="text-[#D83C00] font-mono">EAR &lt; 0.21</code>), subject saliency, and motion smear while protecting background bokeh.
             </p>
           </div>
         </div>
@@ -266,8 +266,8 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
           disabled={items.length === 0}
           className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-white font-heading font-bold text-xs tracking-wide transition-all ${
             items.length > 0
-              ? 'bg-[#F94500] hover:bg-[#D83C00] active:scale-98 cursor-pointer shadow-sm'
-              : 'bg-slate-300 dark:bg-slate-700 cursor-not-allowed opacity-70'
+              ? 'bg-[#D83C00] hover:bg-[#B83300] active:scale-98 cursor-pointer shadow-none'
+              : 'bg-slate-300 dark:bg-slate-800 cursor-not-allowed opacity-70'
           }`}
         >
           <Sparkles className="w-3.5 h-3.5" />
@@ -276,16 +276,16 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
       </div>
 
       {/* 2. Google Gemini Vision AI Bar */}
-      <div className="bg-white dark:bg-[#20003A] border border-[#E7E0EE] dark:border-[#4C177D] rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3 shadow-xs">
+      <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3 shadow-none">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-8 h-8 rounded-xl bg-[#F94500]/10 text-[#F94500] border border-[#F94500]/20 flex items-center justify-center flex-shrink-0 font-bold">
+          <div className="w-8 h-8 rounded-xl bg-[#D83C00]/10 text-[#D83C00] border border-[#D83C00]/20 flex items-center justify-center flex-shrink-0 font-bold">
             <Zap className="w-4 h-4" />
           </div>
           <div className="min-w-0">
-            <span className="font-heading text-xs font-bold text-[#23003F] dark:text-[#FFFDB4]">
+            <span className="font-heading text-xs font-bold text-[#111827] dark:text-white">
               Google Gemini Vision AI (Flash)
             </span>
-            <p className="font-sans text-2xs text-[#5A476E] dark:text-[#BCACCE] mt-0.5 truncate">
+            <p className="font-sans text-2xs text-[#4B5563] dark:text-[#A1A1AA] mt-0.5 truncate">
               {apiKeyInput || geminiApiKey
                 ? 'Ready to inspect subtle blinks, squinting eyelids & camera shake with high precision.'
                 : 'Paste your Google Gemini API key to run multimodal AI culling & expression inspection.'}
@@ -294,20 +294,20 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
         </div>
 
         <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
-          <div className="flex items-center gap-1.5 bg-[#FAF8FD] dark:bg-[#2D074B] px-2.5 py-1 rounded-xl border border-[#E7E0EE] dark:border-[#5B228E]">
-            <Key className="w-3.5 h-3.5 text-[#BCACCE]" />
+          <div className="flex items-center gap-1.5 bg-[#F9FAFB] dark:bg-[#181818] px-2.5 py-1 rounded-xl border border-[#E5E7EB] dark:border-[#27272A]">
+            <Key className="w-3.5 h-3.5 text-[#9CA3AF]" />
             <input
               type="password"
-              placeholder="Paste Gemini API Key (AIza...)"
+              placeholder="Paste Gemini API Key (AIza... / AQ...)"
               value={apiKeyInput}
               onChange={(e) => setApiKeyInput(e.target.value)}
               onBlur={handleSaveApiKey}
-              className="bg-transparent font-mono text-xs text-[#23003F] dark:text-white placeholder:text-[#BCACCE] outline-none w-44"
+              className="bg-transparent font-mono text-xs text-[#111827] dark:text-white placeholder:text-[#9CA3AF] outline-none w-48"
             />
             {apiKeyInput !== geminiApiKey && apiKeyInput.length > 5 && (
               <button
                 onClick={handleSaveApiKey}
-                className="px-2 py-0.5 rounded bg-[#F94500] text-white text-2xs font-bold font-heading hover:bg-[#D83C00] cursor-pointer"
+                className="px-2 py-0.5 rounded bg-[#D83C00] text-white text-2xs font-bold font-heading hover:bg-[#B83300] cursor-pointer"
               >
                 Save
               </button>
@@ -318,7 +318,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             href="https://aistudio.google.com/app/apikey"
             target="_blank"
             rel="noreferrer"
-            className="flex items-center gap-1 text-2xs font-heading font-bold text-[#5A476E] dark:text-[#BCACCE] hover:text-[#F94500] transition-colors"
+            className="flex items-center gap-1 text-2xs font-heading font-bold text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#D83C00] transition-colors"
           >
             <span>Get Free Key</span>
             <ExternalLink className="w-3 h-3" />
@@ -327,11 +327,11 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
           <button
             onClick={handleRunGeminiVisionScan}
             disabled={isScanningGemini || items.length === 0}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-xl font-heading text-xs font-bold transition-all shadow-xs ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-xl font-heading text-xs font-bold transition-all shadow-none ${
               isScanningGemini
                 ? 'bg-purple-600 text-white cursor-wait'
                 : apiKeyInput || geminiApiKey
-                ? 'bg-[#23003F] dark:bg-[#FFFDB4] text-white dark:text-[#23003F] hover:opacity-90 cursor-pointer active:scale-95'
+                ? 'bg-[#D83C00] hover:bg-[#B83300] text-white cursor-pointer active:scale-95'
                 : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-pointer'
             }`}
             title={apiKeyInput || geminiApiKey ? 'Run Gemini Vision AI Scan' : 'Paste API Key to run'}
@@ -343,7 +343,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
               </>
             ) : (
               <>
-                <Zap className="w-3.5 h-3.5 text-[#F94500]" />
+                <Zap className="w-3.5 h-3.5 text-white" />
                 <span>Run Gemini AI Scan</span>
               </>
             )}
@@ -352,21 +352,21 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
       </div>
 
       {/* 3. Facet Mode Selector & Auto-Cull Tuning Strip */}
-      <div className="bg-[#FAF8FD] dark:bg-[#20003A] border border-[#E7E0EE] dark:border-[#4C177D] rounded-2xl p-3 flex items-center justify-between gap-3 shadow-xs">
+      <div className="bg-[#F9FAFB] dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-3 flex items-center justify-between gap-3 shadow-none">
         <div className="flex items-center gap-2">
-          <Sliders className="w-4 h-4 text-[#F94500]" />
-          <span className="font-heading text-xs font-bold text-[#23003F] dark:text-[#FFFDB4]">
+          <Sliders className="w-4 h-4 text-[#D83C00]" />
+          <span className="font-heading text-xs font-bold text-[#111827] dark:text-white">
             Facet Auto-Cull Mode:
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5 bg-white dark:bg-[#2D074B] p-1 rounded-xl border border-[#E7E0EE] dark:border-[#5B228E]">
+        <div className="flex items-center gap-1.5 bg-white dark:bg-[#181818] p-1 rounded-xl border border-[#E5E7EB] dark:border-[#27272A]">
           <button
             onClick={() => handleApplyFacetMode('KEEP_ALL_GOOD')}
             className={`px-3 py-1 rounded-lg font-heading text-2xs font-bold transition-all cursor-pointer ${
               cullMode === 'KEEP_ALL_GOOD'
-                ? 'bg-[#F94500] text-white shadow-xs'
-                : 'text-[#5A476E] dark:text-[#BCACCE] hover:text-[#23003F] dark:hover:text-white'
+                ? 'bg-[#D83C00] text-white shadow-none'
+                : 'text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white'
             }`}
           >
             Keep All Good Shots (Default)
@@ -376,8 +376,8 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             onClick={() => handleApplyFacetMode('BALANCED')}
             className={`px-3 py-1 rounded-lg font-heading text-2xs font-bold transition-all cursor-pointer ${
               cullMode === 'BALANCED'
-                ? 'bg-[#F94500] text-white shadow-xs'
-                : 'text-[#5A476E] dark:text-[#BCACCE] hover:text-[#23003F] dark:hover:text-white'
+                ? 'bg-[#D83C00] text-white shadow-none'
+                : 'text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white'
             }`}
           >
             Facet Balanced (Top 2 in Bursts)
@@ -387,8 +387,8 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             onClick={() => handleApplyFacetMode('STRICT')}
             className={`px-3 py-1 rounded-lg font-heading text-2xs font-bold transition-all cursor-pointer ${
               cullMode === 'STRICT'
-                ? 'bg-[#F94500] text-white shadow-xs'
-                : 'text-[#5A476E] dark:text-[#BCACCE] hover:text-[#23003F] dark:hover:text-white'
+                ? 'bg-[#D83C00] text-white shadow-none'
+                : 'text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white'
             }`}
           >
             Facet Strict (Winner Only)
@@ -398,63 +398,63 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
 
       {/* 3. Real Separation Stat Cards */}
       <div className="grid grid-cols-4 gap-3">
-        <div className="bg-white dark:bg-[#20003A] border border-[#E7E0EE] dark:border-[#4C177D] rounded-2xl p-3.5 flex flex-col justify-between transition-colors shadow-xs">
-          <span className="font-heading text-xs font-semibold text-[#5A476E] dark:text-[#BCACCE]">Total Ingested</span>
-          <div className="font-mono tabular-nums text-xl font-extrabold text-[#23003F] dark:text-[#FFFDB4] mt-1">
+        <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-3.5 flex flex-col justify-between transition-colors shadow-none">
+          <span className="font-heading text-xs font-semibold text-[#4B5563] dark:text-[#A1A1AA]">Total Ingested</span>
+          <div className="font-mono tabular-nums text-xl font-extrabold text-[#111827] dark:text-white mt-1">
             {totalCount} photos
           </div>
-          <span className="font-sans text-2xs text-[#BCACCE] mt-1">Source pool</span>
+          <span className="font-sans text-2xs text-[#9CA3AF] mt-1">Source pool</span>
         </div>
 
-        <div className="bg-white dark:bg-[#20003A] border border-[#BCACCE]/50 dark:border-[#5B228E] rounded-2xl p-3.5 flex flex-col justify-between bg-[#FFFDB4]/20 dark:bg-[#2A0548] shadow-xs">
+        <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-3.5 flex flex-col justify-between shadow-none">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-heading font-semibold text-[#23003F] dark:text-[#FFFDB4]">Kept Winners (Eyes Open)</span>
-            <CheckCircle2 className="w-4 h-4 text-[#F94500]" />
+            <span className="font-heading font-semibold text-[#111827] dark:text-white">Kept Winners (Eyes Open)</span>
+            <CheckCircle2 className="w-4 h-4 text-[#D83C00]" />
           </div>
-          <div className="font-mono tabular-nums text-xl font-extrabold text-[#F94500] mt-1">
+          <div className="font-mono tabular-nums text-xl font-extrabold text-[#D83C00] mt-1">
             {keptItems.length} photos
           </div>
-          <span className="font-sans text-2xs text-[#5A476E] dark:text-[#BCACCE] font-medium mt-1">
+          <span className="font-sans text-2xs text-[#4B5563] dark:text-[#A1A1AA] font-medium mt-1">
             Subject in focus &amp; eyes open
           </span>
         </div>
 
-        <div className="bg-white dark:bg-[#20003A] border border-[#F94500]/40 rounded-2xl p-3.5 flex flex-col justify-between bg-[#F94500]/10 shadow-xs">
+        <div className="bg-white dark:bg-[#0E0E0E] border border-red-500/30 rounded-2xl p-3.5 flex flex-col justify-between bg-red-500/5 dark:bg-red-950/10 shadow-none">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-heading font-semibold text-[#F94500]">Closed Eyes / Blinking (EAR &lt; 0.21)</span>
-            <EyeOff className="w-4 h-4 text-[#F94500]" />
+            <span className="font-heading font-semibold text-red-500">Closed Eyes / Blinking (EAR &lt; 0.21)</span>
+            <EyeOff className="w-4 h-4 text-red-500" />
           </div>
-          <div className="font-mono tabular-nums text-xl font-extrabold text-[#F94500] mt-1">
+          <div className="font-mono tabular-nums text-xl font-extrabold text-red-500 mt-1">
             {eyesClosedCount} frames
           </div>
-          <span className="font-mono text-2xs text-[#F94500] mt-1">
+          <span className="font-mono text-2xs text-red-500 mt-1">
             Separated to `_archive/`
           </span>
         </div>
 
-        <div className="bg-white dark:bg-[#20003A] border border-[#BCACCE]/40 rounded-2xl p-3.5 flex flex-col justify-between bg-[#FFFDB4]/15 shadow-xs">
+        <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-3.5 flex flex-col justify-between shadow-none">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-heading font-semibold text-[#23003F] dark:text-[#FFFDB4]">Motion Shake Blur</span>
-            <Activity className="w-4 h-4 text-[#BCACCE]" />
+            <span className="font-heading font-semibold text-[#111827] dark:text-white">Motion Shake Blur</span>
+            <Activity className="w-4 h-4 text-[#9CA3AF]" />
           </div>
-          <div className="font-mono tabular-nums text-xl font-extrabold text-[#23003F] dark:text-[#FFFDB4] mt-1">
+          <div className="font-mono tabular-nums text-xl font-extrabold text-[#111827] dark:text-white mt-1">
             {motionCount} frames
           </div>
-          <span className="font-mono text-2xs text-[#5A476E] dark:text-[#BCACCE] mt-1">
+          <span className="font-mono text-2xs text-[#4B5563] dark:text-[#A1A1AA] mt-1">
             Separated to `_archive/`
           </span>
         </div>
       </div>
 
       {/* 4. Filter Bar & Bulk Actions */}
-      <div className="flex items-center justify-between bg-[#FAF8FD] dark:bg-[#20003A] border border-[#E7E0EE] dark:border-[#4C177D] rounded-2xl p-2 transition-colors">
+      <div className="flex items-center justify-between bg-[#F9FAFB] dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-2 transition-colors">
         <div className="flex items-center gap-1.5 flex-wrap">
           <button
             onClick={() => setActiveTab('all')}
             className={`px-3 py-1.5 rounded-xl font-heading text-xs font-bold transition-colors cursor-pointer ${
               activeTab === 'all'
-                ? 'bg-white dark:bg-[#2F0850] text-[#23003F] dark:text-[#FFFDB4] border border-[#E7E0EE] dark:border-[#5B228E] shadow-xs'
-                : 'text-[#5A476E] dark:text-[#BCACCE] hover:text-[#23003F] dark:hover:text-white'
+                ? 'bg-white dark:bg-[#1E1E1E] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#3F3F46] shadow-none'
+                : 'text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white'
             }`}
           >
             All Frames ({totalCount})
@@ -464,8 +464,8 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             onClick={() => setActiveTab('kept')}
             className={`px-3 py-1.5 rounded-xl font-heading text-xs font-bold transition-colors cursor-pointer ${
               activeTab === 'kept'
-                ? 'bg-white dark:bg-[#2F0850] text-[#F94500] border border-[#E7E0EE] dark:border-[#5B228E] shadow-xs'
-                : 'text-[#5A476E] dark:text-[#BCACCE] hover:text-[#23003F] dark:hover:text-white'
+                ? 'bg-white dark:bg-[#1E1E1E] text-[#D83C00] border border-[#E5E7EB] dark:border-[#3F3F46] shadow-none'
+                : 'text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white'
             }`}
           >
             Kept Winners ({keptItems.length})
@@ -475,8 +475,8 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             onClick={() => setActiveTab('top_picks')}
             className={`px-3 py-1.5 rounded-xl font-heading text-xs font-bold transition-colors cursor-pointer ${
               activeTab === 'top_picks'
-                ? 'bg-white dark:bg-[#2F0850] text-[#F94500] border border-[#E7E0EE] dark:border-[#5B228E] shadow-xs'
-                : 'text-[#5A476E] dark:text-[#BCACCE] hover:text-[#23003F] dark:hover:text-white'
+                ? 'bg-white dark:bg-[#1E1E1E] text-[#D83C00] border border-[#E5E7EB] dark:border-[#3F3F46] shadow-none'
+                : 'text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white'
             }`}
           >
             Facet Top Picks ({topPicks.length})
@@ -486,24 +486,24 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             onClick={() => setActiveTab('archived')}
             className={`px-3 py-1.5 rounded-xl font-heading text-xs font-bold transition-colors cursor-pointer ${
               activeTab === 'archived'
-                ? 'bg-white dark:bg-[#2F0850] text-[#F94500] border border-[#E7E0EE] dark:border-[#5B228E] shadow-xs'
-                : 'text-[#5A476E] dark:text-[#BCACCE] hover:text-[#23003F] dark:hover:text-white'
+                ? 'bg-white dark:bg-[#1E1E1E] text-red-500 border border-[#E5E7EB] dark:border-[#3F3F46] shadow-none'
+                : 'text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white'
             }`}
           >
             Separated `_archive/` ({archivedItems.length})
           </button>
 
-          <div className="h-4 w-px bg-[#E7E0EE] dark:bg-[#4C177D] mx-1" />
+          <div className="h-4 w-px bg-[#E5E7EB] dark:bg-[#27272A] mx-1" />
 
           {/* Select All Checkbox */}
           <button
             onClick={handleToggleSelectAll}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E7E0EE] dark:border-[#4C177D] bg-white dark:bg-[#20003A] hover:bg-[#F4F1F8] dark:hover:bg-[#320857] text-[#23003F] dark:text-[#FFFDB4] font-heading text-xs font-bold transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E5E7EB] dark:border-[#27272A] bg-white dark:bg-[#181818] hover:bg-slate-100 dark:hover:bg-[#222222] text-[#111827] dark:text-white font-heading text-xs font-bold transition-colors cursor-pointer"
           >
             {isAllSelected ? (
-              <CheckSquare className="w-3.5 h-3.5 text-[#F94500]" />
+              <CheckSquare className="w-3.5 h-3.5 text-[#D83C00]" />
             ) : (
-              <Square className="w-3.5 h-3.5 text-[#BCACCE]" />
+              <Square className="w-3.5 h-3.5 text-[#9CA3AF]" />
             )}
             <span>{isAllSelected ? 'Deselect All' : 'Select All'}</span>
           </button>
@@ -513,7 +513,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             <>
               <button
                 onClick={() => handleBulkAction(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#F94500] hover:bg-[#D83C00] text-white font-heading text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-heading text-xs font-bold transition-all cursor-pointer shadow-none active:scale-95"
               >
                 <Archive className="w-3.5 h-3.5" />
                 <span>Move Selected to _archive ({selectedIds.size})</span>
@@ -521,7 +521,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
 
               <button
                 onClick={() => handleBulkAction(false)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#23003F] dark:bg-[#FFFDB4] text-white dark:text-[#23003F] font-heading text-xs font-bold transition-all cursor-pointer shadow-xs active:scale-95"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#D83C00] hover:bg-[#B83300] text-white font-heading text-xs font-bold transition-all cursor-pointer shadow-none active:scale-95"
               >
                 <Check className="w-3.5 h-3.5" />
                 <span>Restore Selected to Kept ({selectedIds.size})</span>
@@ -531,34 +531,34 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
         </div>
 
         {/* Search Bar */}
-        <div className="flex items-center gap-2 bg-white dark:bg-[#2E074E] border border-[#E7E0EE] dark:border-[#4C177D] rounded-xl px-2.5 py-1 text-xs">
-          <Search className="w-3.5 h-3.5 text-[#BCACCE]" />
+        <div className="flex items-center gap-2 bg-white dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#27272A] rounded-xl px-2.5 py-1 text-xs">
+          <Search className="w-3.5 h-3.5 text-[#9CA3AF]" />
           <input
             type="text"
             placeholder="Search filename..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="bg-transparent font-sans text-xs text-[#23003F] dark:text-white placeholder:text-[#BCACCE] outline-none w-36"
+            className="bg-transparent font-sans text-xs text-[#111827] dark:text-white placeholder:text-[#9CA3AF] outline-none w-36"
           />
         </div>
       </div>
 
       {/* 5. Photos Grid or Clean Empty State */}
       {items.length === 0 ? (
-        <div className="bg-white dark:bg-[#20003A] border border-[#E7E0EE] dark:border-[#4C177D] rounded-2xl p-12 text-center flex flex-col items-center justify-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-[#F94500]/15 text-[#F94500] border border-[#F94500]/30 flex items-center justify-center">
+        <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-12 text-center flex flex-col items-center justify-center gap-3">
+          <div className="w-12 h-12 rounded-2xl bg-[#D83C00]/15 text-[#D83C00] border border-[#D83C00]/30 flex items-center justify-center">
             <FolderOpen className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="font-heading text-sm font-bold text-[#23003F] dark:text-[#FFFDB4]">No photos uploaded for separation</h3>
-            <p className="font-sans text-xs text-[#5A476E] dark:text-[#BCACCE] mt-1 max-w-sm">
+            <h3 className="font-heading text-sm font-bold text-[#111827] dark:text-white">No photos uploaded for separation</h3>
+            <p className="font-sans text-xs text-[#4B5563] dark:text-[#A1A1AA] mt-1 max-w-sm">
               Please go to Step 1 and drag &amp; drop a photo folder or images from your computer to run the eye blink and motion separation.
             </p>
           </div>
           {onGoToIngest && (
             <button
               onClick={onGoToIngest}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#F94500] hover:bg-[#D83C00] text-white font-heading text-xs font-bold tracking-wide transition-all mt-2 cursor-pointer shadow-sm active:scale-98"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#D83C00] hover:bg-[#B83300] text-white font-heading text-xs font-bold tracking-wide transition-all mt-2 cursor-pointer shadow-none active:scale-98"
             >
               <span>Go to Step 1: Ingest Folders</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -580,16 +580,16 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
               <div
                 key={item.metadata.id}
                 onClick={() => setInspectingItem(item)}
-                className={`bg-white dark:bg-[#20003A] rounded-2xl border p-3 flex flex-col justify-between transition-all select-none cursor-pointer group ${
+                className={`bg-white dark:bg-[#0E0E0E] rounded-2xl border p-3 flex flex-col justify-between transition-all select-none cursor-pointer group ${
                   isChecked
-                    ? 'border-[#F94500] ring-2 ring-[#F94500]/30'
+                    ? 'border-[#D83C00] ring-2 ring-[#D83C00]/30'
                     : isArchived
-                    ? 'border-[#F94500]/40 bg-[#F94500]/5 dark:bg-[#2D063A]'
-                    : 'border-[#E7E0EE] dark:border-[#4C177D] hover:border-[#F94500]'
+                    ? 'border-red-500/40 bg-red-500/5 dark:bg-red-950/10'
+                    : 'border-[#E5E7EB] dark:border-[#27272A] hover:border-[#D83C00]'
                 }`}
               >
                 {/* Real Photo Thumbnail Container */}
-                <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-slate-900 border border-slate-100 dark:border-[#4C177D]">
+                <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-slate-900 border border-slate-100 dark:border-[#27272A]">
                   <img
                     src={item.thumbnailUrl}
                     alt={item.metadata.filename}
@@ -603,7 +603,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
                     title={isChecked ? 'Deselect photo' : 'Select photo'}
                   >
                     {isChecked ? (
-                      <CheckSquare className="w-3.5 h-3.5 text-[#F94500]" />
+                      <CheckSquare className="w-3.5 h-3.5 text-[#D83C00]" />
                     ) : (
                       <Square className="w-3.5 h-3.5 text-white" />
                     )}
@@ -611,16 +611,16 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
 
                   {/* Top Right: Facet Score & Status Pill Badges */}
                   <div className="absolute top-2 right-2 z-10 flex items-center gap-1">
-                    <span className="px-2 py-0.5 rounded-full text-2xs font-mono font-extrabold bg-black/80 backdrop-blur-md text-[#FFFDB4] border border-[#FFFDB4]/30 shadow-sm">
+                    <span className="px-2 py-0.5 rounded-full text-2xs font-mono font-extrabold bg-black/80 backdrop-blur-md text-white border border-white/20 shadow-none">
                       ★ {facetScore}
                     </span>
 
                     {isArchived ? (
-                      <span className="px-2 py-0.5 rounded-full text-2xs font-heading font-extrabold uppercase tracking-wider bg-[#F94500] text-white flex items-center gap-1 shadow-sm">
+                      <span className="px-2 py-0.5 rounded-full text-2xs font-heading font-extrabold uppercase tracking-wider bg-red-600 text-white flex items-center gap-1 shadow-none">
                         _archive
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded-full text-2xs font-heading font-extrabold uppercase tracking-wider bg-[#FFFDB4] text-[#23003F] flex items-center gap-1 shadow-sm font-bold">
+                      <span className="px-2 py-0.5 rounded-full text-2xs font-heading font-extrabold uppercase tracking-wider bg-[#D83C00] text-white flex items-center gap-1 shadow-none font-bold">
                         Kept
                       </span>
                     )}
@@ -629,22 +629,22 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
                   {/* Facet Eye EAR & Focus Pill (Bottom) */}
                   <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between bg-black/80 backdrop-blur-sm text-white px-2.5 py-1 rounded-lg text-2xs font-mono tabular-nums z-10">
                     {isEyesClosed ? (
-                      <span className="text-[#F94500] font-bold flex items-center gap-1">
-                        <EyeOff className="w-3 h-3 text-[#F94500]" />
+                      <span className="text-red-400 font-bold flex items-center gap-1">
+                        <EyeOff className="w-3 h-3 text-red-400" />
                         EAR: {earRatio.toFixed(2)} (Blink)
                       </span>
                     ) : isMotion ? (
-                      <span className="text-[#FFFDB4] font-bold flex items-center gap-1">
-                        <Activity className="w-3 h-3 text-[#FFFDB4]" />
+                      <span className="text-amber-400 font-bold flex items-center gap-1">
+                        <Activity className="w-3 h-3 text-amber-400" />
                         Motion Smear
                       </span>
                     ) : (
-                      <span className="text-[#FFFDB4] font-bold flex items-center gap-1">
-                        <Eye className="w-3 h-3 text-[#FFFDB4]" />
+                      <span className="text-emerald-400 font-bold flex items-center gap-1">
+                        <Eye className="w-3 h-3 text-emerald-400" />
                         EAR: {earRatio.toFixed(2)} (Open)
                       </span>
                     )}
-                    <span className="text-[#BCACCE] text-2xs">
+                    <span className="text-[#A1A1AA] text-2xs">
                       Focus: {item.quality.laplacianSharpness.toFixed(0)}/100
                     </span>
                   </div>
@@ -653,21 +653,21 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
                 {/* Card Meta & Override Trigger */}
                 <div className="flex flex-col gap-2 pt-2.5">
                   <div className="flex items-center justify-between">
-                    <span className="font-sans font-bold text-xs text-[#23003F] dark:text-[#FFFDB4] truncate max-w-[170px]">
+                    <span className="font-sans font-bold text-xs text-[#111827] dark:text-white truncate max-w-[170px]">
                       {item.metadata.filename}
                     </span>
-                    <span className="text-2xs font-mono tabular-nums text-[#BCACCE]">
+                    <span className="text-2xs font-mono tabular-nums text-[#9CA3AF]">
                       {(item.metadata.fileSize / 1000000).toFixed(2)} MB
                     </span>
                   </div>
 
-                  <p className="font-sans text-2xs text-[#5A476E] dark:text-[#BCACCE] leading-tight truncate">
+                  <p className="font-sans text-2xs text-[#4B5563] dark:text-[#A1A1AA] leading-tight truncate">
                     {item.blurClassification.reason}
                   </p>
 
                   {/* Action: Toggle Archive Status */}
-                  <div className="pt-2 border-t border-[#E7E0EE] dark:border-[#4C177D] flex items-center justify-between">
-                    <span className="text-2xs font-mono tabular-nums text-[#BCACCE] truncate max-w-[120px]">
+                  <div className="pt-2 border-t border-[#E5E7EB] dark:border-[#27272A] flex items-center justify-between">
+                    <span className="text-2xs font-mono tabular-nums text-[#9CA3AF] truncate max-w-[120px]">
                       {isArchived ? 'Dest: /_archive/' : 'Dest: /Kept/'}
                     </span>
 
@@ -676,10 +676,10 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
                         e.stopPropagation();
                         onToggleArchive(item.metadata.id);
                       }}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-heading text-xs font-bold tracking-wide transition-all cursor-pointer active:scale-95 shadow-xs ${
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-heading text-xs font-bold tracking-wide transition-all cursor-pointer active:scale-95 shadow-none ${
                         isArchived
-                          ? 'bg-[#23003F] dark:bg-[#FFFDB4] hover:opacity-90 text-white dark:text-[#23003F]'
-                          : 'bg-[#F94500] hover:bg-[#D83C00] text-white'
+                          ? 'bg-[#181818] hover:bg-[#222222] text-white border border-[#27272A]'
+                          : 'bg-[#D83C00] hover:bg-[#B83300] text-white'
                       }`}
                     >
                       {isArchived ? (
@@ -710,25 +710,25 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-white dark:bg-[#20003A] border border-[#E7E0EE] dark:border-[#4C177D] rounded-3xl p-6 max-w-3xl w-full flex flex-col gap-4 shadow-2xl overflow-hidden max-h-[90vh]"
+            className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-3xl p-6 max-w-3xl w-full flex flex-col gap-4 shadow-2xl overflow-hidden max-h-[90vh]"
           >
-            <div className="flex items-center justify-between border-b border-[#E7E0EE] dark:border-[#4C177D] pb-3">
+            <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#27272A] pb-3">
               <div className="flex items-center gap-2">
-                <Info className="w-5 h-5 text-[#F94500]" />
-                <h3 className="font-heading text-sm font-bold text-[#23003F] dark:text-[#FFFDB4]">
+                <Info className="w-5 h-5 text-[#D83C00]" />
+                <h3 className="font-heading text-sm font-bold text-[#111827] dark:text-white">
                   Facet 9-Dimension Quality Breakdown
                 </h3>
               </div>
               <button
                 onClick={() => setInspectingItem(null)}
-                className="p-1 rounded-lg text-[#BCACCE] hover:text-[#F94500] hover:bg-[#F94500]/10 transition-colors"
+                className="p-1 rounded-lg text-[#9CA3AF] hover:text-[#D83C00] hover:bg-[#D83C00]/10 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="grid grid-cols-2 gap-4 overflow-y-auto">
-              <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-slate-900 border border-[#E7E0EE] dark:border-[#4C177D]">
+              <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-slate-900 border border-[#E5E7EB] dark:border-[#27272A]">
                 <img
                   src={inspectingItem.originalFileUrl || inspectingItem.transformedThumbnailUrl || inspectingItem.thumbnailUrl}
                   alt={inspectingItem.metadata.filename}
@@ -737,58 +737,58 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
               </div>
 
               <div className="flex flex-col gap-2.5 text-xs font-sans">
-                <div className="flex items-center justify-between p-2 rounded-xl bg-[#FAF8FD] dark:bg-[#2D074B] border border-[#E7E0EE] dark:border-[#5B228E]">
-                  <span className="font-heading font-bold text-[#23003F] dark:text-[#FFFDB4]">Facet Overall Score</span>
-                  <span className="font-mono text-base font-extrabold text-[#F94500]">
+                <div className="flex items-center justify-between p-2 rounded-xl bg-[#F9FAFB] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#27272A]">
+                  <span className="font-heading font-bold text-[#111827] dark:text-white">Facet Overall Score</span>
+                  <span className="font-mono text-base font-extrabold text-[#D83C00]">
                     {inspectingItem.quality.facet?.facetCompositeScore || inspectingItem.quality.compositeScore}/100
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-2xs">
-                  <div className="p-2 rounded-xl bg-slate-50 dark:bg-[#1A0030] border border-[#E7E0EE] dark:border-[#4C177D]">
-                    <span className="text-[#BCACCE]">Eye Aspect Ratio (EAR)</span>
-                    <div className="font-mono text-xs font-bold text-[#23003F] dark:text-white mt-0.5">
+                  <div className="p-2 rounded-xl bg-slate-50 dark:bg-[#141414] border border-[#E5E7EB] dark:border-[#27272A]">
+                    <span className="text-[#9CA3AF]">Eye Aspect Ratio (EAR)</span>
+                    <div className="font-mono text-xs font-bold text-[#111827] dark:text-white mt-0.5">
                       {inspectingItem.quality.facet?.earRatio ?? 0.32} (Thresh: 0.21)
                     </div>
                   </div>
 
-                  <div className="p-2 rounded-xl bg-slate-50 dark:bg-[#1A0030] border border-[#E7E0EE] dark:border-[#4C177D]">
-                    <span className="text-[#BCACCE]">Eye Sharpness</span>
-                    <div className="font-mono text-xs font-bold text-[#23003F] dark:text-white mt-0.5">
+                  <div className="p-2 rounded-xl bg-slate-50 dark:bg-[#141414] border border-[#E5E7EB] dark:border-[#27272A]">
+                    <span className="text-[#9CA3AF]">Eye Sharpness</span>
+                    <div className="font-mono text-xs font-bold text-[#111827] dark:text-white mt-0.5">
                       {inspectingItem.quality.facet?.eyeSharpness ?? 8.5}/10
                     </div>
                   </div>
 
-                  <div className="p-2 rounded-xl bg-slate-50 dark:bg-[#1A0030] border border-[#E7E0EE] dark:border-[#4C177D]">
-                    <span className="text-[#BCACCE]">Tech Sharpness</span>
-                    <div className="font-mono text-xs font-bold text-[#23003F] dark:text-white mt-0.5">
+                  <div className="p-2 rounded-xl bg-slate-50 dark:bg-[#141414] border border-[#E5E7EB] dark:border-[#27272A]">
+                    <span className="text-[#9CA3AF]">Tech Sharpness</span>
+                    <div className="font-mono text-xs font-bold text-[#111827] dark:text-white mt-0.5">
                       {inspectingItem.quality.laplacianSharpness.toFixed(0)}/100
                     </div>
                   </div>
 
-                  <div className="p-2 rounded-xl bg-slate-50 dark:bg-[#1A0030] border border-[#E7E0EE] dark:border-[#4C177D]">
-                    <span className="text-[#BCACCE]">Exposure Quality</span>
-                    <div className="font-mono text-xs font-bold text-[#23003F] dark:text-white mt-0.5">
+                  <div className="p-2 rounded-xl bg-slate-50 dark:bg-[#141414] border border-[#E5E7EB] dark:border-[#27272A]">
+                    <span className="text-[#9CA3AF]">Exposure Quality</span>
+                    <div className="font-mono text-xs font-bold text-[#111827] dark:text-white mt-0.5">
                       {inspectingItem.quality.facet?.exposureQuality ?? 9.2}/10
                     </div>
                   </div>
 
-                  <div className="p-2 rounded-xl bg-slate-50 dark:bg-[#1A0030] border border-[#E7E0EE] dark:border-[#4C177D]">
-                    <span className="text-[#BCACCE]">Color Harmony</span>
-                    <div className="font-mono text-xs font-bold text-[#23003F] dark:text-white mt-0.5">
+                  <div className="p-2 rounded-xl bg-slate-50 dark:bg-[#141414] border border-[#E5E7EB] dark:border-[#27272A]">
+                    <span className="text-[#9CA3AF]">Color Harmony</span>
+                    <div className="font-mono text-xs font-bold text-[#111827] dark:text-white mt-0.5">
                       {inspectingItem.quality.facet?.colorHarmony ?? 8.6}/10
                     </div>
                   </div>
 
-                  <div className="p-2 rounded-xl bg-slate-50 dark:bg-[#1A0030] border border-[#E7E0EE] dark:border-[#4C177D]">
-                    <span className="text-[#BCACCE]">Culling Decision</span>
-                    <div className="font-mono text-xs font-bold text-[#F94500] mt-0.5">
+                  <div className="p-2 rounded-xl bg-slate-50 dark:bg-[#141414] border border-[#E5E7EB] dark:border-[#27272A]">
+                    <span className="text-[#9CA3AF]">Culling Decision</span>
+                    <div className="font-mono text-xs font-bold text-[#D83C00] mt-0.5">
                       {inspectingItem.isArchived ? '_archive' : 'Kept Winner'}
                     </div>
                   </div>
                 </div>
 
-                <div className="p-2.5 rounded-xl bg-[#FFFDB4]/20 border border-[#FFFDB4]/40 text-2xs text-[#23003F] dark:text-[#FFFDB4]">
+                <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#27272A] text-2xs text-[#111827] dark:text-white">
                   <strong>Reason:</strong> {inspectingItem.blurClassification.reason}
                 </div>
 
@@ -800,20 +800,20 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
               </div>
             </div>
 
-            <div className="flex items-center justify-between gap-2 pt-2 border-t border-[#E7E0EE] dark:border-[#4C177D]">
+            <div className="flex items-center justify-between gap-2 pt-2 border-t border-[#E5E7EB] dark:border-[#27272A]">
               <button
                 onClick={handleScanInspectingItemWithGemini}
                 disabled={geminiSingleLoading}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-100 hover:bg-purple-200 dark:bg-purple-900/40 dark:hover:bg-purple-900/60 text-purple-700 dark:text-purple-300 font-heading text-xs font-bold transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#D83C00]/10 hover:bg-[#D83C00]/20 text-[#D83C00] dark:text-[#FF8C61] border border-[#D83C00]/30 font-heading text-xs font-bold transition-all cursor-pointer"
               >
                 {geminiSingleLoading ? (
                   <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin text-[#F94500]" />
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-[#D83C00]" />
                     <span>Analyzing with Gemini Vision...</span>
                   </>
                 ) : (
                   <>
-                    <Zap className="w-3.5 h-3.5 text-[#F94500]" />
+                    <Zap className="w-3.5 h-3.5 text-[#D83C00]" />
                     <span>⚡ Inspect with Gemini Vision AI</span>
                   </>
                 )}
@@ -826,8 +826,8 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
                 }}
                 className={`px-4 py-2 rounded-xl font-heading text-xs font-bold transition-all cursor-pointer ${
                   inspectingItem.isArchived
-                    ? 'bg-[#23003F] dark:bg-[#FFFDB4] text-white dark:text-[#23003F]'
-                    : 'bg-[#F94500] text-white'
+                    ? 'bg-[#181818] hover:bg-[#222222] text-white border border-[#27272A]'
+                    : 'bg-[#D83C00] hover:bg-[#B83300] text-white'
                 }`}
               >
                 {inspectingItem.isArchived ? 'Restore to Kept' : 'Move to _archive'}

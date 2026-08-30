@@ -403,9 +403,9 @@ export const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="w-screen h-screen m-0 p-0 bg-white dark:bg-[#150027] flex overflow-hidden font-sans transition-colors duration-200">
+    <div className="w-screen h-screen m-0 p-0 bg-[#F8F9FA] dark:bg-[#000000] flex overflow-hidden font-sans transition-colors duration-200">
       {/* Full viewport Edge-to-Edge Container without shadows */}
-      <div className="flex w-full h-full overflow-hidden bg-white dark:bg-[#150027] transition-colors duration-200">
+      <div className="flex w-full h-full overflow-hidden bg-[#F8F9FA] dark:bg-[#000000] transition-colors duration-200">
         {/* Column 1: Left Navigation Sidebar */}
         <Sidebar
           activeTab={activeTab}
@@ -419,7 +419,7 @@ export const AppContent: React.FC = () => {
         />
 
         {/* Column 2: Center Content Area */}
-        <main className="flex-1 flex flex-col min-w-0 p-5 overflow-hidden bg-white dark:bg-[#150027] transition-colors duration-200">
+        <main className="flex-1 flex flex-col min-w-0 p-5 overflow-hidden bg-[#F8F9FA] dark:bg-[#000000] transition-colors duration-200">
           <Header
             activeTab={activeTab}
             status={status}
