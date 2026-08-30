@@ -243,16 +243,11 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             <Archive className="w-5 h-5" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="font-heading text-2xs font-extrabold px-2 py-0.5 rounded-full bg-[#FFFDB4] text-[#23003F] uppercase tracking-wider font-mono">
-                Facet AI Engine (ncoevoet/facet)
-              </span>
-              <h2 className="font-heading text-xs font-bold text-[#23003F] dark:text-[#FFFDB4]">
-                9-Dimension Quality Scoring, Blink Detection (EAR) &amp; Burst Culling
-              </h2>
-            </div>
+            <h2 className="font-heading text-xs font-bold text-[#23003F] dark:text-[#FFFDB4]">
+              9-Dimension Quality Scoring, Blink Detection (EAR) &amp; Burst Culling
+            </h2>
             <p className="font-sans text-xs text-[#5A476E] dark:text-[#BCACCE] mt-0.5">
-              Powered by Facet's multi-dimensional scoring: evaluates Eye Aspect Ratio (<code className="text-[#F94500] font-mono">EAR &lt; 0.21</code>), subject saliency, and motion smear while protecting creamy background bokeh.
+              Powered by Facet multi-dimensional scoring: evaluates Eye Aspect Ratio (<code className="text-[#F94500] font-mono">EAR &lt; 0.21</code>), subject saliency, and motion smear while protecting background bokeh.
             </p>
           </div>
         </div>
@@ -269,21 +264,18 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
           <Sparkles className="w-3.5 h-3.5" />
           <span>Proceed to Step 3: Straighten &amp; Tone</span>
         </button>
-      </div>      {/* 2. Google Gemini Vision AI Bar */}
+      </div>
+
+      {/* 2. Google Gemini Vision AI Bar */}
       <div className="bg-white dark:bg-[#20003A] border border-[#E7E0EE] dark:border-[#4C177D] rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3 shadow-xs">
         <div className="flex items-center gap-2.5 min-w-0">
           <div className="w-8 h-8 rounded-xl bg-[#F94500]/10 text-[#F94500] border border-[#F94500]/20 flex items-center justify-center flex-shrink-0 font-bold">
             <Zap className="w-4 h-4" />
           </div>
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="font-heading text-xs font-bold text-[#23003F] dark:text-[#FFFDB4]">
-                Google Gemini Vision AI (Flash)
-              </span>
-              <span className="px-2 py-0.5 rounded-full text-2xs font-mono font-bold bg-[#FFFDB4] text-[#23003F]">
-                100% Free Multimodal
-              </span>
-            </div>
+            <span className="font-heading text-xs font-bold text-[#23003F] dark:text-[#FFFDB4]">
+              Google Gemini Vision AI (Flash)
+            </span>
             <p className="font-sans text-2xs text-[#5A476E] dark:text-[#BCACCE] mt-0.5 truncate">
               {apiKeyInput || geminiApiKey
                 ? 'Ready to inspect subtle blinks, squinting eyelids & camera shake with high precision.'

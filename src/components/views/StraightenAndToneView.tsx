@@ -61,14 +61,9 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
             <Compass className="w-5 h-5" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="font-heading text-2xs font-extrabold px-2 py-0.5 rounded-full bg-[#FFFDB4] text-[#23003F] uppercase tracking-wider font-mono">
-                Step 3 of 4
-              </span>
-              <h2 className="font-heading text-xs font-bold text-[#23003F] dark:text-[#FFFDB4]">
-                Horizon Straightening &amp; Adobe Lightroom Tonal Corrections
-              </h2>
-            </div>
+            <h2 className="font-heading text-xs font-bold text-[#23003F] dark:text-[#FFFDB4]">
+              Horizon Straightening &amp; Adobe Lightroom Tonal Corrections
+            </h2>
             <p className="font-sans text-xs text-[#5A476E] dark:text-[#BCACCE] mt-0.5">
               Auto-straightens tilt angles &amp; applies Lightroom tone rules: <span className="font-semibold text-[#F94500]">Underexposed (-20 Contrast, +20 Shadows)</span> and <span className="font-semibold text-[#F94500]">Overexposed (-20 Highlights, -20 Whites)</span>.
             </p>

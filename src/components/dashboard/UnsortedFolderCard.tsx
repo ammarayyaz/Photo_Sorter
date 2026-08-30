@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, Sparkles, Trash2, Image as ImageIcon } from 'lucide-react';
+import { Play, Trash2, Image as ImageIcon } from 'lucide-react';
 
 export interface UnsortedFolderData {
   id: string;
@@ -106,29 +106,22 @@ export const UnsortedFolderCard: React.FC<UnsortedFolderCardProps> = ({
       <div className="absolute left-[12px] right-[12px] bottom-[8px] top-[66px] z-30 flex flex-col justify-between p-3 select-none">
         {/* Top Info Bar */}
         <div className="flex items-center justify-between">
-          <span className="flex items-center gap-1 font-heading text-2xs font-extrabold uppercase tracking-wider text-[#23003F] bg-[#FFFDB4] border border-[#FFFDB4] px-2 py-0.5 rounded-full">
-            <Sparkles className="w-2.5 h-2.5 text-[#F94500]" />
-            UNSORTED RAW
+          <span className="text-2xs font-mono tabular-nums text-[#BCACCE] font-bold bg-black/30 px-2 py-0.5 rounded-md border border-[#4C177D]">
+            {folder.photoCount} files
           </span>
 
-          <div className="flex items-center gap-1.5">
-            <span className="text-2xs font-mono tabular-nums text-[#BCACCE] font-bold bg-black/30 px-2 py-0.5 rounded-md border border-[#4C177D]">
-              {folder.photoCount} files
-            </span>
-
-            {onDelete && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete();
-                }}
-                title="Delete this folder"
-                className="p-1 rounded-lg hover:bg-[#F94500]/30 text-[#BCACCE] hover:text-[#F94500] transition-colors cursor-pointer"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
+          {onDelete && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete();
+              }}
+              title="Delete this folder"
+              className="p-1 rounded-lg hover:bg-[#F94500]/30 text-[#BCACCE] hover:text-[#F94500] transition-colors cursor-pointer"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
 
         {/* Bottom Details & Sort Button */}
