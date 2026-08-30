@@ -11,6 +11,7 @@ import { OutputGalleryView } from './components/views/OutputGalleryView';
 import { FaceClustersView } from './components/views/FaceClustersView';
 import { SettingsView } from './components/views/SettingsView';
 import { PhotoPipelineController } from './engine/pipeline';
+import { MinimalPipelineProgressModal } from './components/common/MinimalPipelineProgressModal';
 import { ThemeProvider } from './context/ThemeContext';
 import {
   saveSessionState,
@@ -600,6 +601,14 @@ export const AppContent: React.FC = () => {
           onToggleCollapse={() => setIsInspectorCollapsed((prev) => !prev)}
         />
       </div>
+
+      {/* Minimal Step-by-Step Pipeline Loading Overlay */}
+      <MinimalPipelineProgressModal
+        status={status}
+        activeItem={activeItem}
+        currentProcessed={metrics.currentProcessed}
+        totalScanned={metrics.totalScanned || items.length}
+      />
     </div>
   );
 };
