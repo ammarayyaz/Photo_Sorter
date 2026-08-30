@@ -69,16 +69,21 @@ export function calculateInscribedCrop(
   };
 }
 
+import { detectZoltanvinStraightAngle } from './zoltanvinStraightener';
+
+export type StraighteningAlgorithm = 'zoltanvin-hough' | 'hybrid-ensemble' | 'radon-profile' | 'portrait-body';
+
 /**
- * Analyzes image pixel gradients using Multi-Axis Radon Projection & Hough Line Histogram
- * to detect the true tilt angle of horizon, coastlines, architectural lines, or portrait silhouettes.
+ * Analyzes image pixel gradients using Multi-Axis Radon Projection, Zoltanvin Hough Line Segments,
+ * and Portrait Body Inertial Analysis to detect the true tilt angle.
  * 
  * @param gray Grayscale pixel buffer of size (sampleWidth * sampleHeight)
- * @param sampleWidth Width of sampled pixel buffer (e.g. 320px)
- * @param sampleHeight Height of sampled pixel buffer (e.g. 240px)
+ * @param sampleWidth Width of sampled pixel buffer (e.g. 480px)
+ * @param sampleHeight Height of sampled pixel buffer (e.g. 320px)
  * @param originalWidth Full original image width
  * @param originalHeight Full original image height
  * @param faceTiltHint Optional detected face orientation angle in degrees
+ * @param algorithm Selected straightening algorithm engine
  */
 export function detectHorizonAndTiltAngle(
   gray: Float32Array,
@@ -86,8 +91,13 @@ export function detectHorizonAndTiltAngle(
   sampleHeight: number,
   originalWidth: number,
   originalHeight: number,
-  faceTiltHint?: number | null
+  faceTiltHint?: number | null,
+  algorithm: StraighteningAlgorithm = 'zoltanvin-hough'
 ): DetectedHorizonGeometry {
+  // 1. Run Zoltanvin Probabilistic Hough Line Algorithm (from zoltanvin/straight-image)
+  const zoltanResult = detectZoltanvinStraightAngle(gray, sampleWidth, sampleHeight);
+
+  // 2. Run Radon & Cardinal Sobel Projection Profile
   const minAngle = -45.0;
   const maxAngle = 45.0;
   const step = 0.5; // 0.5 degree precision
@@ -96,13 +106,10 @@ export function detectHorizonAndTiltAngle(
   let totalEdgeEnergy = 0;
   let edgeCount = 0;
 
-  // 1. Compute Sobel Edge Gradients & Canonical Angular Deviation Mapping
-  // Evaluates both Horizontal (horizons, floors) and Vertical (trees, body silhouettes, architecture)
   for (let y = 2; y < sampleHeight - 2; y++) {
     for (let x = 2; x < sampleWidth - 2; x++) {
       const idx = y * sampleWidth + x;
 
-      // Sobel 3x3 kernel
       const dx =
         (gray[idx + 1] - gray[idx - 1]) * 2 +
         (gray[idx - sampleWidth + 1] - gray[idx - sampleWidth - 1]) +
@@ -115,16 +122,14 @@ export function detectHorizonAndTiltAngle(
 
       const magSq = dx * dx + dy * dy;
 
-      // Filter out low-contrast background noise (magSq > 25)
       if (magSq > 25) {
         const mag = Math.sqrt(magSq);
-        let phi = (Math.atan2(dy, dx) * 180) / Math.PI; // [-180, 180]
+        let phi = (Math.atan2(dy, dx) * 180) / Math.PI;
         if (phi < 0) phi += 180;
-        while (phi >= 180) phi -= 180; // [0, 180)
+        while (phi >= 180) phi -= 180;
 
-        // Measure angular deviation from nearest cardinal normal (0° for vertical, 90° for horizontal)
-        const tiltFromVertical = phi > 90 ? phi - 180 : phi; // [-90, 90]
-        const tiltFromHorizontal = phi - 90; // [-90, 90]
+        const tiltFromVertical = phi > 90 ? phi - 180 : phi;
+        const tiltFromHorizontal = phi - 90;
 
         const tilt =
           Math.abs(tiltFromVertical) <= Math.abs(tiltFromHorizontal)
@@ -134,7 +139,6 @@ export function detectHorizonAndTiltAngle(
         if (tilt >= minAngle && tilt <= maxAngle) {
           const binIdx = Math.round((tilt - minAngle) / step);
           if (binIdx >= 0 && binIdx < numBins) {
-            // Emphasize prominent silhouette and horizon lines with mag^1.25
             const weight = Math.pow(mag, 1.25);
             angleBins[binIdx] += weight;
             totalEdgeEnergy += weight;
@@ -145,15 +149,7 @@ export function detectHorizonAndTiltAngle(
     }
   }
 
-  // If a portrait body / face orientation hint was detected, reinforce that angular bin
-  if (typeof faceTiltHint === 'number' && !isNaN(faceTiltHint) && Math.abs(faceTiltHint) <= 45) {
-    const hintBinIdx = Math.round((faceTiltHint - minAngle) / step);
-    if (hintBinIdx >= 0 && hintBinIdx < numBins && totalEdgeEnergy > 0) {
-      angleBins[hintBinIdx] += totalEdgeEnergy * 0.25;
-    }
-  }
-
-  // 2. 5-point Gaussian smoothing on projection bins to suppress discretization noise
+  // 3. 5-point Gaussian smoothing on projection bins
   const smoothedBins = new Float32Array(numBins);
   const kernel = [0.06, 0.24, 0.40, 0.24, 0.06];
   for (let i = 2; i < numBins - 2; i++) {
@@ -169,7 +165,6 @@ export function detectHorizonAndTiltAngle(
   smoothedBins[numBins - 2] = angleBins[numBins - 2];
   smoothedBins[numBins - 1] = angleBins[numBins - 1];
 
-  // 3. Baseline statistics
   let sum = 0;
   for (let i = 0; i < numBins; i++) sum += smoothedBins[i];
   const mean = sum / numBins;
@@ -181,9 +176,8 @@ export function detectHorizonAndTiltAngle(
   }
   const stdDev = Math.sqrt(varianceSum / numBins);
 
-  // 4. Find Peak Angle in Angular Projection Profile
   let peakEnergy = 0;
-  let peakBinIdx = Math.round((-minAngle) / step); // Default 0.0 degrees
+  let peakBinIdx = Math.round((-minAngle) / step);
 
   for (let i = 1; i < numBins - 1; i++) {
     if (smoothedBins[i] > peakEnergy) {
@@ -192,20 +186,56 @@ export function detectHorizonAndTiltAngle(
     }
   }
 
-  const rawDetectedAngle = Number((minAngle + peakBinIdx * step).toFixed(1));
+  const radonRawAngle = Number((minAngle + peakBinIdx * step).toFixed(1));
   const snr = stdDev > 0 ? (peakEnergy - mean) / stdDev : 0;
-  const confidence = Math.min(1.0, Math.max(0.0, snr / 3.0));
 
-  // Threshold: Accept peak when tilt >= 0.5° with clear statistical significance or prominence
-  const requiresCorrection =
-    Math.abs(rawDetectedAngle) >= 0.5 &&
-    (snr >= 1.15 || (mean > 0 && peakEnergy >= mean * 1.15)) &&
-    edgeCount > 25;
+  // 4. Decide Angle Based on Requested Algorithm Mode
+  let finalDetectedAngle = 0.0;
+  let confidence = 0.5;
 
-  const finalDetectedAngle = requiresCorrection ? rawDetectedAngle : 0.0;
-  const correctedAngleDeg = -finalDetectedAngle;
+  if (algorithm === 'zoltanvin-hough') {
+    if (zoltanResult.requiresCorrection) {
+      finalDetectedAngle = zoltanResult.detectedAngleDeg;
+      confidence = zoltanResult.confidence;
+    } else if (Math.abs(radonRawAngle) >= 0.5 && (snr >= 1.15 || peakEnergy > mean * 1.15)) {
+      finalDetectedAngle = radonRawAngle;
+      confidence = Math.min(0.95, snr / 3.0);
+    }
+  } else if (algorithm === 'portrait-body' && typeof faceTiltHint === 'number' && Math.abs(faceTiltHint) >= 0.5) {
+    finalDetectedAngle = Number(faceTiltHint.toFixed(1));
+    confidence = 0.90;
+  } else if (algorithm === 'radon-profile') {
+    if (Math.abs(radonRawAngle) >= 0.5 && (snr >= 1.15 || peakEnergy > mean * 1.15)) {
+      finalDetectedAngle = radonRawAngle;
+      confidence = Math.min(0.95, snr / 3.0);
+    }
+  } else {
+    // Hybrid Ensemble: Consensus of Zoltanvin Hough + Radon + Body
+    const candidates: Array<{ angle: number; weight: number }> = [];
+    if (zoltanResult.requiresCorrection) {
+      candidates.push({ angle: zoltanResult.detectedAngleDeg, weight: 1.5 });
+    }
+    if (Math.abs(radonRawAngle) >= 0.5 && snr >= 1.15) {
+      candidates.push({ angle: radonRawAngle, weight: 1.2 });
+    }
+    if (typeof faceTiltHint === 'number' && Math.abs(faceTiltHint) >= 0.5) {
+      candidates.push({ angle: faceTiltHint, weight: 1.3 });
+    }
 
-  // 5. Compute Inscribed Crop Box for full resolution
+    if (candidates.length > 0) {
+      let weightedSum = 0;
+      let totalW = 0;
+      for (const c of candidates) {
+        weightedSum += c.angle * c.weight;
+        totalW += c.weight;
+      }
+      finalDetectedAngle = Number((weightedSum / totalW).toFixed(1));
+      confidence = Math.min(0.98, 0.70 + candidates.length * 0.1);
+    }
+  }
+
+  const requiresCorrection = Math.abs(finalDetectedAngle) >= 0.5;
+  const correctedAngleDeg = Number((-finalDetectedAngle).toFixed(1));
   const crop = calculateInscribedCrop(originalWidth, originalHeight, finalDetectedAngle);
 
   return {

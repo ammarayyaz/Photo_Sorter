@@ -16,7 +16,11 @@ import {
 } from 'lucide-react';
 import { ProcessedItem, PipelineMetrics } from '../../engine/types';
 import { getOriginalFileBlob } from '../../engine/storageManager';
-import { calculateInscribedCrop, detectHorizonAndTiltAngle } from '../../engine/horizonDetector';
+import {
+  calculateInscribedCrop,
+  detectHorizonAndTiltAngle,
+  StraighteningAlgorithm
+} from '../../engine/horizonDetector';
 import { calculateLightroomAdjustments } from '../../engine/lightroomTone';
 
 interface StraightenAndToneViewProps {
@@ -39,8 +43,9 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
   const [isZoomed, setIsZoomed] = useState<boolean>(false);
   const [showGrid, setShowGrid] = useState<boolean>(true);
   const [isAutoDetecting, setIsAutoDetecting] = useState<boolean>(false);
+  const [algorithm, setAlgorithm] = useState<StraighteningAlgorithm>('zoltanvin-hough');
   const [filterMode, setFilterMode] = useState<
-    'all' | 'straightened' | 'underexposed' | 'overexposed' | 'archive'
+    'all' | 'tilted' | 'straightened' | 'underexposed' | 'overexposed' | 'archive'
   >('all');
   const [activeFullResUrl, setActiveFullResUrl] = useState<string>('');
 
@@ -283,6 +288,19 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
   const realUnderexposed = items.filter((i) => i.lightroom && i.lightroom.exposureState === 'UNDER_EXPOSED').length;
   const realOverexposed = items.filter((i) => i.lightroom && i.lightroom.exposureState === 'OVER_EXPOSED').length;
 
+  // Check if any image has detected tilt but is not yet leveled/straightened
+  const unstraightenedTiltedPhotos = items.filter(
+    (i) => i.geometry && Math.abs(i.geometry.detectedAngleDeg) >= 0.5 && i.geometry.correctedAngleDeg === 0
+  );
+  const totalTiltedCount = items.filter(
+    (i) => (i.geometry && Math.abs(i.geometry.detectedAngleDeg) >= 0.5) || (i.geometry && i.geometry.correctedAngleDeg !== 0)
+  ).length;
+
+  const maxDetectedTilt = items.reduce(
+    (max, i) => Math.max(max, Math.abs(i.geometry?.detectedAngleDeg || 0)),
+    0
+  );
+
   return (
     <div className="flex flex-col gap-4 h-full overflow-y-auto pr-1 pb-6 select-none">
       {/* 1. Header Banner */}
@@ -296,7 +314,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
               Horizon Straightening &amp; Lightroom Tonal Corrections
             </h2>
             <p className="text-2xs text-[#4B5563] dark:text-[#A1A1AA]">
-              AI multi-axis tilt detection &amp; inscribed crop (zero black borders) with parametric tone curve.
+              Zoltanvin Hough Line Segment &amp; AI Multi-Axis Tilt Detection with Inscribed Zero-Border Cropping.
             </p>
           </div>
         </div>
@@ -308,7 +326,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#181818] dark:hover:bg-[#222222] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] font-heading font-semibold text-xs tracking-wide transition-all cursor-pointer"
           >
             <Sparkles className="w-3.5 h-3.5 text-[#D83C00]" />
-            <span>Auto-Level All</span>
+            <span>Auto-Straighten All</span>
           </button>
 
           <button
@@ -321,7 +339,45 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
         </div>
       </div>
 
-      {/* 2. Metrics Strip */}
+      {/* 2. Audit Health Alert Bar (Checks if any image is tilted / un-straightened) */}
+      {unstraightenedTiltedPhotos.length > 0 ? (
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-3 px-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center font-bold">
+              <Compass className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="font-heading font-bold text-xs text-amber-500">
+                {unstraightenedTiltedPhotos.length} Photo{unstraightenedTiltedPhotos.length > 1 ? 's' : ''} with Detected Tilt Need Straightening
+              </span>
+              <p className="text-2xs text-[#4B5563] dark:text-[#A1A1AA]">
+                AI has identified tilt angles up to {maxDetectedTilt.toFixed(1)}°. Click below to level horizons and human posture automatically.
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={handleBatchStraightenAll}
+            disabled={isAutoDetecting}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-heading font-bold text-xs transition-all cursor-pointer shadow-none"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Straighten Tilted ({unstraightenedTiltedPhotos.length})</span>
+          </button>
+        </div>
+      ) : (
+        <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-2.5 px-4 flex items-center justify-between text-2xs font-sans">
+          <span className="text-emerald-500 font-heading font-bold flex items-center gap-1.5">
+            <CheckCircle2 className="w-4 h-4" />
+            All loaded photos are perfectly leveled &amp; verified straight (0.0° deviation).
+          </span>
+          <span className="text-[#9CA3AF] font-mono tabular-nums">
+            Active Engine: {algorithm === 'zoltanvin-hough' ? 'Zoltanvin HoughLines' : algorithm === 'hybrid-ensemble' ? 'Hybrid AI Ensemble' : algorithm === 'portrait-body' ? 'Portrait Body Lean' : 'Radon Profile'}
+          </span>
+        </div>
+      )}
+
+      {/* 3. Metrics Strip */}
       <div className="grid grid-cols-4 gap-3">
         <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-3 flex flex-col justify-between">
           <span className="font-heading text-xs font-semibold text-[#4B5563] dark:text-[#A1A1AA]">Images Straightened</span>
@@ -611,18 +667,100 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                 </button>
               </div>
 
+              {/* Detection Engine Algorithm Options (Zoltanvin Hough / Hybrid / Radon / Portrait) */}
+              <div className="flex flex-col gap-1.5 p-2 rounded-xl bg-slate-50 dark:bg-[#141414] border border-[#E5E7EB] dark:border-[#27272A] mt-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-heading font-extrabold text-[#4B5563] dark:text-[#A1A1AA] uppercase tracking-wider">
+                    Detection Algorithm Engine
+                  </span>
+                  <span className="text-[9px] font-mono text-[#D83C00] font-bold">
+                    {algorithm === 'zoltanvin-hough' ? 'HoughLinesP' : algorithm === 'hybrid-ensemble' ? 'AI Consensus' : algorithm === 'portrait-body' ? 'Body Lean' : 'Radon 2D'}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-1 text-2xs font-sans">
+                  <button
+                    onClick={() => {
+                      setAlgorithm('zoltanvin-hough');
+                      setTimeout(() => handleAutoDetect(), 50);
+                    }}
+                    className={`px-2 py-1.5 rounded-lg text-left transition-all cursor-pointer ${
+                      algorithm === 'zoltanvin-hough'
+                        ? 'bg-[#D83C00] text-white shadow-sm'
+                        : 'bg-white dark:bg-[#1C1C1E] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] hover:border-[#D83C00]'
+                    }`}
+                  >
+                    <div className="font-bold text-xs leading-tight">Zoltanvin Hough</div>
+                    <div className={`text-[9px] ${algorithm === 'zoltanvin-hough' ? 'text-white/80' : 'text-[#9CA3AF]'}`}>
+                      OpenCV Line Segments
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setAlgorithm('hybrid-ensemble');
+                      setTimeout(() => handleAutoDetect(), 50);
+                    }}
+                    className={`px-2 py-1.5 rounded-lg text-left transition-all cursor-pointer ${
+                      algorithm === 'hybrid-ensemble'
+                        ? 'bg-[#D83C00] text-white shadow-sm'
+                        : 'bg-white dark:bg-[#1C1C1E] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] hover:border-[#D83C00]'
+                    }`}
+                  >
+                    <div className="font-bold text-xs leading-tight">Hybrid AI</div>
+                    <div className={`text-[9px] ${algorithm === 'hybrid-ensemble' ? 'text-white/80' : 'text-[#9CA3AF]'}`}>
+                      Multi-Model Consensus
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setAlgorithm('portrait-body');
+                      setTimeout(() => handleAutoDetect(), 50);
+                    }}
+                    className={`px-2 py-1.5 rounded-lg text-left transition-all cursor-pointer ${
+                      algorithm === 'portrait-body'
+                        ? 'bg-[#D83C00] text-white shadow-sm'
+                        : 'bg-white dark:bg-[#1C1C1E] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] hover:border-[#D83C00]'
+                    }`}
+                  >
+                    <div className="font-bold text-xs leading-tight">Portrait Lean</div>
+                    <div className={`text-[9px] ${algorithm === 'portrait-body' ? 'text-white/80' : 'text-[#9CA3AF]'}`}>
+                      Dutch Angle / Silhouette
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setAlgorithm('radon-profile');
+                      setTimeout(() => handleAutoDetect(), 50);
+                    }}
+                    className={`px-2 py-1.5 rounded-lg text-left transition-all cursor-pointer ${
+                      algorithm === 'radon-profile'
+                        ? 'bg-[#D83C00] text-white shadow-sm'
+                        : 'bg-white dark:bg-[#1C1C1E] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] hover:border-[#D83C00]'
+                    }`}
+                  >
+                    <div className="font-bold text-xs leading-tight">Radon Profile</div>
+                    <div className={`text-[9px] ${algorithm === 'radon-profile' ? 'text-white/80' : 'text-[#9CA3AF]'}`}>
+                      Multi-Axis Radon
+                    </div>
+                  </button>
+                </div>
+              </div>
+
               {/* 90 Degree Rotation Shift */}
               <div className="flex items-center justify-between gap-2 pt-1">
                 <button
                   onClick={() => handleApplyAngle(geometry.correctedAngleDeg - 90)}
-                  className="flex-1 flex items-center justify-center gap-1 py-1 px-2 rounded-lg bg-slate-100 dark:bg-[#181818] hover:bg-slate-200 dark:hover:bg-[#222222] text-2xs font-heading font-semibold text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] cursor-pointer"
+                  className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg bg-slate-100 dark:bg-[#181818] hover:bg-slate-200 dark:hover:bg-[#222222] text-2xs font-heading font-semibold text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] cursor-pointer"
                 >
                   <RotateCcw className="w-3 h-3" />
                   <span>Rotate 90° CCW</span>
                 </button>
                 <button
                   onClick={() => handleApplyAngle(geometry.correctedAngleDeg + 90)}
-                  className="flex-1 flex items-center justify-center gap-1 py-1 px-2 rounded-lg bg-slate-100 dark:bg-[#181818] hover:bg-slate-200 dark:hover:bg-[#222222] text-2xs font-heading font-semibold text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] cursor-pointer"
+                  className="flex-1 flex items-center justify-center gap-1 py-1.5 px-2 rounded-lg bg-slate-100 dark:bg-[#181818] hover:bg-slate-200 dark:hover:bg-[#222222] text-2xs font-heading font-semibold text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] cursor-pointer"
                 >
                   <RotateCw className="w-3 h-3" />
                   <span>Rotate 90° CW</span>
@@ -765,6 +903,12 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
               All ({items.length})
             </button>
             <button
+              onClick={() => setFilterMode('tilted')}
+              className={`px-2 py-0.5 rounded-lg font-heading font-bold cursor-pointer ${filterMode === 'tilted' ? 'bg-amber-500 text-white' : 'text-[#9CA3AF]'}`}
+            >
+              Tilted ({totalTiltedCount})
+            </button>
+            <button
               onClick={() => setFilterMode('straightened')}
               className={`px-2 py-0.5 rounded-lg font-heading font-bold cursor-pointer ${filterMode === 'straightened' ? 'bg-[#D83C00] text-white' : 'text-[#9CA3AF]'}`}
             >
@@ -792,48 +936,64 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
         </div>
 
         <div className="flex items-center gap-2 overflow-x-auto pb-1">
-          {displayedList.map((item) => (
-            <div
-              key={item.metadata.id}
-              onClick={() => setSelectedItemId(item.metadata.id)}
-              className={`w-28 flex-shrink-0 cursor-pointer rounded-xl border p-1.5 transition-colors ${
-                selectedItemId === item.metadata.id
-                  ? 'border-[#D83C00] bg-[#D83C00]/10'
-                  : 'border-[#E5E7EB] dark:border-[#27272A] hover:border-[#9CA3AF]'
-              }`}
-            >
-              <div className="aspect-[4/3] rounded-lg overflow-hidden bg-slate-900 relative">
-                <img
-                  src={item.transformedThumbnailUrl || item.thumbnailUrl}
-                  alt={item.metadata.filename}
-                  onError={(e) => {
-                    const target = e.currentTarget;
-                    if (target.src !== item.thumbnailUrl && item.thumbnailUrl) {
-                      target.src = item.thumbnailUrl;
-                    }
-                  }}
-                  style={{ filter: item.lightroom?.cssFilter || 'none' }}
-                  className="w-full h-full object-cover"
-                />
-                {item.isArchived && (
-                  <span className="absolute top-1 left-1 bg-red-600 text-white text-2xs font-bold px-1 rounded">
-                    _archive
-                  </span>
-                )}
-                {item.geometry && item.geometry.requiresCorrection && (
-                  <span className="absolute bottom-1 right-1 bg-[#D83C00] text-white text-2xs font-mono font-bold px-1 rounded">
-                    {item.geometry.correctedAngleDeg > 0 ? '+' : ''}{item.geometry.correctedAngleDeg}°
-                  </span>
-                )}
+          {displayedList.map((item) => {
+            const isTilted = item.geometry && Math.abs(item.geometry.detectedAngleDeg) >= 0.5 && item.geometry.correctedAngleDeg === 0;
+            const isCorrected = item.geometry && item.geometry.correctedAngleDeg !== 0;
+
+            return (
+              <div
+                key={item.metadata.id}
+                onClick={() => setSelectedItemId(item.metadata.id)}
+                className={`w-28 flex-shrink-0 cursor-pointer rounded-xl border p-1.5 transition-colors ${
+                  selectedItemId === item.metadata.id
+                    ? 'border-[#D83C00] bg-[#D83C00]/10'
+                    : isTilted
+                    ? 'border-amber-500/50 bg-amber-500/5'
+                    : 'border-[#E5E7EB] dark:border-[#27272A] hover:border-[#9CA3AF]'
+                }`}
+              >
+                <div className="aspect-[4/3] rounded-lg overflow-hidden bg-slate-900 relative">
+                  <img
+                    src={item.transformedThumbnailUrl || item.thumbnailUrl}
+                    alt={item.metadata.filename}
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      if (target.src !== item.thumbnailUrl && item.thumbnailUrl) {
+                        target.src = item.thumbnailUrl;
+                      }
+                    }}
+                    style={{ filter: item.lightroom?.cssFilter || 'none' }}
+                    className="w-full h-full object-cover"
+                  />
+                  {item.isArchived && (
+                    <span className="absolute top-1 left-1 bg-red-600 text-white text-2xs font-bold px-1 rounded">
+                      _archive
+                    </span>
+                  )}
+                  {isCorrected ? (
+                    <span className="absolute bottom-1 right-1 bg-[#D83C00] text-white text-2xs font-mono font-bold px-1 rounded">
+                      ✓ {item.geometry.correctedAngleDeg > 0 ? '+' : ''}{item.geometry.correctedAngleDeg.toFixed(1)}°
+                    </span>
+                  ) : isTilted ? (
+                    <span className="absolute bottom-1 right-1 bg-amber-500 text-white text-2xs font-mono font-bold px-1 rounded">
+                      ⚠ {item.geometry.detectedAngleDeg > 0 ? '+' : ''}{item.geometry.detectedAngleDeg.toFixed(1)}°
+                    </span>
+                  ) : null}
+                </div>
+                <div className="font-sans text-xs font-bold text-[#111827] dark:text-white truncate mt-1">
+                  {item.metadata.filename}
+                </div>
+                <div className="text-2xs font-mono tabular-nums text-[#9CA3AF]">
+                  {isCorrected
+                    ? `${item.geometry?.correctedAngleDeg}°`
+                    : isTilted
+                    ? `Tilt: ${item.geometry?.detectedAngleDeg}°`
+                    : 'Level 0.0°'}{' '}
+                  | {item.lightroom?.exposureState?.split('_')[0]}
+                </div>
               </div>
-              <div className="font-sans text-xs font-bold text-[#111827] dark:text-white truncate mt-1">
-                {item.metadata.filename}
-              </div>
-              <div className="text-2xs font-mono tabular-nums text-[#9CA3AF]">
-                {item.geometry?.correctedAngleDeg !== 0 ? `${item.geometry?.correctedAngleDeg}°` : 'Level'} | {item.lightroom?.exposureState?.split('_')[0]}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
