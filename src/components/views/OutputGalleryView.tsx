@@ -173,7 +173,7 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
             return (
               <div
                 key={item.metadata.id}
-                className="soft-blur-card min-h-[380px] flex flex-col justify-between group"
+                className="soft-blur-card min-h-[380px] flex flex-col justify-between"
               >
                 {/* Full Bleed Background Image with Lightroom CSS Filter */}
                 <img
@@ -190,19 +190,16 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
                   loading="lazy"
                 />
 
-                {/* Soft Progressive Feathered Blur Overlay (Zero Border) */}
-                <div className="progressive-blur-layer" />
-
-                {/* Foreground Content Layer */}
+                {/* Foreground Content Layer (No Blur · No BG behind text) */}
                 <div className="card-foreground">
                   {/* Top Badges */}
                   <div className="flex items-center justify-between z-10">
                     {item.isArchived ? (
-                      <span className="bg-red-600/90 text-white font-heading font-extrabold text-2xs px-2.5 py-0.5 rounded-full backdrop-blur-sm">
+                      <span className="bg-red-600 text-white font-heading font-extrabold text-2xs px-2.5 py-0.5 rounded-full">
                         _archive
                       </span>
                     ) : (
-                      <span className="bg-[#D83C00]/90 text-white font-heading font-extrabold text-2xs px-2.5 py-0.5 rounded-full flex items-center gap-1 backdrop-blur-sm">
+                      <span className="bg-[#D83C00] text-white font-heading font-extrabold text-2xs px-2.5 py-0.5 rounded-full flex items-center gap-1">
                         <Sparkles className="w-3 h-3 text-white" />
                         Enhanced
                       </span>
@@ -211,7 +208,7 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
                     {/* 1-Click Single Image Download Button */}
                     <button
                       onClick={() => handleDownloadSingle(item)}
-                      className="p-1.5 rounded-xl bg-black/60 hover:bg-black/90 text-white backdrop-blur-md transition-all flex items-center gap-1 text-2xs font-bold cursor-pointer"
+                      className="p-1.5 rounded-xl bg-black/70 hover:bg-[#D83C00] text-white transition-colors flex items-center gap-1 text-2xs font-bold cursor-pointer"
                       title="Download this image"
                     >
                       {hasDownloaded ? (
@@ -222,11 +219,11 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
                     </button>
                   </div>
 
-                  {/* Bottom Content Area (Inside Soft Progressive Blur) */}
-                  <div className="flex flex-col gap-2 z-10 mt-auto">
-                    {/* Leveling & Exposure Stat Pill */}
-                    <div className="flex items-center justify-between bg-black/60 backdrop-blur-md px-2.5 py-1.5 rounded-xl text-2xs font-mono tabular-nums border border-white/10">
-                      <span className="flex items-center gap-1 text-white">
+                  {/* Bottom Content Area (No BG behind text) */}
+                  <div className="flex flex-col gap-1.5 z-10 mt-auto drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                    {/* Leveling & Exposure Stat Row */}
+                    <div className="flex items-center justify-between text-2xs font-mono tabular-nums text-white">
+                      <span className="flex items-center gap-1 text-white font-bold">
                         <Compass className="w-3 h-3 text-[#D83C00]" />
                         {item.geometry.correctedAngleDeg !== 0
                           ? `${item.geometry.correctedAngleDeg > 0 ? '+' : ''}${item.geometry.correctedAngleDeg.toFixed(1)}° Straightened`
@@ -243,26 +240,26 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
                         <span className="font-sans font-bold text-sm text-white truncate max-w-[180px]">
                           {item.metadata.filename}
                         </span>
-                        <span className="text-2xs font-mono tabular-nums text-white/80">
+                        <span className="text-2xs font-mono tabular-nums text-white/90 font-medium">
                           {(item.metadata.fileSize / 1000000).toFixed(2)} MB
                         </span>
                       </div>
 
-                      {/* Lightroom Tone Pill */}
-                      <div className="mt-1 flex items-center justify-between bg-black/50 backdrop-blur-md border border-white/10 rounded-xl px-2.5 py-1 text-2xs font-mono tabular-nums text-white">
+                      {/* Lightroom Tone Row */}
+                      <div className="mt-0.5 flex items-center justify-between text-2xs font-mono tabular-nums text-white">
                         <span className="flex items-center gap-1 text-white/90">
                           <Sliders className="w-3 h-3 text-[#D83C00]" />
                           Lightroom Tone
                         </span>
-                        <span className={isUnder || isOver ? 'text-[#D83C00] font-bold' : 'text-white/70'}>
+                        <span className={isUnder || isOver ? 'text-[#FF8C61] font-bold' : 'text-white/80'}>
                           {isUnder ? 'Contrast -20 / Shadows +20' : isOver ? 'Highlights -20 / Whites -20' : 'Balanced (0)'}
                         </span>
                       </div>
                     </div>
 
                     {/* Action Footer: Destination & Download */}
-                    <div className="flex items-center justify-between pt-1 text-2xs">
-                      <span className="font-mono tabular-nums text-white/70 truncate max-w-[160px]">
+                    <div className="flex items-center justify-between pt-0.5 text-2xs">
+                      <span className="font-mono tabular-nums text-white/80 truncate max-w-[160px]">
                         {item.targetPath}
                       </span>
 

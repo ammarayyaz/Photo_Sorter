@@ -428,7 +428,7 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
             return (
               <div
                 key={item.metadata.id}
-                className="soft-blur-card min-h-[360px] flex flex-col justify-between group"
+                className="soft-blur-card min-h-[360px] flex flex-col justify-between"
               >
                 {/* Full Bleed Background Image */}
                 <img
@@ -444,48 +444,45 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
                   loading="lazy"
                 />
 
-                {/* Soft Progressive Feathered Blur Overlay (Zero Border) */}
-                <div className="progressive-blur-layer" />
-
-                {/* Foreground Content Layer */}
+                {/* Foreground Content Layer (No Blur · No BG behind text) */}
                 <div className="card-foreground">
                   {/* Top Bar Badges */}
                   <div className="flex items-center justify-between z-10">
-                    <span className="px-2.5 py-1 rounded-full text-2xs font-mono font-bold bg-black/75 backdrop-blur-md text-white border border-white/10">
+                    <span className="px-2.5 py-0.5 rounded-full text-2xs font-mono font-bold bg-black/70 text-white">
                       #{preview?.index}
                     </span>
                     {isArchived ? (
-                      <span className="px-2.5 py-0.5 rounded-full text-2xs font-heading font-extrabold uppercase tracking-wider bg-red-600/90 text-white backdrop-blur-sm">
+                      <span className="px-2.5 py-0.5 rounded-full text-2xs font-heading font-extrabold uppercase tracking-wider bg-red-600 text-white">
                         _archive
                       </span>
                     ) : (
-                      <span className="px-2.5 py-0.5 rounded-full text-2xs font-mono font-bold bg-black/60 text-[#D83C00] backdrop-blur-md border border-[#D83C00]/30">
+                      <span className="px-2.5 py-0.5 rounded-full text-2xs font-mono font-bold bg-black/70 text-[#FF8C61]">
                         {preview?.folderName}
                       </span>
                     )}
                   </div>
 
-                  {/* Bottom Content Area (Inside Soft Progressive Blur) */}
-                  <div className="flex flex-col gap-2 z-10 mt-auto">
+                  {/* Bottom Content Area (No BG behind text) */}
+                  <div className="flex flex-col gap-1.5 z-10 mt-auto drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
                     {/* Original Filename (Strikethrough) + File Size */}
-                    <div className="flex items-center justify-between text-2xs font-mono tabular-nums text-white/70">
+                    <div className="flex items-center justify-between text-2xs font-mono tabular-nums text-white/80">
                       <span className="truncate max-w-[170px] line-through">
                         {preview?.original}
                       </span>
                       <span>{(item.metadata.fileSize / 1000000).toFixed(2)} MB</span>
                     </div>
 
-                    {/* New Renamed Filename Highlight Badge */}
-                    <div className="flex items-center justify-between bg-black/60 backdrop-blur-md border border-[#D83C00]/40 rounded-xl px-3 py-2">
+                    {/* New Renamed Filename Highlight Row */}
+                    <div className="flex items-center justify-between pt-0.5 text-white">
                       <div className="flex items-center gap-1.5 truncate">
                         <FileSignature className="w-3.5 h-3.5 text-[#D83C00] flex-shrink-0" />
-                        <span className="font-mono text-xs font-extrabold text-[#D83C00] truncate">
+                        <span className="font-mono text-xs font-extrabold text-[#FF8C61] truncate">
                           {preview?.renamed}
                         </span>
                       </div>
                       <button
                         onClick={() => handleApplySingleRename(item.metadata.id)}
-                        className="p-1 rounded-lg bg-[#D83C00] hover:bg-[#B83300] text-white text-[10px] font-heading font-bold ml-2 transition-all cursor-pointer active:scale-95 shadow-none"
+                        className="px-2 py-0.5 rounded-lg bg-[#D83C00] hover:bg-[#B83300] text-white text-[10px] font-heading font-bold ml-2 transition-colors cursor-pointer shadow-none flex-shrink-0"
                         title="Apply this new name to this photo"
                       >
                         {isSingleApplied ? '✓ Done' : 'Apply'}

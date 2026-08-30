@@ -669,7 +669,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                         src={item.thumbnailUrl}
                         alt={item.metadata.filename}
                         loading="lazy"
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        className="w-full h-full object-cover"
                       />
 
                       {/* Selection Tint when Checked */}

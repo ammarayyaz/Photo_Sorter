@@ -426,7 +426,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
               <div
                 key={item.metadata.id}
                 onClick={() => setInspectingItem(item)}
-                className={`soft-blur-card min-h-[380px] flex flex-col justify-between group ${
+                className={`soft-blur-card min-h-[380px] flex flex-col justify-between ${
                   isChecked
                     ? 'ring-2 ring-[#D83C00]'
                     : isArchived
@@ -448,17 +448,14 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
                   loading="lazy"
                 />
 
-                {/* Soft Progressive Feathered Blur Overlay (Zero Border) */}
-                <div className="progressive-blur-layer" />
-
-                {/* Foreground Content Layer */}
+                {/* Foreground Content Layer (No Blur · No BG behind text) */}
                 <div className="card-foreground">
                   {/* Top Bar Floating Badges */}
                   <div className="flex items-center justify-between z-10">
                     {/* Selection Checkbox */}
                     <button
                       onClick={(e) => handleToggleSelection(item.metadata.id, e)}
-                      className="p-1.5 rounded-xl bg-black/60 hover:bg-black/90 text-white backdrop-blur-md transition-all cursor-pointer"
+                      className="p-1.5 rounded-xl bg-black/70 hover:bg-[#D83C00] text-white transition-colors cursor-pointer"
                       title={isChecked ? 'Deselect photo' : 'Select photo'}
                     >
                       {isChecked ? (
@@ -470,42 +467,42 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
 
                     {/* Top Right Badges */}
                     <div className="flex items-center gap-1.5">
-                      <span className="px-2 py-0.5 rounded-full text-2xs font-mono font-extrabold bg-black/75 backdrop-blur-md text-white border border-white/10">
+                      <span className="px-2 py-0.5 rounded-full text-2xs font-mono font-extrabold bg-black/70 text-white">
                         ★ {facetScore}
                       </span>
                       {isArchived ? (
-                        <span className="px-2 py-0.5 rounded-full text-2xs font-heading font-extrabold uppercase tracking-wider bg-red-600/90 text-white backdrop-blur-sm">
+                        <span className="px-2 py-0.5 rounded-full text-2xs font-heading font-extrabold uppercase tracking-wider bg-red-600 text-white">
                           _archive
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 rounded-full text-2xs font-heading font-extrabold uppercase tracking-wider bg-[#D83C00]/90 text-white backdrop-blur-sm">
+                        <span className="px-2 py-0.5 rounded-full text-2xs font-heading font-extrabold uppercase tracking-wider bg-[#D83C00] text-white">
                           Kept
                         </span>
                       )}
                     </div>
                   </div>
 
-                  {/* Bottom Content Area (Inside Soft Progressive Blur) */}
-                  <div className="flex flex-col gap-2 z-10 mt-auto">
-                    {/* Eye EAR & Focus Pill */}
-                    <div className="flex items-center justify-between bg-black/60 backdrop-blur-md px-2.5 py-1.5 rounded-xl text-2xs font-mono tabular-nums border border-white/10">
+                  {/* Bottom Content Area (No BG behind text) */}
+                  <div className="flex flex-col gap-1.5 z-10 mt-auto drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
+                    {/* Eye EAR & Focus Row */}
+                    <div className="flex items-center justify-between text-2xs font-mono tabular-nums text-white">
                       {isEyesClosed ? (
                         <span className="text-red-400 font-bold flex items-center gap-1">
                           <EyeOff className="w-3.5 h-3.5 text-red-400" />
                           EAR: {earRatio.toFixed(2)} (Blink)
                         </span>
                       ) : isMotion ? (
-                        <span className="text-amber-400 font-bold flex items-center gap-1">
-                          <Activity className="w-3.5 h-3.5 text-amber-400" />
+                        <span className="text-amber-300 font-bold flex items-center gap-1">
+                          <Activity className="w-3.5 h-3.5 text-amber-300" />
                           Motion Smear
                         </span>
                       ) : (
-                        <span className="text-emerald-400 font-bold flex items-center gap-1">
-                          <Eye className="w-3.5 h-3.5 text-emerald-400" />
+                        <span className="text-emerald-300 font-bold flex items-center gap-1">
+                          <Eye className="w-3.5 h-3.5 text-emerald-300" />
                           EAR: {earRatio.toFixed(2)} (Open)
                         </span>
                       )}
-                      <span className="text-white/70 text-2xs">
+                      <span className="text-white/80 text-2xs font-bold">
                         Focus: {item.quality.laplacianSharpness.toFixed(0)}/100
                       </span>
                     </div>
@@ -516,7 +513,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
                         <span className="font-sans font-bold text-sm text-white truncate max-w-[170px]">
                           {item.metadata.filename}
                         </span>
-                        <span className="text-2xs font-mono tabular-nums text-white/80">
+                        <span className="text-2xs font-mono tabular-nums text-white/90 font-medium">
                           {(item.metadata.fileSize / 1000000).toFixed(2)} MB
                         </span>
                       </div>
@@ -527,7 +524,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
 
                     {/* Action Footer: Destination & Button */}
                     <div className="flex items-center justify-between pt-1 gap-2">
-                      <span className="text-2xs font-mono tabular-nums text-white/70 truncate max-w-[90px]">
+                      <span className="text-2xs font-mono tabular-nums text-white/80 truncate max-w-[90px]">
                         {isArchived ? '/_archive/' : '/Kept/'}
                       </span>
 
@@ -536,9 +533,9 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
                           e.stopPropagation();
                           onToggleArchive(item.metadata.id);
                         }}
-                        className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-full font-heading text-xs font-bold tracking-wide transition-all cursor-pointer active:scale-95 ${
+                        className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-full font-heading text-xs font-bold tracking-wide transition-colors cursor-pointer ${
                           isArchived
-                            ? 'bg-white/20 hover:bg-white/30 text-white backdrop-blur-md'
+                            ? 'bg-black/70 hover:bg-black text-white'
                             : 'bg-[#D83C00] hover:bg-[#B83300] text-white'
                         }`}
                       >
