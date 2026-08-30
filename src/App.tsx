@@ -54,7 +54,7 @@ export const AppContent: React.FC = () => {
   }));
 
   const [status, setStatus] = useState<ProcessingStatus>('IDLE');
-  const [isInspectorCollapsed, setIsInspectorCollapsed] = useState<boolean>(true);
+  const [isInspectorCollapsed, setIsInspectorCollapsed] = useState<boolean>(false);
   const [cullingSubTab, setCullingSubTab] = useState<'all' | 'kept' | 'archived' | 'top_picks'>('all');
   const [items, setItems] = useState<ProcessedItem[]>([]);
   const [activeItem, setActiveItem] = useState<ProcessedItem | null>(null);
