@@ -53,7 +53,7 @@ export function analyzeHorizonGeometry(
   rawDetectedAngleDeg: number,
   thresholdDeg: number = 0.5
 ): GeometryCorrection {
-  const requiresCorrection = Math.abs(rawDetectedAngleDeg) >= thresholdDeg && Math.abs(rawDetectedAngleDeg) <= 20.0;
+  const requiresCorrection = Math.abs(rawDetectedAngleDeg) >= thresholdDeg && Math.abs(rawDetectedAngleDeg) <= 45.0;
   
   if (!requiresCorrection) {
     return {

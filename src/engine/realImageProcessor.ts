@@ -382,13 +382,37 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
             });
           }
 
-          // 4. Calculate Real Horizon & Tilt Angle via Radon & Hough Line Projection
+          // 4. Calculate Real Horizon & Portrait Tilt Angle via Radon & Hough Line Projection
+          let faceTiltHint: number | null = null;
+          if (detectedFaces.length > 0 && skinPixelCount > 30) {
+            let covXX = 0, covYY = 0, covXY = 0;
+            const avgX = skinCenterX / skinPixelCount;
+            const avgY = skinCenterY / skinPixelCount;
+            for (let i = 0; i < pixelCount; i++) {
+              if (isSkin[i] === 1) {
+                const px = (i % sampleWidth) - avgX;
+                const py = Math.floor(i / sampleWidth) - avgY;
+                covXX += px * px;
+                covYY += py * py;
+                covXY += px * py;
+              }
+            }
+            if (covXX + covYY > 0) {
+              const theta = 0.5 * Math.atan2(2 * covXY, covXX - covYY);
+              let bodyTilt = (theta * 180) / Math.PI;
+              while (bodyTilt < -45) bodyTilt += 90;
+              while (bodyTilt > 45) bodyTilt -= 90;
+              faceTiltHint = bodyTilt;
+            }
+          }
+
           geometry = detectHorizonAndTiltAngle(
             gray,
             sampleWidth,
             sampleHeight,
             width,
-            height
+            height,
+            faceTiltHint
           );
         } catch {
           // Fallback if canvas read restriction occurs
@@ -447,10 +471,40 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
         }
       }
 
+      // Generate straightened & inscribed transformed thumbnail if angle was corrected
+      let transformedThumbnail = persistentThumbnail;
+      if (geometry.requiresCorrection && geometry.correctedAngleDeg !== 0) {
+        try {
+          const transCanvas = document.createElement('canvas');
+          transCanvas.width = sampleWidth;
+          transCanvas.height = sampleHeight;
+          const tCtx = transCanvas.getContext('2d');
+          if (tCtx) {
+            tCtx.imageSmoothingEnabled = true;
+            tCtx.imageSmoothingQuality = 'high';
+            const scale = Math.max(width / geometry.cropBox.width, height / geometry.cropBox.height);
+            tCtx.save();
+            tCtx.translate(sampleWidth / 2, sampleHeight / 2);
+            tCtx.rotate((geometry.correctedAngleDeg * Math.PI) / 180);
+            tCtx.drawImage(
+              img,
+              (-sampleWidth * scale) / 2,
+              (-sampleHeight * scale) / 2,
+              sampleWidth * scale,
+              sampleHeight * scale
+            );
+            tCtx.restore();
+            transformedThumbnail = transCanvas.toDataURL('image/jpeg', 0.88);
+          }
+        } catch {
+          // Fallback to original thumbnail
+        }
+      }
+
       resolve({
         metadata,
         thumbnailUrl: objectUrl || persistentThumbnail,
-        transformedThumbnailUrl: objectUrl || persistentThumbnail,
+        transformedThumbnailUrl: transformedThumbnail,
         originalFileUrl: objectUrl,
         originalFile: file,
         burstGroupId: `burst_${Math.floor(index / 3) + 1}`,

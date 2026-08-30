@@ -163,7 +163,7 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-3.5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {currentList.map((item) => {
             const lr = item.lightroom;
             const isUnder = lr.exposureState === 'UNDER_EXPOSED';
@@ -173,93 +173,101 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
             return (
               <div
                 key={item.metadata.id}
-                className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] hover:border-[#D83C00] rounded-2xl p-3.5 flex flex-col justify-between transition-colors"
+                className="soft-blur-card min-h-[380px] flex flex-col justify-between group"
               >
-                {/* Photo Preview with Real-time Lightroom CSS Filter Applied */}
-                <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-slate-950 border border-slate-100 dark:border-[#27272A]">
-                  <img
-                    src={item.thumbnailUrl}
-                    alt={item.metadata.filename}
-                    style={{ filter: lr.cssFilter }}
-                    className="w-full h-full object-cover"
-                  />
+                {/* Full Bleed Background Image with Lightroom CSS Filter */}
+                <img
+                  src={item.thumbnailUrl}
+                  alt={item.metadata.filename}
+                  style={{ filter: lr.cssFilter || 'none' }}
+                  className="card-bg-image"
+                  loading="lazy"
+                />
 
+                {/* Soft Progressive Feathered Blur Overlay (Zero Border) */}
+                <div className="progressive-blur-layer" />
+
+                {/* Foreground Content Layer */}
+                <div className="card-foreground">
                   {/* Top Badges */}
-                  <div className="absolute top-2 left-2 flex items-center gap-1 z-10">
+                  <div className="flex items-center justify-between z-10">
                     {item.isArchived ? (
-                      <span className="bg-red-600 text-white font-heading font-extrabold text-2xs px-2 py-0.5 rounded-full shadow-none">
+                      <span className="bg-red-600/90 text-white font-heading font-extrabold text-2xs px-2.5 py-0.5 rounded-full backdrop-blur-sm">
                         _archive
                       </span>
                     ) : (
-                      <span className="bg-[#D83C00] text-white font-heading font-extrabold text-2xs px-2 py-0.5 rounded-full flex items-center gap-1 shadow-none">
-                        <Sparkles className="w-2.5 h-2.5 text-white" />
+                      <span className="bg-[#D83C00]/90 text-white font-heading font-extrabold text-2xs px-2.5 py-0.5 rounded-full flex items-center gap-1 backdrop-blur-sm">
+                        <Sparkles className="w-3 h-3 text-white" />
                         Enhanced
                       </span>
                     )}
-                  </div>
 
-                  {/* 1-Click Single Image Download Button */}
-                  <button
-                    onClick={() => handleDownloadSingle(item)}
-                    className="absolute top-2 right-2 z-10 p-1.5 rounded-lg bg-black/70 hover:bg-black text-white transition-colors flex items-center gap-1 text-2xs font-bold backdrop-blur-sm cursor-pointer"
-                    title="Download this image"
-                  >
-                    {hasDownloaded ? (
-                      <Check className="w-3 h-3 text-emerald-400" />
-                    ) : (
-                      <Download className="w-3 h-3" />
-                    )}
-                  </button>
-
-                  {/* Bottom Stats Overlay */}
-                  <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between bg-black/75 backdrop-blur-sm text-white px-2 py-1 rounded-lg text-2xs font-mono tabular-nums z-10">
-                    <span className="flex items-center gap-1 text-white">
-                      <Compass className="w-3 h-3 text-[#D83C00]" />
-                      {item.geometry.detectedAngleDeg > 0 ? '+' : ''}{item.geometry.detectedAngleDeg}° Leveled
-                    </span>
-                    <span className="text-white">
-                      {lr.exposureState.split('_')[0]}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Card Metadata & Lightroom Adjustments Summary */}
-                <div className="flex flex-col gap-2 pt-3">
-                  <div className="flex items-center justify-between">
-                    <span className="font-sans font-bold text-xs text-[#111827] dark:text-white truncate max-w-[170px]">
-                      {item.metadata.filename}
-                    </span>
-                    <span className="text-2xs font-mono tabular-nums text-[#9CA3AF]">
-                      {(item.metadata.fileSize / 1000000).toFixed(2)} MB
-                    </span>
-                  </div>
-
-                  {/* Lightroom Parameters Pill */}
-                  <div className="bg-[#F9FAFB] dark:bg-[#141414] border border-[#E5E7EB] dark:border-[#27272A] rounded-xl p-2 flex flex-col gap-1 text-2xs font-mono tabular-nums">
-                    <div className="flex items-center justify-between text-[#111827] dark:text-white">
-                      <span className="font-semibold flex items-center gap-1">
-                        <Sliders className="w-3 h-3 text-[#D83C00]" />
-                        Lightroom Tone
-                      </span>
-                      <span className={isUnder || isOver ? 'text-[#D83C00] font-bold' : 'text-[#9CA3AF]'}>
-                        {isUnder ? 'Contrast -20 / Shadows +20' : isOver ? 'Highlights -20 / Whites -20' : 'Balanced (0)'}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Target File Destination & Download Trigger */}
-                  <div className="pt-2 border-t border-[#E5E7EB] dark:border-[#27272A] flex items-center justify-between text-2xs">
-                    <span className="font-mono tabular-nums text-[#9CA3AF] truncate max-w-[170px]">
-                      {item.targetPath}
-                    </span>
-
+                    {/* 1-Click Single Image Download Button */}
                     <button
                       onClick={() => handleDownloadSingle(item)}
-                      className="flex items-center gap-1 font-heading text-[#D83C00] hover:text-[#B83300] font-bold cursor-pointer transition-colors"
+                      className="p-1.5 rounded-xl bg-black/60 hover:bg-black/90 text-white backdrop-blur-md transition-all flex items-center gap-1 text-2xs font-bold cursor-pointer"
+                      title="Download this image"
                     >
-                      <Download className="w-3 h-3" />
-                      <span>Download</span>
+                      {hasDownloaded ? (
+                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      ) : (
+                        <Download className="w-3.5 h-3.5" />
+                      )}
                     </button>
+                  </div>
+
+                  {/* Bottom Content Area (Inside Soft Progressive Blur) */}
+                  <div className="flex flex-col gap-2 z-10 mt-auto">
+                    {/* Leveling & Exposure Stat Pill */}
+                    <div className="flex items-center justify-between bg-black/60 backdrop-blur-md px-2.5 py-1.5 rounded-xl text-2xs font-mono tabular-nums border border-white/10">
+                      <span className="flex items-center gap-1 text-white">
+                        <Compass className="w-3 h-3 text-[#D83C00]" />
+                        {item.geometry.correctedAngleDeg !== 0
+                          ? `${item.geometry.correctedAngleDeg > 0 ? '+' : ''}${item.geometry.correctedAngleDeg.toFixed(1)}° Straightened`
+                          : 'Level 0.0°'}
+                      </span>
+                      <span className="text-white font-bold">
+                        {lr.exposureState.split('_')[0]}
+                      </span>
+                    </div>
+
+                    {/* Filename & File Size */}
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className="font-sans font-bold text-sm text-white truncate max-w-[180px]">
+                          {item.metadata.filename}
+                        </span>
+                        <span className="text-2xs font-mono tabular-nums text-white/80">
+                          {(item.metadata.fileSize / 1000000).toFixed(2)} MB
+                        </span>
+                      </div>
+
+                      {/* Lightroom Tone Pill */}
+                      <div className="mt-1 flex items-center justify-between bg-black/50 backdrop-blur-md border border-white/10 rounded-xl px-2.5 py-1 text-2xs font-mono tabular-nums text-white">
+                        <span className="flex items-center gap-1 text-white/90">
+                          <Sliders className="w-3 h-3 text-[#D83C00]" />
+                          Lightroom Tone
+                        </span>
+                        <span className={isUnder || isOver ? 'text-[#D83C00] font-bold' : 'text-white/70'}>
+                          {isUnder ? 'Contrast -20 / Shadows +20' : isOver ? 'Highlights -20 / Whites -20' : 'Balanced (0)'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Action Footer: Destination & Download */}
+                    <div className="flex items-center justify-between pt-1 text-2xs">
+                      <span className="font-mono tabular-nums text-white/70 truncate max-w-[160px]">
+                        {item.targetPath}
+                      </span>
+
+                      <button
+                        onClick={() => handleDownloadSingle(item)}
+                        className="flex items-center gap-1 font-heading text-white hover:text-[#D83C00] font-bold cursor-pointer transition-colors"
+                      >
+                        <Download className="w-3.5 h-3.5 text-[#D83C00]" />
+                        <span>Download</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -342,7 +342,7 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
           <h3 className="font-heading text-xs font-bold text-[#111827] dark:text-white">No photos loaded for renaming</h3>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filteredItems.map((item) => {
             const preview = previewMap.get(item.metadata.id);
             const isArchived = item.isArchived;
@@ -350,41 +350,59 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
             return (
               <div
                 key={item.metadata.id}
-                className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] hover:border-[#D83C00] rounded-2xl p-3 flex flex-col justify-between gap-2.5 transition-colors"
+                className="soft-blur-card min-h-[360px] flex flex-col justify-between group"
               >
-                {/* Image Thumbnail */}
-                <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-slate-900 border border-[#E5E7EB] dark:border-[#27272A]">
-                  <img
-                    src={item.thumbnailUrl}
-                    alt={item.metadata.filename}
-                    className="w-full h-full object-cover"
-                  />
-                  {isArchived && (
-                    <span className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-full text-2xs font-heading font-bold bg-red-600 text-white">
-                      _archive
-                    </span>
-                  )}
-                  <span className="absolute bottom-1.5 right-1.5 px-2 py-0.5 rounded-lg text-2xs font-mono font-bold bg-black/70 text-white backdrop-blur-sm">
-                    {preview?.folderName}
-                  </span>
-                </div>
+                {/* Full Bleed Background Image */}
+                <img
+                  src={item.thumbnailUrl}
+                  alt={item.metadata.filename}
+                  className="card-bg-image"
+                  loading="lazy"
+                />
 
-                {/* Name Transformation Comparison */}
-                <div className="flex flex-col gap-1.5 pt-1">
-                  <div className="flex items-center justify-between text-2xs font-mono tabular-nums text-[#9CA3AF]">
-                    <span className="truncate max-w-[140px] line-through text-[#9CA3AF]">
-                      {preview?.original}
-                    </span>
-                    <span>{(item.metadata.fileSize / 1000000).toFixed(1)} MB</span>
-                  </div>
+                {/* Soft Progressive Feathered Blur Overlay (Zero Border) */}
+                <div className="progressive-blur-layer" />
 
-                  <div className="flex items-center justify-between bg-[#F9FAFB] dark:bg-[#181818] border border-[#D83C00]/30 rounded-xl px-2.5 py-1.5">
-                    <span className="font-mono text-xs font-extrabold text-[#D83C00] truncate max-w-[170px]">
-                      {preview?.renamed}
-                    </span>
-                    <span className="text-2xs font-mono tabular-nums text-emerald-500 font-bold">
+                {/* Foreground Content Layer */}
+                <div className="card-foreground">
+                  {/* Top Bar Badges */}
+                  <div className="flex items-center justify-between z-10">
+                    <span className="px-2.5 py-1 rounded-full text-2xs font-mono font-bold bg-black/75 backdrop-blur-md text-white border border-white/10">
                       #{preview?.index}
                     </span>
+                    {isArchived ? (
+                      <span className="px-2.5 py-0.5 rounded-full text-2xs font-heading font-extrabold uppercase tracking-wider bg-red-600/90 text-white backdrop-blur-sm">
+                        _archive
+                      </span>
+                    ) : (
+                      <span className="px-2.5 py-0.5 rounded-full text-2xs font-mono font-bold bg-black/60 text-[#D83C00] backdrop-blur-md border border-[#D83C00]/30">
+                        {preview?.folderName}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Bottom Content Area (Inside Soft Progressive Blur) */}
+                  <div className="flex flex-col gap-2 z-10 mt-auto">
+                    {/* Original Filename (Strikethrough) + File Size */}
+                    <div className="flex items-center justify-between text-2xs font-mono tabular-nums text-white/70">
+                      <span className="truncate max-w-[170px] line-through">
+                        {preview?.original}
+                      </span>
+                      <span>{(item.metadata.fileSize / 1000000).toFixed(2)} MB</span>
+                    </div>
+
+                    {/* New Renamed Filename Highlight Badge */}
+                    <div className="flex items-center justify-between bg-black/60 backdrop-blur-md border border-[#D83C00]/40 rounded-xl px-3 py-2">
+                      <div className="flex items-center gap-1.5 truncate">
+                        <FileSignature className="w-3.5 h-3.5 text-[#D83C00] flex-shrink-0" />
+                        <span className="font-mono text-xs font-extrabold text-[#D83C00] truncate">
+                          {preview?.renamed}
+                        </span>
+                      </div>
+                      <span className="text-2xs font-mono tabular-nums text-emerald-400 font-bold ml-2">
+                        READY
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -70,95 +70,133 @@ export function calculateInscribedCrop(
 }
 
 /**
- * Analyzes image pixel gradients using Radon Projection & Hough Line Histogram
- * to detect the true tilt angle of horizon, coastlines, or architectural lines.
+ * Analyzes image pixel gradients using Multi-Axis Radon Projection & Hough Line Histogram
+ * to detect the true tilt angle of horizon, coastlines, architectural lines, or portrait silhouettes.
  * 
  * @param gray Grayscale pixel buffer of size (sampleWidth * sampleHeight)
  * @param sampleWidth Width of sampled pixel buffer (e.g. 320px)
  * @param sampleHeight Height of sampled pixel buffer (e.g. 240px)
  * @param originalWidth Full original image width
  * @param originalHeight Full original image height
+ * @param faceTiltHint Optional detected face orientation angle in degrees
  */
 export function detectHorizonAndTiltAngle(
   gray: Float32Array,
   sampleWidth: number,
   sampleHeight: number,
   originalWidth: number,
-  originalHeight: number
+  originalHeight: number,
+  faceTiltHint?: number | null
 ): DetectedHorizonGeometry {
-  const minAngle = -15.0;
-  const maxAngle = 15.0;
-  const step = 0.2; // 0.2 degree resolution
+  const minAngle = -45.0;
+  const maxAngle = 45.0;
+  const step = 0.5; // 0.5 degree precision
   const numBins = Math.round((maxAngle - minAngle) / step) + 1;
   const angleBins = new Float32Array(numBins);
-  const angleCounts = new Uint32Array(numBins);
-
-  // 1. Compute Sobel Edge Gradients & Local Orientations
-  // Focusing on horizontal and near-horizontal edges (horizon / architectural levels)
   let totalEdgeEnergy = 0;
+  let edgeCount = 0;
 
-  for (let y = 2; y < sampleHeight - 2; y += 2) {
-    for (let x = 2; x < sampleWidth - 2; x += 2) {
+  // 1. Compute Sobel Edge Gradients & Cardinal Deviation Mapping
+  // Evaluates both Horizontal (horizons, floors) and Vertical (trees, people, walls) edges
+  for (let y = 2; y < sampleHeight - 2; y++) {
+    for (let x = 2; x < sampleWidth - 2; x++) {
       const idx = y * sampleWidth + x;
-      // Sobel kernel approximations
+      
+      // Sobel kernel for gradient components
       const dx =
-        gray[idx + 1] - gray[idx - 1] +
-        0.5 * (gray[idx - sampleWidth + 1] - gray[idx - sampleWidth - 1] +
-               gray[idx + sampleWidth + 1] - gray[idx + sampleWidth - 1]);
+        (gray[idx + 1] - gray[idx - 1]) * 2 +
+        (gray[idx - sampleWidth + 1] - gray[idx - sampleWidth - 1]) +
+        (gray[idx + sampleWidth + 1] - gray[idx + sampleWidth - 1]);
 
       const dy =
-        gray[idx + sampleWidth] - gray[idx - sampleWidth] +
-        0.5 * (gray[idx + sampleWidth + 1] - gray[idx - sampleWidth + 1] +
-               gray[idx + sampleWidth - 1] - gray[idx - sampleWidth - 1]);
+        (gray[idx + sampleWidth] - gray[idx - sampleWidth]) * 2 +
+        (gray[idx + sampleWidth + 1] - gray[idx + sampleWidth + 1]) +
+        (gray[idx + sampleWidth - 1] - gray[idx - sampleWidth - 1]);
 
       const magSq = dx * dx + dy * dy;
 
-      // Filter out low-contrast noise
-      if (magSq > 80) {
+      // Filter out low-contrast texture noise
+      if (magSq > 120) {
         const mag = Math.sqrt(magSq);
-        // Calculate edge orientation angle in degrees (-90 to +90)
-        let edgeAngleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
+        let gradAngle = (Math.atan2(dy, dx) * 180) / Math.PI;
+        if (gradAngle < 0) gradAngle += 180; // [0, 180)
 
-        // Map perpendicular edge gradient to line tilt angle (-45 to +45)
-        let lineTiltDeg = edgeAngleDeg - 90;
-        while (lineTiltDeg < -45) lineTiltDeg += 90;
-        while (lineTiltDeg > 45) lineTiltDeg -= 90;
+        // Deviation from nearest cardinal axis (0° or 90°) -> range [-45°, +45°]
+        let tilt = gradAngle % 90;
+        if (tilt > 45) tilt -= 90;
 
-        // Check if within natural camera tilt range (-15 to +15 degrees)
-        if (lineTiltDeg >= minAngle && lineTiltDeg <= maxAngle) {
-          const binIdx = Math.round((lineTiltDeg - minAngle) / step);
+        if (tilt >= minAngle && tilt <= maxAngle) {
+          const binIdx = Math.round((tilt - minAngle) / step);
           if (binIdx >= 0 && binIdx < numBins) {
-            angleBins[binIdx] += mag;
-            angleCounts[binIdx]++;
-            totalEdgeEnergy += mag;
+            // Emphasize prominent clean silhouette edges with mag^1.25
+            const weight = Math.pow(mag, 1.25);
+            angleBins[binIdx] += weight;
+            totalEdgeEnergy += weight;
+            edgeCount++;
           }
         }
       }
     }
   }
 
-  // 2. Find Peak Angle in Angular Projection Profile
+  // If a portrait face tilt hint was detected, reinforce that angular bin
+  if (typeof faceTiltHint === 'number' && !isNaN(faceTiltHint) && Math.abs(faceTiltHint) <= 45) {
+    const hintBinIdx = Math.round((faceTiltHint - minAngle) / step);
+    if (hintBinIdx >= 0 && hintBinIdx < numBins && totalEdgeEnergy > 0) {
+      angleBins[hintBinIdx] += totalEdgeEnergy * 0.15;
+    }
+  }
+
+  // 2. 5-point Gaussian smoothing on projection bins to suppress discretization noise
+  const smoothedBins = new Float32Array(numBins);
+  const kernel = [0.06, 0.24, 0.40, 0.24, 0.06];
+  for (let i = 2; i < numBins - 2; i++) {
+    let s = 0;
+    for (let k = -2; k <= 2; k++) {
+      s += angleBins[i + k] * kernel[k + 2];
+    }
+    smoothedBins[i] = s;
+  }
+
+  // Copy edge bins
+  smoothedBins[0] = angleBins[0];
+  smoothedBins[1] = angleBins[1];
+  smoothedBins[numBins - 2] = angleBins[numBins - 2];
+  smoothedBins[numBins - 1] = angleBins[numBins - 1];
+
+  // 3. Compute statistical baseline (Mean & StdDev for Signal-to-Noise Ratio)
+  let sum = 0;
+  for (let i = 0; i < numBins; i++) sum += smoothedBins[i];
+  const mean = sum / numBins;
+
+  let varianceSum = 0;
+  for (let i = 0; i < numBins; i++) {
+    const diff = smoothedBins[i] - mean;
+    varianceSum += diff * diff;
+  }
+  const stdDev = Math.sqrt(varianceSum / numBins);
+
+  // 4. Find Peak Angle in Angular Projection Profile
   let peakEnergy = 0;
   let peakBinIdx = Math.round((-minAngle) / step); // Default 0.0 degrees
 
   for (let i = 1; i < numBins - 1; i++) {
-    // 3-point Gaussian smoothing on projection bins
-    const smoothed = 0.25 * angleBins[i - 1] + 0.5 * angleBins[i] + 0.25 * angleBins[i + 1];
-    if (smoothed > peakEnergy) {
-      peakEnergy = smoothed;
+    if (smoothedBins[i] > peakEnergy) {
+      peakEnergy = smoothedBins[i];
       peakBinIdx = i;
     }
   }
 
   const rawDetectedAngle = Number((minAngle + peakBinIdx * step).toFixed(1));
-  const confidence = totalEdgeEnergy > 0 ? Math.min(1.0, (peakEnergy / (totalEdgeEnergy * 0.12))) : 0.4;
+  const snr = stdDev > 0 ? (peakEnergy - mean) / stdDev : 0;
+  const confidence = Math.min(1.0, Math.max(0.0, snr / 3.5));
 
-  // Threshold: Ignore tiny micro-jitter (< 0.4 deg) unless strong confidence
-  const requiresCorrection = Math.abs(rawDetectedAngle) >= 0.5 && confidence >= 0.35;
+  // Threshold: Require clear statistical significance (SNR >= 1.6) and tilt >= 0.5°
+  const requiresCorrection = Math.abs(rawDetectedAngle) >= 0.5 && snr >= 1.6 && edgeCount > 50;
   const finalDetectedAngle = requiresCorrection ? rawDetectedAngle : 0.0;
   const correctedAngleDeg = -finalDetectedAngle;
 
-  // 3. Compute Inscribed Crop Box for full resolution
+  // 5. Compute Inscribed Crop Box for full resolution
   const crop = calculateInscribedCrop(originalWidth, originalHeight, finalDetectedAngle);
 
   return {

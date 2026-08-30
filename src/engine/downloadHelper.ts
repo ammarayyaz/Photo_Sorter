@@ -61,10 +61,22 @@ async function renderFullResolutionBlob(item: ProcessedItem): Promise<Blob> {
 
   // Apply Horizon Straightening rotation & inscribed crop if required
   if (item.geometry && item.geometry.requiresCorrection && item.geometry.correctedAngleDeg !== 0) {
+    const crop = item.geometry.cropBox;
+    const scale =
+      crop && crop.width > 0 && crop.height > 0
+        ? Math.max(origWidth / crop.width, origHeight / crop.height)
+        : 1.0;
+
     ctx.save();
     ctx.translate(origWidth / 2, origHeight / 2);
     ctx.rotate((item.geometry.correctedAngleDeg * Math.PI) / 180);
-    ctx.drawImage(img, -origWidth / 2, -origHeight / 2, origWidth, origHeight);
+    ctx.drawImage(
+      img,
+      (-origWidth * scale) / 2,
+      (-origHeight * scale) / 2,
+      origWidth * scale,
+      origHeight * scale
+    );
     ctx.restore();
   } else {
     ctx.drawImage(img, 0, 0, origWidth, origHeight);

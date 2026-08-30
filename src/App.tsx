@@ -492,6 +492,18 @@ export const AppContent: React.FC = () => {
                 items={items}
                 metrics={metrics}
                 onContinueToOutput={() => setActiveTab('step4-renaming')}
+                onUpdateItems={(updated) => {
+                  setItems(updated);
+                  const straightened = updated.filter((i) => i.geometry && i.geometry.requiresCorrection).length;
+                  const under = updated.filter((i) => i.lightroom?.exposureState === 'UNDER_EXPOSED').length;
+                  const over = updated.filter((i) => i.lightroom?.exposureState === 'OVER_EXPOSED').length;
+                  setMetrics((prev) => ({
+                    ...prev,
+                    imagesStraightened: straightened,
+                    underexposedCount: under,
+                    overexposedCount: over,
+                  }));
+                }}
               />
             )}
 

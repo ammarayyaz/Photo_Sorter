@@ -209,7 +209,7 @@ export class PhotoPipelineController {
           angle
         );
         item.geometry.requiresCorrection = true;
-        item.geometry.correctedAngleDeg = angle;
+        item.geometry.correctedAngleDeg = -angle;
         item.geometry.cropBox = {
           x: crop.x,
           y: crop.y,
@@ -218,6 +218,9 @@ export class PhotoPipelineController {
         };
         item.geometry.cropLossPercentage = crop.cropLossPercentage;
         straightenedCount++;
+      } else {
+        item.geometry.requiresCorrection = false;
+        item.geometry.correctedAngleDeg = 0;
       }
 
       // 3B. Lightroom Tonal Adjustments based on real luminance

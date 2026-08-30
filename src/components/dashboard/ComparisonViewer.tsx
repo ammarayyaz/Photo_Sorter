@@ -91,11 +91,6 @@ export const ComparisonViewer: React.FC<ComparisonViewerProps> = ({
               className={`w-full h-full object-cover transition-transform duration-300 ${
                 isZoomed ? 'scale-150' : 'scale-100'
               }`}
-              style={{
-                transform: `rotate(${-geometry.correctedAngleDeg}deg) ${
-                  isZoomed ? 'scale(1.5)' : 'scale(1)'
-                }`,
-              }}
             />
           </div>
           <div className="absolute top-2.5 left-2.5 bg-black/70 backdrop-blur-sm text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded border border-amber-500/30">
