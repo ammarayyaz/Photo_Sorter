@@ -22,10 +22,15 @@ import {
   StraighteningAlgorithm
 } from '../../engine/horizonDetector';
 import { calculateLightroomAdjustments } from '../../engine/lightroomTone';
+import {
+  analyzeStraightnessWithGemini,
+  GeminiStraightenResult
+} from '../../engine/geminiStraightener';
 
 interface StraightenAndToneViewProps {
   items: ProcessedItem[];
   metrics: PipelineMetrics;
+  geminiApiKey?: string;
   onContinueToOutput: () => void;
   onUpdateItems?: (items: ProcessedItem[]) => void;
 }
@@ -33,6 +38,7 @@ interface StraightenAndToneViewProps {
 export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
   items,
   metrics,
+  geminiApiKey,
   onContinueToOutput,
   onUpdateItems,
 }) => {
@@ -43,6 +49,8 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
   const [isZoomed, setIsZoomed] = useState<boolean>(false);
   const [showGrid, setShowGrid] = useState<boolean>(true);
   const [isAutoDetecting, setIsAutoDetecting] = useState<boolean>(false);
+  const [isAiAnalyzing, setIsAiAnalyzing] = useState<boolean>(false);
+  const [aiResults, setAiResults] = useState<Record<string, GeminiStraightenResult>>({});
   const [algorithm, setAlgorithm] = useState<StraighteningAlgorithm>('zoltanvin-hough');
   const [filterMode, setFilterMode] = useState<
     'all' | 'tilted' | 'straightened' | 'underexposed' | 'overexposed' | 'archive'
@@ -233,25 +241,89 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
     onUpdateItems(updatedList);
   }, [items, onUpdateItems, selectedItem]);
 
-  // Batch auto-straighten all photos in queue
+  // 1. Single Image Gemini AI Straighten Scan
+  const handleGeminiAiStraighten = useCallback(async () => {
+    if (!selectedItem || !onUpdateItems) return;
+    setIsAiAnalyzing(true);
+
+    try {
+      const result = await analyzeStraightnessWithGemini(geminiApiKey, selectedItem);
+      setAiResults((prev) => ({ ...prev, [selectedItem.metadata.id]: result }));
+
+      if (result.needsStraightening) {
+        handleApplyAngle(result.recommendedCorrectionAngleDeg);
+      } else if (result.isStraight) {
+        handleApplyAngle(0.0);
+      }
+    } catch {
+      // Fallback
+    } finally {
+      setIsAiAnalyzing(false);
+    }
+  }, [geminiApiKey, handleApplyAngle, onUpdateItems, selectedItem]);
+
+  // 2. Batch Gemini AI Straighten All
+  const handleBatchGeminiAiStraightenAll = useCallback(async () => {
+    if (!onUpdateItems || items.length === 0) return;
+    setIsAiAnalyzing(true);
+
+    const updatedList = [...items];
+    const newAiResults: Record<string, GeminiStraightenResult> = { ...aiResults };
+
+    for (let i = 0; i < updatedList.length; i++) {
+      const it = updatedList[i];
+      try {
+        const res = await analyzeStraightnessWithGemini(geminiApiKey, it);
+        newAiResults[it.metadata.id] = res;
+
+        if (res.needsStraightening) {
+          const recAngle = res.recommendedCorrectionAngleDeg;
+          const origW = it.metadata.dimensions.width || 1920;
+          const origH = it.metadata.dimensions.height || 1080;
+          const crop = calculateInscribedCrop(origW, origH, recAngle);
+
+          updatedList[i] = {
+            ...it,
+            geometry: {
+              ...it.geometry,
+              detectedAngleDeg: res.estimatedTiltAngleDeg,
+              correctedAngleDeg: recAngle,
+              requiresCorrection: true,
+              cropBox: { x: crop.x, y: crop.y, width: crop.width, height: crop.height },
+              cropLossPercentage: crop.lossPercentage,
+            },
+          };
+        }
+      } catch {
+        // Continue
+      }
+    }
+
+    setAiResults(newAiResults);
+    onUpdateItems(updatedList);
+    setIsAiAnalyzing(false);
+  }, [aiResults, geminiApiKey, items, onUpdateItems]);
+
+  // Batch auto-straighten all photos in queue via geometry
   const handleBatchStraightenAll = useCallback(async () => {
     if (!onUpdateItems || items.length === 0) return;
     setIsAutoDetecting(true);
 
     const updated = items.map((item) => {
       const angle = item.geometry.detectedAngleDeg;
-      if (Math.abs(angle) >= 0.5) {
+      const targetAngle = item.geometry.correctedAngleDeg !== 0 ? item.geometry.correctedAngleDeg : -angle;
+      if (Math.abs(targetAngle) >= 0.1) {
         const crop = calculateInscribedCrop(
           item.metadata.dimensions.width,
           item.metadata.dimensions.height,
-          -angle
+          targetAngle
         );
         return {
           ...item,
           geometry: {
             ...item.geometry,
             requiresCorrection: true,
-            correctedAngleDeg: -angle,
+            correctedAngleDeg: targetAngle,
             cropBox: { x: crop.x, y: crop.y, width: crop.width, height: crop.height },
             cropLossPercentage: crop.lossPercentage,
           },
@@ -321,12 +393,22 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
 
         <div className="flex items-center gap-2">
           <button
+            onClick={handleBatchGeminiAiStraightenAll}
+            disabled={isAiAnalyzing || isAutoDetecting}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#D83C00]/10 hover:bg-[#D83C00]/20 text-[#D83C00] border border-[#D83C00]/30 font-heading font-bold text-xs tracking-wide transition-all cursor-pointer shadow-none"
+            title="Scan all images with Gemini Vision AI to detect and level tilted photos"
+          >
+            <Sparkles className={`w-3.5 h-3.5 ${isAiAnalyzing ? 'animate-spin' : ''}`} />
+            <span>{isAiAnalyzing ? 'AI Straightening...' : 'AI Straighten All'}</span>
+          </button>
+
+          <button
             onClick={handleBatchStraightenAll}
-            disabled={isAutoDetecting}
+            disabled={isAutoDetecting || isAiAnalyzing}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#181818] dark:hover:bg-[#222222] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] font-heading font-semibold text-xs tracking-wide transition-all cursor-pointer"
           >
-            <Sparkles className="w-3.5 h-3.5 text-[#D83C00]" />
-            <span>Auto-Straighten All</span>
+            <Compass className="w-3.5 h-3.5 text-[#D83C00]" />
+            <span>Auto-Level All</span>
           </button>
 
           <button
@@ -588,16 +670,71 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                   Straighten &amp; Leveling
                 </span>
               </div>
-              <button
-                onClick={handleAutoDetect}
-                disabled={isAutoDetecting}
-                className="flex items-center gap-1 text-2xs font-heading font-bold px-2 py-0.5 rounded-lg bg-[#D83C00]/15 hover:bg-[#D83C00]/25 text-[#D83C00] border border-[#D83C00]/30 cursor-pointer transition-colors"
-                title="Re-run AI Horizon / Portrait detection"
-              >
-                <Wand2 className={`w-3 h-3 ${isAutoDetecting ? 'animate-spin' : ''}`} />
-                <span>{isAutoDetecting ? 'Detecting...' : 'Auto-Detect'}</span>
-              </button>
+
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={handleGeminiAiStraighten}
+                  disabled={isAiAnalyzing}
+                  className="flex items-center gap-1 text-2xs font-heading font-bold px-2 py-0.5 rounded-lg bg-[#D83C00] hover:bg-[#B83300] text-white cursor-pointer transition-colors shadow-none"
+                  title="Analyze image with Gemini AI Vision to detect if straight or tilted"
+                >
+                  <Sparkles className={`w-3 h-3 ${isAiAnalyzing ? 'animate-spin' : ''}`} />
+                  <span>{isAiAnalyzing ? 'AI Analyzing...' : 'AI Vision Scan'}</span>
+                </button>
+
+                <button
+                  onClick={handleAutoDetect}
+                  disabled={isAutoDetecting || isAiAnalyzing}
+                  className="flex items-center gap-1 text-2xs font-heading font-bold px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-[#181818] hover:bg-slate-200 dark:hover:bg-[#222222] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] cursor-pointer transition-colors"
+                  title="Run local geometric line detection"
+                >
+                  <Wand2 className={`w-3 h-3 ${isAutoDetecting ? 'animate-spin' : ''}`} />
+                  <span>{isAutoDetecting ? 'Detecting...' : 'Auto-Detect'}</span>
+                </button>
+              </div>
             </div>
+
+            {/* Gemini AI Visual Straightness Verdict Card */}
+            {aiResults[selectedItem.metadata.id] && (
+              <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-[#141414] border border-[#E5E7EB] dark:border-[#27272A] flex flex-col gap-1.5 text-2xs">
+                <div className="flex items-center justify-between">
+                  <span className="font-heading font-bold text-xs flex items-center gap-1 text-[#111827] dark:text-white">
+                    <Sparkles className="w-3.5 h-3.5 text-[#D83C00]" />
+                    AI Vision Verdict
+                  </span>
+                  <span
+                    className={`font-mono font-bold px-1.5 py-0.5 rounded text-[10px] ${
+                      aiResults[selectedItem.metadata.id].isStraight
+                        ? 'bg-emerald-500/15 text-emerald-500'
+                        : 'bg-[#D83C00]/15 text-[#D83C00]'
+                    }`}
+                  >
+                    {aiResults[selectedItem.metadata.id].isStraight
+                      ? '✓ Verified Level (0.0°)'
+                      : `⚠ Tilted: ${aiResults[selectedItem.metadata.id].estimatedTiltAngleDeg > 0 ? '+' : ''}${aiResults[selectedItem.metadata.id].estimatedTiltAngleDeg}°`}
+                  </span>
+                </div>
+
+                <div className="text-[11px] text-[#4B5563] dark:text-[#A1A1AA] leading-snug">
+                  {aiResults[selectedItem.metadata.id].reason}
+                </div>
+
+                <div className="flex items-center justify-between text-[10px] text-[#9CA3AF] pt-0.5 border-t border-[#E5E7EB] dark:border-[#27272A]/50">
+                  <span>
+                    Type:{' '}
+                    <strong className="text-[#111827] dark:text-white capitalize">
+                      {aiResults[selectedItem.metadata.id].tiltType.toLowerCase().replace(/_/g, ' ')}
+                    </strong>
+                  </span>
+                  <span>
+                    Confidence:{' '}
+                    <strong className="text-[#D83C00]">
+                      {(aiResults[selectedItem.metadata.id].confidence * 100).toFixed(0)}%
+                    </strong>
+                  </span>
+                </div>
+              </div>
+            )}
 
             {/* Angle Slider + Direct Degree Input */}
             <div className="flex flex-col gap-1.5">

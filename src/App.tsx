@@ -521,6 +521,7 @@ export const AppContent: React.FC = () => {
               <StraightenAndToneView
                 items={items}
                 metrics={metrics}
+                geminiApiKey={config.geminiApiKey}
                 onContinueToOutput={() => setActiveTab('step4-renaming')}
                 onUpdateItems={(updated) => {
                   setItems(updated);
