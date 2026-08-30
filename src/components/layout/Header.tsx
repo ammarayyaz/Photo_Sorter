@@ -13,6 +13,8 @@ import { ActiveTab } from './Sidebar';
 import { ProcessingStatus } from '../../engine/types';
 import { useTheme } from '../../context/ThemeContext';
 
+import { StepProgressRibbon } from './StepProgressRibbon';
+
 interface HeaderProps {
   activeTab: ActiveTab;
   status: ProcessingStatus;
@@ -20,6 +22,8 @@ interface HeaderProps {
   folderName?: string;
   isInspectorCollapsed?: boolean;
   onToggleInspector?: () => void;
+  onSelectTab?: (tab: ActiveTab) => void;
+  itemsCount?: number;
   onStart: () => void;
   onPause: () => void;
   onResume: () => void;
@@ -33,6 +37,8 @@ export const Header: React.FC<HeaderProps> = ({
   hasGeminiKey: _hasGeminiKey,
   isInspectorCollapsed,
   onToggleInspector,
+  onSelectTab,
+  itemsCount = 0,
   onStart,
   onPause,
   onResume,
@@ -66,7 +72,7 @@ export const Header: React.FC<HeaderProps> = ({
     status !== 'ERROR';
 
   return (
-    <header className="flex items-center justify-between pb-3 select-none bg-transparent">
+    <header className="flex items-center justify-between pb-3 select-none bg-transparent gap-3">
       {/* 1. Left Breadcrumb Navigation */}
       <div className="flex items-center gap-2 text-xs">
         <div className="flex items-center gap-1.5">
@@ -74,7 +80,7 @@ export const Header: React.FC<HeaderProps> = ({
           {folderName && folderName.trim().length > 0 && (
             <>
               <ChevronRight className="w-3.5 h-3.5 text-[#9CA3AF] dark:text-[#71717A]" />
-              <span className="font-heading text-[#111827] dark:text-white font-bold tracking-tight truncate max-w-[240px]">
+              <span className="font-heading text-[#111827] dark:text-white font-bold tracking-tight truncate max-w-[180px]">
                 {folderName}
               </span>
             </>
@@ -82,7 +88,16 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* 2. Top Right Control Actions */}
+      {/* 2. Interactive Step-by-Step Progress Ribbon */}
+      {onSelectTab && (
+        <StepProgressRibbon
+          activeTab={activeTab}
+          onSelectTab={onSelectTab}
+          itemsCount={itemsCount}
+        />
+      )}
+
+      {/* 3. Top Right Control Actions */}
       <div className="flex items-center gap-2">
         {/* Info Inspector Toggle Button */}
         {onToggleInspector && (

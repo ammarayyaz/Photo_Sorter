@@ -119,6 +119,9 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
     return map;
   }, [folderGroups, customPrefixes, items, paddingDigits, separator]);
 
+  const [appliedItemIds, setAppliedItemIds] = useState<Set<string>>(new Set());
+  const [appliedFolderIds, setAppliedFolderIds] = useState<Set<string>>(new Set());
+
   // Commit renaming to all items
   const handleApplyRenaming = () => {
     const updated = items.map((item) => {
@@ -139,6 +142,71 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
     onUpdateItems(updated);
     setAppliedStatus(true);
     setTimeout(() => setAppliedStatus(false), 3000);
+  };
+
+  // Commit renaming to a single item
+  const handleApplySingleRename = (itemId: string) => {
+    const preview = previewMap.get(itemId);
+    if (!preview) return;
+
+    const updated = items.map((item) => {
+      if (item.metadata.id === itemId) {
+        const originalFilename = item.metadata.originalFilename || item.metadata.filename;
+        return {
+          ...item,
+          metadata: {
+            ...item.metadata,
+            originalFilename,
+            filename: preview.renamed,
+          },
+        };
+      }
+      return item;
+    });
+
+    onUpdateItems(updated);
+    setAppliedItemIds((prev) => new Set(prev).add(itemId));
+    setTimeout(() => {
+      setAppliedItemIds((prev) => {
+        const next = new Set(prev);
+        next.delete(itemId);
+        return next;
+      });
+    }, 2500);
+  };
+
+  // Commit renaming to all items in a single folder
+  const handleApplyFolderRename = (folderId: string) => {
+    const targetGroup = folderGroups.find((g) => g.folderId === folderId);
+    if (!targetGroup) return;
+
+    const targetItemIds = new Set(targetGroup.items.map((i) => i.metadata.id));
+    const updated = items.map((item) => {
+      if (targetItemIds.has(item.metadata.id)) {
+        const preview = previewMap.get(item.metadata.id);
+        if (!preview) return item;
+        const originalFilename = item.metadata.originalFilename || item.metadata.filename;
+        return {
+          ...item,
+          metadata: {
+            ...item.metadata,
+            originalFilename,
+            filename: preview.renamed,
+          },
+        };
+      }
+      return item;
+    });
+
+    onUpdateItems(updated);
+    setAppliedFolderIds((prev) => new Set(prev).add(folderId));
+    setTimeout(() => {
+      setAppliedFolderIds((prev) => {
+        const next = new Set(prev);
+        next.delete(folderId);
+        return next;
+      });
+    }, 2500);
   };
 
   // Revert renaming back to original filenames
@@ -295,19 +363,28 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
                 <span className="font-sans text-xs text-[#4B5563] dark:text-[#A1A1AA] font-semibold">
                   Prefix:
                 </span>
-                <input
-                  type="text"
-                  value={currentPrefix}
-                  maxLength={6}
-                  onChange={(e) => {
-                    const val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-                    setCustomPrefixes((prev) => ({
-                      ...prev,
-                      [group.folderId]: val,
-                    }));
-                  }}
-                  className="bg-[#F9FAFB] dark:bg-[#181818] border border-[#D83C00]/40 rounded-lg px-2 py-0.5 font-mono text-xs font-bold text-[#D83C00] text-center w-20 outline-none focus:border-[#D83C00]"
-                />
+                <div className="flex items-center gap-1.5">
+                  <input
+                    type="text"
+                    value={currentPrefix}
+                    maxLength={6}
+                    onChange={(e) => {
+                      const val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                      setCustomPrefixes((prev) => ({
+                        ...prev,
+                        [group.folderId]: val,
+                      }));
+                    }}
+                    className="bg-[#F9FAFB] dark:bg-[#181818] border border-[#D83C00]/40 rounded-lg px-2 py-0.5 font-mono text-xs font-bold text-[#D83C00] text-center w-16 outline-none focus:border-[#D83C00]"
+                  />
+                  <button
+                    onClick={() => handleApplyFolderRename(group.folderId)}
+                    className="px-2 py-1 rounded-lg bg-[#D83C00] hover:bg-[#B83300] text-white text-[10px] font-heading font-bold cursor-pointer transition-all active:scale-95 shadow-none"
+                    title="Apply this prefix to all photos in this folder"
+                  >
+                    {appliedFolderIds.has(group.folderId) ? '✓ Applied' : 'Apply'}
+                  </button>
+                </div>
               </div>
             </div>
           );
@@ -346,6 +423,7 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
           {filteredItems.map((item) => {
             const preview = previewMap.get(item.metadata.id);
             const isArchived = item.isArchived;
+            const isSingleApplied = appliedItemIds.has(item.metadata.id);
 
             return (
               <div
@@ -405,9 +483,13 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
                           {preview?.renamed}
                         </span>
                       </div>
-                      <span className="text-2xs font-mono tabular-nums text-emerald-400 font-bold ml-2">
-                        READY
-                      </span>
+                      <button
+                        onClick={() => handleApplySingleRename(item.metadata.id)}
+                        className="p-1 rounded-lg bg-[#D83C00] hover:bg-[#B83300] text-white text-[10px] font-heading font-bold ml-2 transition-all cursor-pointer active:scale-95 shadow-none"
+                        title="Apply this new name to this photo"
+                      >
+                        {isSingleApplied ? '✓ Done' : 'Apply'}
+                      </button>
                     </div>
                   </div>
                 </div>

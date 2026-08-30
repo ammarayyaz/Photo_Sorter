@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Sidebar, ActiveTab } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
 import { RightInfoPanel } from './components/layout/RightInfoPanel';
@@ -469,110 +470,123 @@ export const AppContent: React.FC = () => {
             hasGeminiKey={config.geminiApiKey.trim().length > 0}
             isInspectorCollapsed={isInspectorCollapsed}
             onToggleInspector={() => setIsInspectorCollapsed((prev) => !prev)}
+            onSelectTab={(tab) => setActiveTab(tab)}
+            itemsCount={items.length}
             onStart={handleStart}
             onPause={handlePause}
             onResume={handleResume}
             onReset={handleReset}
           />
 
-          <div className="flex-1 min-h-0 overflow-hidden">
-            {/* Step 1: Ingest & Browse Folders */}
-            {activeTab === 'step1-folders' && (
-              <FoldersView
-                initialSubTab="unsorted"
-                metrics={metrics}
-                items={items}
-                folders={folders}
-                setFolders={setFolders}
-                faceClusters={faceClusters}
-                activeItem={activeItem}
-                onSelectItem={(item) => setActiveItem(item)}
-                onAddRealItems={handleAddRealItems}
-                onDeleteFolder={handleDeleteFolder}
-                onDeleteImages={handleDeleteImages}
-                config={config}
-                onChangeConfig={handleConfigChange}
-                onStartPipeline={() => {
-                  handleStart();
-                  setActiveTab('step2-culling');
-                }}
-              />
-            )}
+          <div className="flex-1 min-h-0 overflow-hidden relative">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 12, scale: 0.995 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -8, scale: 0.995 }}
+                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                className="h-full w-full overflow-hidden"
+              >
+                {/* Step 1: Ingest & Browse Folders */}
+                {activeTab === 'step1-folders' && (
+                  <FoldersView
+                    initialSubTab="unsorted"
+                    metrics={metrics}
+                    items={items}
+                    folders={folders}
+                    setFolders={setFolders}
+                    faceClusters={faceClusters}
+                    activeItem={activeItem}
+                    onSelectItem={(item) => setActiveItem(item)}
+                    onAddRealItems={handleAddRealItems}
+                    onDeleteFolder={handleDeleteFolder}
+                    onDeleteImages={handleDeleteImages}
+                    config={config}
+                    onChangeConfig={handleConfigChange}
+                    onStartPipeline={() => {
+                      handleStart();
+                      setActiveTab('step2-culling');
+                    }}
+                  />
+                )}
 
-            {/* Step 2: Blur & Motion Culling (Archive Separation) */}
-            {activeTab === 'step2-culling' && (
-              <CullingSeparationView
-                items={items}
-                metrics={metrics}
-                onToggleArchive={handleToggleArchive}
-                onToggleArchiveBulk={handleBulkToggleArchive}
-                onContinueToStraighten={() => setActiveTab('step3-enhancement')}
-                onGoToIngest={() => setActiveTab('step1-folders')}
-                geminiApiKey={config.geminiApiKey}
-                onChangeConfig={handleConfigChange}
-                onUpdateItems={(updated) => setItems(updated)}
-                activeSubTab={cullingSubTab}
-                onChangeSubTab={(sub) => setCullingSubTab(sub)}
-              />
-            )}
+                {/* Step 2: Blur & Motion Culling (Archive Separation) */}
+                {activeTab === 'step2-culling' && (
+                  <CullingSeparationView
+                    items={items}
+                    metrics={metrics}
+                    onToggleArchive={handleToggleArchive}
+                    onToggleArchiveBulk={handleBulkToggleArchive}
+                    onContinueToStraighten={() => setActiveTab('step3-enhancement')}
+                    onGoToIngest={() => setActiveTab('step1-folders')}
+                    geminiApiKey={config.geminiApiKey}
+                    onChangeConfig={handleConfigChange}
+                    onUpdateItems={(updated) => setItems(updated)}
+                    activeSubTab={cullingSubTab}
+                    onChangeSubTab={(sub) => setCullingSubTab(sub)}
+                  />
+                )}
 
-            {/* Step 3: Straighten & Lightroom Tone Tuning */}
-            {activeTab === 'step3-enhancement' && (
-              <StraightenAndToneView
-                items={items}
-                metrics={metrics}
-                geminiApiKey={config.geminiApiKey}
-                onContinueToOutput={() => setActiveTab('step4-renaming')}
-                onUpdateItems={(updated) => {
-                  setItems(updated);
-                  const straightened = updated.filter((i) => i.geometry && i.geometry.requiresCorrection).length;
-                  const under = updated.filter((i) => i.lightroom?.exposureState === 'UNDER_EXPOSED').length;
-                  const over = updated.filter((i) => i.lightroom?.exposureState === 'OVER_EXPOSED').length;
-                  setMetrics((prev) => ({
-                    ...prev,
-                    imagesStraightened: straightened,
-                    underexposedCount: under,
-                    overexposedCount: over,
-                  }));
-                }}
-              />
-            )}
+                {/* Step 3: Straighten & Lightroom Tone Tuning */}
+                {activeTab === 'step3-enhancement' && (
+                  <StraightenAndToneView
+                    items={items}
+                    metrics={metrics}
+                    geminiApiKey={config.geminiApiKey}
+                    onContinueToOutput={() => setActiveTab('step4-renaming')}
+                    onUpdateItems={(updated) => {
+                      setItems(updated);
+                      const straightened = updated.filter((i) => i.geometry && i.geometry.requiresCorrection).length;
+                      const under = updated.filter((i) => i.lightroom?.exposureState === 'UNDER_EXPOSED').length;
+                      const over = updated.filter((i) => i.lightroom?.exposureState === 'OVER_EXPOSED').length;
+                      setMetrics((prev) => ({
+                        ...prev,
+                        imagesStraightened: straightened,
+                        underexposedCount: under,
+                        overexposedCount: over,
+                      }));
+                    }}
+                  />
+                )}
 
-            {/* Step 4: Batch Image Renaming */}
-            {activeTab === 'step4-renaming' && (
-              <RenamingView
-                items={items}
-                folders={folders}
-                onUpdateItems={(updated) => setItems(updated)}
-                onContinueToOutput={() => setActiveTab('step5-output')}
-              />
-            )}
+                {/* Step 4: Batch Image Renaming */}
+                {activeTab === 'step4-renaming' && (
+                  <RenamingView
+                    items={items}
+                    folders={folders}
+                    onUpdateItems={(updated) => setItems(updated)}
+                    onContinueToOutput={() => setActiveTab('step5-output')}
+                  />
+                )}
 
-            {/* Step 5: Final Output Gallery & Hierarchy Review */}
-            {activeTab === 'step5-output' && (
-              <OutputGalleryView
-                items={items}
-                metrics={metrics}
-                faceClusters={faceClusters}
-                destinationDirectory={config.destinationDirectory}
-              />
-            )}
+                {/* Step 5: Final Output Gallery & Hierarchy Review */}
+                {activeTab === 'step5-output' && (
+                  <OutputGalleryView
+                    items={items}
+                    metrics={metrics}
+                    faceClusters={faceClusters}
+                    destinationDirectory={config.destinationDirectory}
+                  />
+                )}
 
-            {/* Shared With Me / Face Clusters */}
-            {activeTab === 'faces' && (
-              <FaceClustersView
-                faceClusters={faceClusters}
-                onRenameCluster={handleRenameFaceCluster}
-              />
-            )}
+                {/* Shared With Me / Face Clusters */}
+                {activeTab === 'faces' && (
+                  <FaceClustersView
+                    faceClusters={faceClusters}
+                    onRenameCluster={handleRenameFaceCluster}
+                  />
+                )}
 
-            {/* Backups & Settings */}
-            {activeTab === 'settings' && (
-              <SettingsView
-                config={config}
-                onChangeConfig={handleConfigChange}
-              />
-            )}
+                {/* Backups & Settings */}
+                {activeTab === 'settings' && (
+                  <SettingsView
+                    config={config}
+                    onChangeConfig={handleConfigChange}
+                  />
+                )}
+              </motion.div>
+            </AnimatePresence>
           </div>
         </main>
 

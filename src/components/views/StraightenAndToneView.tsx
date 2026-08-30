@@ -12,7 +12,9 @@ import {
   RotateCw,
   Grid,
   Wand2,
-  RefreshCw
+  RefreshCw,
+  Check,
+  FolderCheck
 } from 'lucide-react';
 import { ProcessedItem, PipelineMetrics } from '../../engine/types';
 import { getOriginalFileBlob } from '../../engine/storageManager';
@@ -56,6 +58,8 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
     'all' | 'tilted' | 'straightened' | 'underexposed' | 'overexposed' | 'archive'
   >('all');
   const [activeFullResUrl, setActiveFullResUrl] = useState<string>('');
+  const [showAppliedToast, setShowAppliedToast] = useState<boolean>(false);
+  const [showAppliedFolderToast, setShowAppliedFolderToast] = useState<boolean>(false);
 
   const selectedItem = items.find((i) => i.metadata.id === selectedItemId) || items[0];
 
@@ -1056,6 +1060,68 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                   onChange={(e) => handleToneChange('whites', parseInt(e.target.value, 10))}
                   className="accent-[#D83C00] w-full cursor-pointer"
                 />
+              </div>
+            </div>
+
+            {/* Single Step Apply Actions on Photo or Folder */}
+            <div className="flex flex-col gap-2 pt-3 border-t border-[#E5E7EB] dark:border-[#27272A] mt-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-heading font-extrabold text-[#4B5563] dark:text-[#A1A1AA] uppercase tracking-wider">
+                  Apply Step 3 Actions
+                </span>
+                {showAppliedToast && (
+                  <span className="text-2xs font-mono font-bold text-emerald-500 flex items-center gap-1 animate-pulse">
+                    <Check className="w-3 h-3" /> Saved!
+                  </span>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    handleApplyAngle(geometry.correctedAngleDeg);
+                    setShowAppliedToast(true);
+                    setTimeout(() => setShowAppliedToast(false), 2000);
+                  }}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-[#D83C00] hover:bg-[#B83300] text-white font-heading font-bold text-xs tracking-wide transition-all active:scale-98 cursor-pointer shadow-none"
+                  title="Apply current horizon tilt & tone adjustments to this individual image"
+                >
+                  <Check className="w-3.5 h-3.5" />
+                  <span>{showAppliedToast ? '✓ Applied to Photo' : 'Apply Step to This Photo'}</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    if (!onUpdateItems) return;
+                    const updated = items.map((it) => {
+                      const crop = calculateInscribedCrop(
+                        it.metadata.dimensions.width || 1920,
+                        it.metadata.dimensions.height || 1080,
+                        geometry.correctedAngleDeg
+                      );
+                      return {
+                        ...it,
+                        lightroom: { ...selectedItem.lightroom },
+                        geometry: {
+                          ...it.geometry,
+                          detectedAngleDeg: Number((-geometry.correctedAngleDeg).toFixed(1)),
+                          correctedAngleDeg: geometry.correctedAngleDeg,
+                          requiresCorrection: Math.abs(geometry.correctedAngleDeg) >= 0.1,
+                          cropBox: { x: crop.x, y: crop.y, width: crop.width, height: crop.height },
+                          cropLossPercentage: crop.lossPercentage,
+                        },
+                      };
+                    });
+                    onUpdateItems(updated);
+                    setShowAppliedFolderToast(true);
+                    setTimeout(() => setShowAppliedFolderToast(false), 2000);
+                  }}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-slate-100 dark:bg-[#181818] hover:bg-slate-200 dark:hover:bg-[#222222] text-[#111827] dark:text-white font-heading font-bold text-xs border border-[#E5E7EB] dark:border-[#27272A] transition-all active:scale-98 cursor-pointer"
+                  title="Apply current straightening & Lightroom tone curve to all photos in the album"
+                >
+                  <FolderCheck className="w-3.5 h-3.5 text-[#D83C00]" />
+                  <span>{showAppliedFolderToast ? '✓ Applied to Folder' : 'Apply Step to Folder'}</span>
+                </button>
               </div>
             </div>
           </div>
