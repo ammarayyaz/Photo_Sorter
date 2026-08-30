@@ -26,7 +26,7 @@ import {
 
 export const AppContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('step1-folders');
-  const [currentFolderName, setCurrentFolderName] = useState<string>('My Uploaded Photos');
+  const [currentFolderName, setCurrentFolderName] = useState<string>('');
   const [folders, setFolders] = useState<
     Array<{
       id: string;
@@ -54,7 +54,7 @@ export const AppContent: React.FC = () => {
   }));
 
   const [status, setStatus] = useState<ProcessingStatus>('IDLE');
-  const [isInspectorCollapsed, setIsInspectorCollapsed] = useState<boolean>(false);
+  const [isInspectorCollapsed, setIsInspectorCollapsed] = useState<boolean>(true);
   const [cullingSubTab, setCullingSubTab] = useState<'all' | 'kept' | 'archived' | 'top_picks'>('all');
   const [items, setItems] = useState<ProcessedItem[]>([]);
   const [activeItem, setActiveItem] = useState<ProcessedItem | null>(null);
@@ -120,7 +120,11 @@ export const AppContent: React.FC = () => {
           setFolders(uniqueFolders);
         }
         if (saved.metrics) setMetrics(saved.metrics);
-        if (saved.currentFolderName) setCurrentFolderName(saved.currentFolderName);
+        if (saved.currentFolderName && saved.items && saved.items.length > 0) {
+          setCurrentFolderName(saved.currentFolderName);
+        } else {
+          setCurrentFolderName('');
+        }
         if (saved.activeTab) setActiveTab(saved.activeTab as ActiveTab);
         if (saved.config) setConfig(saved.config);
         if (saved.items.length > 0) setActiveItem(saved.items[0]);
@@ -234,6 +238,9 @@ export const AppContent: React.FC = () => {
     if (activeItem && targetImageIds.has(activeItem.metadata.id)) {
       setActiveItem(updatedItems[0] || null);
     }
+    if (updatedItems.length === 0) {
+      setCurrentFolderName('');
+    }
 
     const under = updatedItems.filter((i) => i.lightroom.exposureState === 'UNDER_EXPOSED').length;
     const over = updatedItems.filter((i) => i.lightroom.exposureState === 'OVER_EXPOSED').length;
@@ -266,6 +273,9 @@ export const AppContent: React.FC = () => {
     setFolders(updatedFolders);
     if (activeItem && deleteSet.has(activeItem.metadata.id)) {
       setActiveItem(updatedItems[0] || null);
+    }
+    if (updatedItems.length === 0) {
+      setCurrentFolderName('');
     }
 
     const under = updatedItems.filter((i) => i.lightroom.exposureState === 'UNDER_EXPOSED').length;
@@ -322,7 +332,7 @@ export const AppContent: React.FC = () => {
     setActiveItem(null);
     setFaceClusters([]);
     setLogs([]);
-    setCurrentFolderName('All Uploaded Photos');
+    setCurrentFolderName('');
     setMetrics({
       totalScanned: 0,
       currentProcessed: 0,

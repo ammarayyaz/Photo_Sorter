@@ -212,14 +212,9 @@ export const RightInfoPanel: React.FC<RightInfoPanelProps> = ({
               </div>
             </div>
           ) : (
-            <div className="bg-[#F9FAFB] dark:bg-[#121212] border border-[#E5E7EB] dark:border-[#222222] rounded-xl p-3 flex flex-col gap-2 my-1">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-[#111827] dark:text-white">
-                <Sparkles className="w-3.5 h-3.5 text-[#D83C00]" />
-                <span>Ready to Ingest</span>
-              </div>
-              <p className="font-sans text-[11px] text-[#4B5563] dark:text-[#A1A1AA] leading-relaxed">
-                Upload your camera folders in Step 1 to inspect live EXIF parameters, burst rankings, horizon tilts, and facial embeddings.
-              </p>
+            <div className="bg-[#F9FAFB] dark:bg-[#121212] border border-[#E5E7EB] dark:border-[#222222] rounded-xl p-2.5 flex items-center gap-2 my-1">
+              <Sparkles className="w-3.5 h-3.5 text-[#D83C00]" />
+              <span className="text-xs font-bold text-[#111827] dark:text-white font-heading">No item selected</span>
             </div>
           )}
         </div>

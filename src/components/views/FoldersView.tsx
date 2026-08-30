@@ -429,9 +429,6 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
           <h2 className="font-heading text-sm font-bold text-[#111827] dark:text-white tracking-tight">
             Drag &amp; drop photo folders or images here
           </h2>
-          <p className="font-sans text-xs text-[#4B5563] dark:text-[#A1A1AA] mt-1 max-w-md leading-relaxed">
-            Select your real camera folders or raw image files. LuminaSort automatically groups and tags photos by capture date on the calendar.
-          </p>
 
           <div className="flex items-center gap-2 mt-3">
             <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#27272A] hover:bg-slate-100 dark:hover:bg-[#222222] text-[#111827] dark:text-white font-heading text-xs font-bold cursor-pointer transition-colors">
@@ -485,9 +482,6 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
               {currentTabFolders.length} Folders
             </span>
           </div>
-          <span className="font-sans text-xs text-[#4B5563] dark:text-[#A1A1AA] font-medium">
-            Click any folder to open its edge-to-edge gallery
-          </span>
         </div>
 
         {subTab === 'unsorted' ? (
@@ -519,10 +513,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
           ) : (
             <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-8 text-center flex flex-col items-center gap-2 text-[#9CA3AF]">
               <FolderOpen className="w-8 h-8 text-[#9CA3AF]" />
-              <p className="font-heading text-xs font-bold text-[#111827] dark:text-white">No unsorted folders yet</p>
-              <p className="font-sans text-xs text-[#4B5563] dark:text-[#A1A1AA]">
-                Drop a folder above or click "Select Folder" to load your real photos.
-              </p>
+              <p className="font-heading text-xs font-bold text-[#111827] dark:text-white">No unsorted folders</p>
             </div>
           )
         ) : (
@@ -551,10 +542,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
           ) : (
             <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-8 text-center flex flex-col items-center gap-2 text-[#9CA3AF]">
               <FolderCheck className="w-8 h-8 text-[#9CA3AF]" />
-              <p className="font-heading text-xs font-bold text-[#111827] dark:text-white">No sorted folders yet</p>
-              <p className="font-sans text-xs text-[#4B5563] dark:text-[#A1A1AA]">
-                Run the pipeline on your unsorted folders to generate sorted collections.
-              </p>
+              <p className="font-heading text-xs font-bold text-[#111827] dark:text-white">No sorted folders</p>
             </div>
           )
         )}
@@ -657,7 +645,6 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
               <div className="h-full flex flex-col items-center justify-center text-center text-[#9CA3AF] gap-2 p-8">
                 <FileImage className="w-12 h-12 text-[#9CA3AF]" />
                 <p className="font-heading text-sm font-bold text-[#111827] dark:text-white">No images in this folder</p>
-                <p className="font-sans text-xs text-[#4B5563] dark:text-[#A1A1AA]">All photos were deleted or none match your search.</p>
               </div>
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-0 p-0 m-0 w-full">

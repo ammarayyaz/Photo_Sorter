@@ -70,9 +70,6 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
             <h2 className="font-heading text-xs font-bold text-[#111827] dark:text-white">
               Final Output &amp; Separation Review
             </h2>
-            <p className="font-sans text-xs text-[#4B5563] dark:text-[#A1A1AA] mt-0.5">
-              All images have been leveled, color-corrected with Lightroom parameters, and separated from sub-optimal blur frames.
-            </p>
           </div>
         </div>
 
@@ -162,10 +159,7 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
             <FolderOpen className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="font-heading text-sm font-bold text-[#111827] dark:text-white">No output photos generated yet</h3>
-            <p className="font-sans text-xs text-[#4B5563] dark:text-[#A1A1AA] mt-1 max-w-sm">
-              Please ingest photos in Step 1 and run the pipeline to view and download your organized collections.
-            </p>
+            <h3 className="font-heading text-sm font-bold text-[#111827] dark:text-white">No output photos</h3>
           </div>
         </div>
       ) : (

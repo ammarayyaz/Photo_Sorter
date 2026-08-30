@@ -180,8 +180,6 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           <RotateCcw className="w-3.5 h-3.5 text-[#9CA3AF]" />
           <span>Restore Recommended Defaults</span>
         </button>
-
-        <span className="font-sans text-xs text-[#9CA3AF] font-medium">Auto-saved to local secure storage</span>
       </div>
     </div>
   );

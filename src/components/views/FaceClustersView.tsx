@@ -51,9 +51,6 @@ export const FaceClustersView: React.FC<FaceClustersViewProps> = ({
             <h2 className="font-heading text-xs font-bold text-[#111827] dark:text-white">
               Discovered Individuals ({faceClusters.length} Face Clusters)
             </h2>
-            <p className="font-sans text-xs text-[#4B5563] dark:text-[#A1A1AA]">
-              Faces grouped via local 512-dimensional cosine vector embeddings. Name a person once to route all matching photos to their folder.
-            </p>
           </div>
         </div>
 
@@ -75,10 +72,7 @@ export const FaceClustersView: React.FC<FaceClustersViewProps> = ({
           <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#27272A] flex items-center justify-center mb-3">
             <Users className="w-6 h-6 text-[#9CA3AF]" />
           </div>
-          <h3 className="font-heading text-xs font-bold text-[#111827] dark:text-white">No Face Clusters Discovered Yet</h3>
-          <p className="font-sans text-xs max-w-sm mt-1 text-[#4B5563] dark:text-[#A1A1AA]">
-            Run the sorting pipeline on portrait or event photos to extract face embeddings and cluster recurring individuals.
-          </p>
+          <h3 className="font-heading text-xs font-bold text-[#111827] dark:text-white">No Face Clusters Discovered</h3>
         </div>
       ) : (
         <div className="grid grid-cols-3 gap-3.5">

@@ -100,11 +100,8 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
           </div>
           <div>
             <h2 className="font-heading text-xs font-bold text-[#111827] dark:text-white">
-              Horizon Straightening &amp; Adobe Lightroom Tonal Corrections
+              Horizon Straightening &amp; Lightroom Tonal Corrections
             </h2>
-            <p className="font-sans text-xs text-[#4B5563] dark:text-[#A1A1AA] mt-0.5">
-              Auto-straightens tilt angles &amp; applies Lightroom tone rules: <span className="font-semibold text-[#D83C00]">Underexposed (-20 Contrast, +20 Shadows)</span> and <span className="font-semibold text-[#D83C00]">Overexposed (-20 Highlights, -20 Whites)</span>.
-            </p>
           </div>
         </div>
 
@@ -124,7 +121,6 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
           <div className="font-mono tabular-nums text-xl font-extrabold text-[#111827] dark:text-white mt-1">
             {metrics.imagesStraightened > 0 ? metrics.imagesStraightened : realStraightened} photos
           </div>
-          <span className="font-sans text-2xs text-[#9CA3AF]">Inscribed crop applied</span>
         </div>
 
         <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-3 flex flex-col justify-between">
@@ -135,9 +131,6 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
           <div className="font-mono tabular-nums text-xl font-extrabold text-[#D83C00] mt-1">
             {metrics.underexposedCount > 0 ? metrics.underexposedCount : realUnderexposed} frames
           </div>
-          <span className="font-mono text-2xs text-[#4B5563] dark:text-[#A1A1AA]">
-            Contrast: -20 | Shadows: +20
-          </span>
         </div>
 
         <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-3 flex flex-col justify-between">
@@ -148,17 +141,13 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
           <div className="font-mono tabular-nums text-xl font-extrabold text-[#D83C00] mt-1">
             {metrics.overexposedCount > 0 ? metrics.overexposedCount : realOverexposed} frames
           </div>
-          <span className="font-mono text-2xs text-[#D83C00]">
-            Highlights: -20 | Whites: -20
-          </span>
         </div>
 
         <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-3 flex flex-col justify-between">
           <span className="font-heading text-xs font-semibold text-[#4B5563] dark:text-[#A1A1AA]">Applied to _archive</span>
           <div className="font-mono tabular-nums text-xl font-extrabold text-[#111827] dark:text-white mt-1">
-            100% Synced
+            100% Leveled
           </div>
-          <span className="font-sans text-2xs text-[#9CA3AF]">Archive also leveled</span>
         </div>
       </div>
 
@@ -391,10 +380,6 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                 />
               </div>
             </div>
-          </div>
-
-          <div className="pt-3 border-t border-[#E5E7EB] dark:border-[#27272A] text-2xs text-[#9CA3AF]">
-            Rules auto-applied per Lightroom specification.
           </div>
         </div>
       </div>

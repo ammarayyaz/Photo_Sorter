@@ -64,17 +64,26 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
 
       {/* 2. Inner Folder Content Overlay */}
       <div className="relative z-10 w-full h-full flex flex-col justify-between p-4 pt-3.5 select-none">
-        {/* Top: ORGANIZED FOLDER Label & Delete Action */}
+        {/* Top: Photo Count & Delete Action */}
         <div className="flex items-center justify-between">
-          <span
-            className={`font-heading text-2xs font-extrabold uppercase tracking-wider block ${
-              isActive
-                ? 'text-white/90'
-                : 'text-[#4B5563] dark:text-white/80'
-            }`}
-          >
-            ORGANIZED FOLDER
-          </span>
+          <div className="flex items-center gap-1.5">
+            <div
+              className={`w-6 h-6 rounded-lg flex items-center justify-center font-bold text-xs ${
+                isActive
+                  ? 'bg-white/20 text-white'
+                  : 'bg-[#D83C00]/15 dark:bg-black/30 text-[#D83C00] dark:text-white'
+              }`}
+            >
+              <Folder className="w-3.5 h-3.5" />
+            </div>
+            <span
+              className={`font-mono tabular-nums text-2xs font-semibold ${
+                isActive ? 'text-white/80' : 'text-[#4B5563] dark:text-white/90'
+              }`}
+            >
+              {folder.size}
+            </span>
+          </div>
 
           <div className="flex items-center gap-1.5">
             <span
@@ -106,37 +115,10 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
           </div>
         </div>
 
-        {/* Middle: Icon / Size */}
-        <div className="flex items-center gap-2 mt-1">
-          <div
-            className={`w-7 h-7 rounded-xl flex items-center justify-center font-bold text-xs ${
-              isActive
-                ? 'bg-white/20 text-white'
-                : 'bg-[#D83C00]/15 dark:bg-black/30 text-[#D83C00] dark:text-white'
-            }`}
-          >
-            <Folder className="w-3.5 h-3.5" />
-          </div>
-          <span
-            className={`font-mono tabular-nums text-2xs font-semibold ${
-              isActive ? 'text-white/80' : 'text-[#4B5563] dark:text-white/90'
-            }`}
-          >
-            {folder.size}
-          </span>
-        </div>
-
-        {/* Bottom: FOLDER Label & Folder Name */}
+        {/* Bottom: Folder Name */}
         <div className="mt-auto pt-1">
-          <span
-            className={`font-heading text-2xs font-extrabold uppercase tracking-widest block ${
-              isActive ? 'text-white/80' : 'text-[#9CA3AF] dark:text-white/70'
-            }`}
-          >
-            FOLDER
-          </span>
           <div
-            className={`font-heading font-bold text-xs truncate mt-0.5 ${
+            className={`font-heading font-bold text-xs truncate ${
               isActive ? 'text-white' : 'text-[#111827] dark:text-white'
             }`}
           >

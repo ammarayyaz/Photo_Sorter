@@ -29,7 +29,7 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({
   activeTab,
   status,
-  folderName = 'All Uploaded Photos',
+  folderName = '',
   hasGeminiKey: _hasGeminiKey,
   isInspectorCollapsed,
   onToggleInspector,
@@ -69,10 +69,14 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="flex items-center gap-2 text-xs">
         <div className="flex items-center gap-1.5">
           <span className="font-heading text-[#D83C00] font-bold tracking-tight">{getTabBreadcrumb()}</span>
-          <ChevronRight className="w-3.5 h-3.5 text-[#9CA3AF] dark:text-[#71717A]" />
-          <span className="font-heading text-[#111827] dark:text-white font-bold tracking-tight truncate max-w-[240px]">
-            {folderName}
-          </span>
+          {folderName && folderName.trim().length > 0 && (
+            <>
+              <ChevronRight className="w-3.5 h-3.5 text-[#9CA3AF] dark:text-[#71717A]" />
+              <span className="font-heading text-[#111827] dark:text-white font-bold tracking-tight truncate max-w-[240px]">
+                {folderName}
+              </span>
+            </>
+          )}
         </div>
       </div>
 

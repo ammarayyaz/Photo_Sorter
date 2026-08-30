@@ -253,11 +253,8 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
           </div>
           <div>
             <h2 className="font-heading text-xs font-bold text-[#111827] dark:text-white">
-              9-Dimension Quality Scoring, Blink Detection (EAR) &amp; Burst Culling
+              Quality Scoring, Blink Detection &amp; Burst Culling
             </h2>
-            <p className="font-sans text-xs text-[#4B5563] dark:text-[#A1A1AA] mt-0.5">
-              Powered by Facet multi-dimensional scoring: evaluates Eye Aspect Ratio (<code className="text-[#D83C00] font-mono">EAR &lt; 0.21</code>), subject saliency, and motion smear while protecting background bokeh.
-            </p>
           </div>
         </div>
 
@@ -285,11 +282,6 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             <span className="font-heading text-xs font-bold text-[#111827] dark:text-white">
               Google Gemini Vision AI (Flash)
             </span>
-            <p className="font-sans text-2xs text-[#4B5563] dark:text-[#A1A1AA] mt-0.5 truncate">
-              {apiKeyInput || geminiApiKey
-                ? 'Ready to inspect subtle blinks, squinting eyelids & camera shake with high precision.'
-                : 'Paste your Google Gemini API key to run multimodal AI culling & expression inspection.'}
-            </p>
           </div>
         </div>
 
@@ -403,33 +395,26 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
           <div className="font-mono tabular-nums text-xl font-extrabold text-[#111827] dark:text-white mt-1">
             {totalCount} photos
           </div>
-          <span className="font-sans text-2xs text-[#9CA3AF] mt-1">Source pool</span>
         </div>
 
         <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-3.5 flex flex-col justify-between shadow-none">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-heading font-semibold text-[#111827] dark:text-white">Kept Winners (Eyes Open)</span>
+            <span className="font-heading font-semibold text-[#111827] dark:text-white">Kept Winners</span>
             <CheckCircle2 className="w-4 h-4 text-[#D83C00]" />
           </div>
           <div className="font-mono tabular-nums text-xl font-extrabold text-[#D83C00] mt-1">
             {keptItems.length} photos
           </div>
-          <span className="font-sans text-2xs text-[#4B5563] dark:text-[#A1A1AA] font-medium mt-1">
-            Subject in focus &amp; eyes open
-          </span>
         </div>
 
         <div className="bg-white dark:bg-[#0E0E0E] border border-red-500/30 rounded-2xl p-3.5 flex flex-col justify-between bg-red-500/5 dark:bg-red-950/10 shadow-none">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-heading font-semibold text-red-500">Closed Eyes / Blinking (EAR &lt; 0.21)</span>
+            <span className="font-heading font-semibold text-red-500">Closed Eyes / Blinking</span>
             <EyeOff className="w-4 h-4 text-red-500" />
           </div>
           <div className="font-mono tabular-nums text-xl font-extrabold text-red-500 mt-1">
             {eyesClosedCount} frames
           </div>
-          <span className="font-mono text-2xs text-red-500 mt-1">
-            Separated to `_archive/`
-          </span>
         </div>
 
         <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-3.5 flex flex-col justify-between shadow-none">
@@ -440,9 +425,6 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
           <div className="font-mono tabular-nums text-xl font-extrabold text-[#111827] dark:text-white mt-1">
             {motionCount} frames
           </div>
-          <span className="font-mono text-2xs text-[#4B5563] dark:text-[#A1A1AA] mt-1">
-            Separated to `_archive/`
-          </span>
         </div>
       </div>
 
@@ -550,10 +532,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             <FolderOpen className="w-6 h-6" />
           </div>
           <div>
-            <h3 className="font-heading text-sm font-bold text-[#111827] dark:text-white">No photos uploaded for separation</h3>
-            <p className="font-sans text-xs text-[#4B5563] dark:text-[#A1A1AA] mt-1 max-w-sm">
-              Please go to Step 1 and drag &amp; drop a photo folder or images from your computer to run the eye blink and motion separation.
-            </p>
+            <h3 className="font-heading text-sm font-bold text-[#111827] dark:text-white">No photos for separation</h3>
           </div>
           {onGoToIngest && (
             <button

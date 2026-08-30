@@ -132,14 +132,11 @@ export const UnsortedFolderCard: React.FC<UnsortedFolderCardProps> = ({
 
         {/* Bottom Details & Sort Button */}
         <div className="flex items-end justify-between pt-1">
-          <div className="flex flex-col">
-            <span className="font-heading text-2xs font-extrabold uppercase tracking-widest text-[#9CA3AF] dark:text-white/70">
-              FOLDER
-            </span>
-            <span className="font-heading font-bold text-xs text-[#111827] dark:text-white truncate max-w-[140px]">
+          <div className="flex flex-col min-w-0 pr-2">
+            <span className="font-heading font-bold text-xs text-[#111827] dark:text-white truncate max-w-[150px]">
               {folder.name}
             </span>
-            <span className="font-mono tabular-nums text-2xs text-[#6B7280] dark:text-white/80">
+            <span className="font-mono tabular-nums text-2xs text-[#6B7280] dark:text-white/80 mt-0.5">
               {folder.size} • {folder.rawFormats}
             </span>
           </div>
