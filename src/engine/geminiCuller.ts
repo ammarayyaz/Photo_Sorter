@@ -38,12 +38,14 @@ async function getBase64FromUrl(url: string): Promise<{ data: string; mimeType: 
 
 /**
  * Inspects an image with Google Gemini Vision API to detect blinks, soft focus, and camera shake.
+ * Supports auto-fallback across Gemini 1.5 Flash, 1.5 Flash Latest, 2.0 Flash, and 1.5 Pro.
  */
 export async function analyzeImageWithGeminiVision(
   apiKey: string,
   item: ProcessedItem
 ): Promise<GeminiCullingResult> {
-  if (!apiKey || apiKey.trim().length === 0) {
+  const cleanKey = apiKey?.trim();
+  if (!cleanKey || cleanKey.length === 0) {
     throw new Error('Please enter a Google Gemini API Key in Settings or the API Key bar.');
   }
 
@@ -72,44 +74,74 @@ Respond ONLY with valid JSON in this exact structure:
   "reason": "Clear concise explanation"
 }`;
 
-  // Use Gemini 1.5 Flash (free, fast, highly accurate multimodal vision)
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey.trim()}`;
+  // Candidate models and API versions in order of preference
+  const candidateEndpoints = [
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${cleanKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${cleanKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${cleanKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${cleanKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${cleanKey}`,
+    `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${cleanKey}`,
+  ];
 
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [
-        {
-          parts: [
-            { text: prompt },
+  let lastError = '';
+
+  for (const endpoint of candidateEndpoints) {
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [
             {
-              inlineData: {
-                mimeType,
-                data: base64Data,
-              },
+              parts: [
+                { text: prompt },
+                {
+                  inlineData: {
+                    mimeType,
+                    data: base64Data,
+                  },
+                },
+              ],
             },
           ],
-        },
-      ],
-      generationConfig: {
-        responseMimeType: 'application/json',
-        temperature: 0.1,
-      },
-    }),
-  });
+          generationConfig: {
+            responseMimeType: 'application/json',
+            temperature: 0.1,
+          },
+        }),
+      });
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Gemini API Error (${response.status}): ${errorText}`);
+      if (response.ok) {
+        const json = await response.json();
+        const rawText = json.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (rawText) {
+          const cleanText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+          const result: GeminiCullingResult = JSON.parse(cleanText);
+          return result;
+        }
+      } else {
+        const errorText = await response.text();
+        lastError = `Gemini API Error (${response.status}): ${errorText}`;
+        // If 404 (model not found on this version/tier), try next candidate model
+        if (response.status === 404) {
+          continue;
+        } else {
+          // If 400/403 or invalid API key, throw immediately
+          break;
+        }
+      }
+    } catch (err: any) {
+      lastError = err.message || 'Network error connecting to Gemini API';
+    }
   }
 
-  const json = await response.json();
-  const textOutput = json.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!textOutput) {
-    throw new Error('No response returned from Gemini Vision API.');
+  // If all failed, throw descriptive error
+  if (lastError.includes('API_KEY_INVALID') || !cleanKey.startsWith('AIzaSy')) {
+    throw new Error(
+      `Invalid or unrecognized Gemini API Key. Google AI Studio keys start with "AIzaSy...". Please generate a free key at: https://aistudio.google.com/app/apikey\nOriginal Error: ${lastError}`
+    );
   }
 
-  const result: GeminiCullingResult = JSON.parse(textOutput);
-  return result;
+  throw new Error(lastError || 'Failed to analyze image with Gemini Vision AI.');
 }
