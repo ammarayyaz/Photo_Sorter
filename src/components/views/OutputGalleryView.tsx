@@ -3,11 +3,9 @@ import {
   FolderCheck,
   Archive,
   Download,
-  Compass,
-  Sparkles,
   CheckCircle2,
-  Sliders,
   FolderOpen,
+  Sparkles,
   Check
 } from 'lucide-react';
 import { ProcessedItem, PipelineMetrics, FaceCluster } from '../../engine/types';
@@ -166,8 +164,6 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {currentList.map((item) => {
             const lr = item.lightroom;
-            const isUnder = lr.exposureState === 'UNDER_EXPOSED';
-            const isOver = lr.exposureState === 'OVER_EXPOSED';
             const hasDownloaded = downloadedIds.has(item.metadata.id);
 
             return (
@@ -175,7 +171,7 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
                 key={item.metadata.id}
                 className="bg-white dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl overflow-hidden flex flex-col justify-between"
               >
-                {/* 1. Unobscured Clean Photo (No Blur · No Glow · No Darkening) */}
+                {/* 1. Unobscured Clean Photo */}
                 <div className="relative aspect-[4/3] w-full bg-slate-100 dark:bg-[#000000] overflow-hidden">
                   <img
                     src={item.transformedThumbnailUrl || item.thumbnailUrl}
@@ -191,22 +187,17 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
                     loading="lazy"
                   />
 
-                  {/* Minimal Top Badges */}
-                  <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none">
-                    {item.isArchived ? (
-                      <span className="bg-red-600 text-white font-heading font-extrabold text-2xs px-2.5 py-0.5 rounded-md pointer-events-auto">
+                  {/* Top Right Actions */}
+                  <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">
+                    {item.isArchived && (
+                      <span className="bg-red-600 text-white font-heading font-extrabold text-2xs px-2.5 py-0.5 rounded-md">
                         _archive
-                      </span>
-                    ) : (
-                      <span className="bg-[#D83C00] text-white font-heading font-extrabold text-2xs px-2.5 py-0.5 rounded-md flex items-center gap-1 pointer-events-auto">
-                        <Sparkles className="w-3 h-3 text-white" />
-                        Enhanced
                       </span>
                     )}
 
                     <button
                       onClick={() => handleDownloadSingle(item)}
-                      className="p-1.5 rounded-lg bg-black/80 hover:bg-[#D83C00] text-white transition-colors flex items-center gap-1 text-2xs font-bold cursor-pointer pointer-events-auto"
+                      className="p-1.5 rounded-lg bg-black/80 hover:bg-[#D83C00] text-white transition-colors flex items-center gap-1 text-2xs font-bold cursor-pointer"
                       title="Download this image"
                     >
                       {hasDownloaded ? (
@@ -218,11 +209,11 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
                   </div>
                 </div>
 
-                {/* 2. Crisp Info Section BELOW Photo (No Blur · Zero Glow) */}
+                {/* 2. Minimal Footer Below Photo */}
                 <div className="p-3.5 flex flex-col gap-2 bg-white dark:bg-[#111111]">
                   {/* Filename & File Size */}
                   <div className="flex items-center justify-between">
-                    <span className="font-heading font-bold text-xs text-[#111827] dark:text-white truncate max-w-[170px]" title={item.metadata.filename}>
+                    <span className="font-heading font-bold text-xs text-[#111827] dark:text-white truncate max-w-[180px]" title={item.metadata.filename}>
                       {item.metadata.filename}
                     </span>
                     <span className="text-2xs font-mono font-medium text-[#4B5563] dark:text-[#A1A1AA] tabular-nums">
@@ -230,33 +221,9 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
                     </span>
                   </div>
 
-                  {/* Stats Row */}
-                  <div className="flex items-center justify-between text-2xs font-mono tabular-nums text-[#4B5563] dark:text-[#A1A1AA]">
-                    <span className="flex items-center gap-1 font-semibold text-[#111827] dark:text-white">
-                      <Compass className="w-3 h-3 text-[#D83C00]" />
-                      {item.geometry.correctedAngleDeg !== 0
-                        ? `${item.geometry.correctedAngleDeg > 0 ? '+' : ''}${item.geometry.correctedAngleDeg.toFixed(1)}° Straightened`
-                        : 'Level 0.0°'}
-                    </span>
-                    <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-[#1E1E1E] text-slate-700 dark:text-slate-200 font-bold">
-                      {lr.exposureState.split('_')[0]}
-                    </span>
-                  </div>
-
-                  {/* Lightroom Tone Row */}
-                  <div className="flex items-center justify-between text-2xs font-mono tabular-nums text-[#4B5563] dark:text-[#A1A1AA] pt-1 border-t border-[#E5E7EB] dark:border-[#222222]">
-                    <span className="flex items-center gap-1">
-                      <Sliders className="w-3 h-3 text-[#D83C00]" />
-                      Tone:
-                    </span>
-                    <span className={isUnder || isOver ? 'text-[#D83C00] font-bold truncate max-w-[150px]' : 'text-slate-600 dark:text-slate-400 font-medium'}>
-                      {isUnder ? 'Contrast -20 / Shadows +20' : isOver ? 'Highlights -20 / Whites -20' : 'Balanced (0)'}
-                    </span>
-                  </div>
-
-                  {/* Download Action Footer */}
-                  <div className="flex items-center justify-between pt-1 text-2xs">
-                    <span className="font-mono tabular-nums text-[#9CA3AF] truncate max-w-[150px]" title={item.targetPath}>
+                  {/* Destination Path & Download Link */}
+                  <div className="flex items-center justify-between pt-1 border-t border-[#E5E7EB] dark:border-[#222222] text-2xs">
+                    <span className="font-mono tabular-nums text-[#9CA3AF] truncate max-w-[160px]" title={item.targetPath}>
                       {item.targetPath}
                     </span>
                     <button
