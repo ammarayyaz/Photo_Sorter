@@ -27,6 +27,7 @@ import {
   FaceCluster,
   LogEntry,
 } from './engine/types';
+import { Minus, Square, X } from 'lucide-react';
 
 export const AppContent: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('step1-folders');
@@ -446,10 +447,51 @@ export const AppContent: React.FC = () => {
     }
   };
 
+  const isElectron = typeof window !== 'undefined' && navigator.userAgent.toLowerCase().includes('electron');
+
   return (
-    <div className="w-screen h-screen m-0 p-0 bg-[#F8F9FA] dark:bg-[#000000] flex overflow-hidden font-sans transition-colors duration-200">
+    <div className="w-screen h-screen m-0 p-0 bg-[#F8F9FA] dark:bg-[#000000] flex flex-col overflow-hidden font-sans transition-colors duration-200">
+      {isElectron && (
+        <div 
+          className="w-full h-8 bg-white dark:bg-[#000000] border-b border-[#E5E5E5] dark:border-[#223150] flex items-center justify-between px-3.5 select-none flex-shrink-0"
+          style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
+        >
+          {/* Logo & Title */}
+          <div className="flex items-center gap-2">
+            <span className="font-heading text-2xs font-extrabold uppercase tracking-widest text-[#FCA311]">
+              LuminaSort
+            </span>
+          </div>
+
+          {/* Window Control Buttons */}
+          <div className="flex items-center gap-1" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
+            <button 
+              onClick={() => (window as any).electronAPI?.minimize()}
+              className="p-1 hover:bg-slate-200 dark:hover:bg-white/10 rounded transition-colors text-[#14213D] dark:text-slate-400 cursor-pointer"
+              title="Minimize"
+            >
+              <Minus className="w-3.5 h-3.5" />
+            </button>
+            <button 
+              onClick={() => (window as any).electronAPI?.maximize()}
+              className="p-1 hover:bg-slate-200 dark:hover:bg-white/10 rounded transition-colors text-[#14213D] dark:text-slate-400 cursor-pointer"
+              title="Maximize"
+            >
+              <Square className="w-3 h-3" />
+            </button>
+            <button 
+              onClick={() => (window as any).electronAPI?.close()}
+              className="p-1 hover:bg-red-500 hover:text-white rounded transition-colors text-[#14213D] dark:text-slate-400 cursor-pointer"
+              title="Close"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Full viewport Edge-to-Edge Container without shadows */}
-      <div className="flex w-full h-full overflow-hidden bg-[#F8F9FA] dark:bg-[#000000] transition-colors duration-200">
+      <div className="flex-1 flex w-full overflow-hidden bg-[#F8F9FA] dark:bg-[#000000] transition-colors duration-200">
         {/* Column 1: Left Navigation Sidebar */}
         <Sidebar
           activeTab={activeTab}

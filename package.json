@@ -44,10 +44,6 @@
     "files": [
       "dist/**/*",
       "electron/**/*"
-    ],
-    "win": {
-      "target": "portable",
-      "icon": "public/favicon.ico"
-    }
+    ]
   }
 }

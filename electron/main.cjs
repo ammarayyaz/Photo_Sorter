@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
 // Determine if running in dev mode
@@ -10,6 +10,7 @@ function createWindow() {
     height: 850,
     minWidth: 900,
     minHeight: 600,
+    frame: false, // Make window frameless
     title: 'LuminaSort - Desktop Photo Organizer',
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
@@ -29,6 +30,23 @@ function createWindow() {
     mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
   }
 }
+
+// Handle IPC window controls from renderer process
+ipcMain.on('window-control', (event, action) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (!win) return;
+  if (action === 'minimize') {
+    win.minimize();
+  } else if (action === 'maximize') {
+    if (win.isMaximized()) {
+      win.unmaximize();
+    } else {
+      win.maximize();
+    }
+  } else if (action === 'close') {
+    win.close();
+  }
+});
 
 app.whenReady().then(() => {
   createWindow();
