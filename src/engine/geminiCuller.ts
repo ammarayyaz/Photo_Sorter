@@ -76,10 +76,13 @@ Respond ONLY with valid JSON in this exact structure:
 
   // Candidate models and API versions in order of preference
   const candidateEndpoints = [
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${cleanKey}`,
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${cleanKey}`,
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${cleanKey}`,
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${cleanKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${cleanKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${cleanKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent?key=${cleanKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${cleanKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${cleanKey}`,
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${cleanKey}`,
     `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${cleanKey}`,
   ];
@@ -90,7 +93,10 @@ Respond ONLY with valid JSON in this exact structure:
     try {
       const response = await fetch(endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': cleanKey,
+        },
         body: JSON.stringify({
           contents: [
             {
@@ -127,20 +133,13 @@ Respond ONLY with valid JSON in this exact structure:
         if (response.status === 404) {
           continue;
         } else {
-          // If 400/403 or invalid API key, throw immediately
-          break;
+          // If other error, also attempt next endpoint
+          continue;
         }
       }
     } catch (err: any) {
       lastError = err.message || 'Network error connecting to Gemini API';
     }
-  }
-
-  // If all failed, throw descriptive error
-  if (lastError.includes('API_KEY_INVALID') || !cleanKey.startsWith('AIzaSy')) {
-    throw new Error(
-      `Invalid or unrecognized Gemini API Key. Google AI Studio keys start with "AIzaSy...". Please generate a free key at: https://aistudio.google.com/app/apikey\nOriginal Error: ${lastError}`
-    );
   }
 
   throw new Error(lastError || 'Failed to analyze image with Gemini Vision AI.');
