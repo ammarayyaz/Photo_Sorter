@@ -6,31 +6,31 @@
 
 :root {
   /* Brand Palette Constants */
-  --palette-primary: #D83C00;
-  --palette-primary-hover: #B83300;
-  --palette-primary-light: #FFEDE5;
+  --palette-primary: #FCA311;
+  --palette-primary-hover: #E08F0A;
+  --palette-primary-light: #FFF8EB;
 
   /* Light Theme */
   --bg-page: #F8F9FA;
   --bg-surface: #FFFFFF;
   --bg-card: #FFFFFF;
-  --border-app: #E5E7EB;
-  --text-main: #111827;
+  --border-app: #E5E5E5;
+  --text-main: #14213D;
   --text-muted: #4B5563;
   --text-dim: #9CA3AF;
-  --primary-accent: #D83C00;
+  --primary-accent: #FCA311;
 }
 
 .dark {
   /* Pure True Black Dark Theme */
   --bg-page: #000000;
-  --bg-surface: #0A0A0A;
-  --bg-card: #121212;
-  --border-app: #27272A;
+  --bg-surface: #0A0F1D;
+  --bg-card: #14213D;
+  --border-app: #223150;
   --text-main: #FFFFFF;
-  --text-muted: #A1A1AA;
+  --text-muted: #E5E5E5;
   --text-dim: #71717A;
-  --primary-accent: #D83C00;
+  --primary-accent: #FCA311;
 }
 
 /* Global Zero-Shadow Policy */
@@ -81,12 +81,12 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 700;
   letter-spacing: 0.01em;
-  background-color: #D83C00;
+  background-color: #FCA311;
   color: #FFFFFF;
   transition: transform 0.1s ease, background-color 0.15s ease;
 }
 .cta-button-primary:hover {
-  background-color: #B83300;
+  background-color: #E08F0A;
 }
 .cta-button-primary:active {
   transform: scale(0.98);
@@ -129,7 +129,7 @@ h1, h2, h3, h4, h5, h6, .font-heading {
   background: rgba(255, 255, 255, 0.12);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #D83C00;
+  background: #FCA311;
 }
 * {
   scrollbar-width: thin;
@@ -141,7 +141,7 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 
 /* Clean Focus Visibility */
 *:focus-visible {
-  outline: 2px solid #D83C00;
+  outline: 2px solid #FCA311;
   outline-offset: 2px;
 }
 

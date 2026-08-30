@@ -67,7 +67,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* 1. Sleek Brand Header */}
       <div className="bg-white dark:bg-[#000000] px-5 py-3.5 flex items-center justify-between transition-colors">
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-full bg-[#D83C00] text-white flex items-center justify-center shadow-none flex-shrink-0">
+          <div className="w-7 h-7 rounded-full bg-[#FCA311] text-white flex items-center justify-center shadow-none flex-shrink-0">
             <Sparkles className="w-4 h-4" />
           </div>
           <span className="font-heading font-extrabold text-base text-[#111827] dark:text-white tracking-tight">
@@ -80,7 +80,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="flex-1 bg-[#111827] dark:bg-[#0D0D0D] rounded-tr-[36px] p-4 flex flex-col justify-between text-white no-scrollbar overflow-y-auto border-t border-r border-transparent dark:border-[#222222]">
         <div className="flex flex-col gap-3">
           {/* Upload Button */}
-          <label className="w-full bg-[#D83C00] hover:bg-[#B83300] text-white font-heading font-bold text-xs tracking-wide py-2.5 px-3.5 rounded-xl transition-all active:scale-98 flex items-center justify-center gap-2 cursor-pointer shadow-none">
+          <label className="w-full bg-[#FCA311] hover:bg-[#E08F0A] text-white font-heading font-bold text-xs tracking-wide py-2.5 px-3.5 rounded-xl transition-all active:scale-98 flex items-center justify-center gap-2 cursor-pointer shadow-none">
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>Upload New Files</span>
             <input
@@ -126,7 +126,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={() => setActiveTab('step1-folders')}
                 className={`flex items-center justify-between px-3 py-2 rounded-xl transition-colors text-left cursor-pointer ${
                   activeTab === 'step1-folders'
-                    ? 'bg-[#D83C00] text-white font-bold'
+                    ? 'bg-[#FCA311] text-white font-bold'
                     : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
                 }`}
               >
@@ -154,7 +154,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   }}
                   className={`flex items-center justify-between px-3 py-2 rounded-xl transition-colors text-left cursor-pointer ${
                     activeTab === 'step2-culling' && (!cullingSubTab || cullingSubTab === 'all')
-                      ? 'bg-[#D83C00] text-white font-bold'
+                      ? 'bg-[#FCA311] text-white font-bold'
                       : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
                   }`}
                 >
@@ -186,12 +186,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       }}
                       className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-colors text-left text-2xs cursor-pointer ${
                         activeTab === 'step2-culling' && cullingSubTab === 'kept'
-                          ? 'bg-[#D83C00] text-white font-bold'
+                          ? 'bg-[#FCA311] text-white font-bold'
                           : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
                       }`}
                     >
                       <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-[#D83C00] dark:text-[#FF8C61]" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#FCA311] dark:text-[#FF8C61]" />
                         <span>Kept Photos</span>
                       </div>
                       <span
@@ -240,7 +240,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={() => setActiveTab('step3-enhancement')}
                 className={`flex items-center justify-between px-3 py-2 rounded-xl transition-colors text-left cursor-pointer ${
                   activeTab === 'step3-enhancement'
-                    ? 'bg-[#D83C00] text-white font-bold'
+                    ? 'bg-[#FCA311] text-white font-bold'
                     : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
                 }`}
               >
@@ -266,7 +266,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={() => setActiveTab('step4-renaming')}
                 className={`flex items-center justify-between px-3 py-2 rounded-xl transition-colors text-left cursor-pointer ${
                   activeTab === 'step4-renaming'
-                    ? 'bg-[#D83C00] text-white font-bold'
+                    ? 'bg-[#FCA311] text-white font-bold'
                     : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
                 }`}
               >
@@ -292,7 +292,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={() => setActiveTab('step5-output')}
                 className={`flex items-center justify-between px-3 py-2 rounded-xl transition-colors text-left cursor-pointer ${
                   activeTab === 'step5-output'
-                    ? 'bg-[#D83C00] text-white font-bold'
+                    ? 'bg-[#FCA311] text-white font-bold'
                     : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
                 }`}
               >
@@ -325,7 +325,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={() => setActiveTab('faces')}
                 className={`flex items-center justify-between px-3 py-1.5 rounded-xl transition-colors text-left cursor-pointer ${
                   activeTab === 'faces'
-                    ? 'bg-[#D83C00] text-white font-bold'
+                    ? 'bg-[#FCA311] text-white font-bold'
                     : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
                 }`}
               >
@@ -345,7 +345,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={() => setActiveTab('settings')}
                 className={`flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-colors text-left cursor-pointer ${
                   activeTab === 'settings'
-                    ? 'bg-[#D83C00] text-white font-bold'
+                    ? 'bg-[#FCA311] text-white font-bold'
                     : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
                 }`}
               >
@@ -370,14 +370,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           <div className="w-full bg-white/15 dark:bg-[#1E1E1E] h-1.5 rounded-full overflow-hidden">
             <div
-              className="bg-[#D83C00] h-full rounded-full transition-all duration-300"
+              className="bg-[#FCA311] h-full rounded-full transition-all duration-300"
               style={{ width: `${usedPercentage}%` }}
             />
           </div>
 
           <button
             onClick={() => setActiveTab('settings')}
-            className="flex items-center justify-between text-2xs font-heading font-bold text-[#D83C00] dark:text-[#FF8C61] hover:underline pt-0.5 cursor-pointer"
+            className="flex items-center justify-between text-2xs font-heading font-bold text-[#FCA311] dark:text-[#FF8C61] hover:underline pt-0.5 cursor-pointer"
           >
             <span>Upgrade Storage</span>
             <ArrowUpRight className="w-3 h-3" />

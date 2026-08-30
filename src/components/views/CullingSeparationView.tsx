@@ -186,7 +186,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
       {/* 1. Header Banner with Facet AI Engine Badge */}
       <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-4 flex items-center justify-between transition-colors shadow-none">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#D83C00]/15 text-[#D83C00] border border-[#D83C00]/30 flex items-center justify-center font-bold">
+          <div className="w-10 h-10 rounded-xl bg-[#FCA311]/15 text-[#FCA311] border border-[#FCA311]/30 flex items-center justify-center font-bold">
             <Archive className="w-5 h-5" />
           </div>
           <div>
@@ -201,7 +201,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
           disabled={items.length === 0}
           className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-white font-heading font-bold text-xs tracking-wide transition-all ${
             items.length > 0
-              ? 'bg-[#D83C00] hover:bg-[#B83300] active:scale-98 cursor-pointer shadow-none'
+              ? 'bg-[#FCA311] hover:bg-[#E08F0A] active:scale-98 cursor-pointer shadow-none'
               : 'bg-slate-300 dark:bg-slate-800 cursor-not-allowed opacity-70'
           }`}
         >
@@ -213,7 +213,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
       {/* 2. Facet Mode Selector & Auto-Cull Tuning Strip */}
       <div className="bg-[#F9FAFB] dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-3 flex items-center justify-between gap-3 shadow-none">
         <div className="flex items-center gap-2">
-          <Sliders className="w-4 h-4 text-[#D83C00]" />
+          <Sliders className="w-4 h-4 text-[#FCA311]" />
           <span className="font-heading text-xs font-bold text-[#111827] dark:text-white">
             Facet Auto-Cull Mode:
           </span>
@@ -224,7 +224,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             onClick={() => handleApplyFacetMode('KEEP_ALL_GOOD')}
             className={`px-3 py-1 rounded-lg font-heading text-2xs font-bold transition-all cursor-pointer ${
               cullMode === 'KEEP_ALL_GOOD'
-                ? 'bg-[#D83C00] text-white shadow-none'
+                ? 'bg-[#FCA311] text-white shadow-none'
                 : 'text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white'
             }`}
           >
@@ -235,7 +235,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             onClick={() => handleApplyFacetMode('BALANCED')}
             className={`px-3 py-1 rounded-lg font-heading text-2xs font-bold transition-all cursor-pointer ${
               cullMode === 'BALANCED'
-                ? 'bg-[#D83C00] text-white shadow-none'
+                ? 'bg-[#FCA311] text-white shadow-none'
                 : 'text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white'
             }`}
           >
@@ -246,7 +246,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             onClick={() => handleApplyFacetMode('STRICT')}
             className={`px-3 py-1 rounded-lg font-heading text-2xs font-bold transition-all cursor-pointer ${
               cullMode === 'STRICT'
-                ? 'bg-[#D83C00] text-white shadow-none'
+                ? 'bg-[#FCA311] text-white shadow-none'
                 : 'text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white'
             }`}
           >
@@ -267,9 +267,9 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
         <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-3.5 flex flex-col justify-between shadow-none">
           <div className="flex items-center justify-between text-xs">
             <span className="font-heading font-semibold text-[#111827] dark:text-white">Kept Winners</span>
-            <CheckCircle2 className="w-4 h-4 text-[#D83C00]" />
+            <CheckCircle2 className="w-4 h-4 text-[#FCA311]" />
           </div>
-          <div className="font-mono tabular-nums text-xl font-extrabold text-[#D83C00] mt-1">
+          <div className="font-mono tabular-nums text-xl font-extrabold text-[#FCA311] mt-1">
             {keptItems.length} photos
           </div>
         </div>
@@ -313,7 +313,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             onClick={() => setActiveTab('kept')}
             className={`px-3 py-1.5 rounded-xl font-heading text-xs font-bold transition-colors cursor-pointer ${
               activeTab === 'kept'
-                ? 'bg-white dark:bg-[#1E1E1E] text-[#D83C00] border border-[#E5E7EB] dark:border-[#3F3F46] shadow-none'
+                ? 'bg-white dark:bg-[#1E1E1E] text-[#FCA311] border border-[#E5E7EB] dark:border-[#3F3F46] shadow-none'
                 : 'text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white'
             }`}
           >
@@ -324,7 +324,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             onClick={() => setActiveTab('top_picks')}
             className={`px-3 py-1.5 rounded-xl font-heading text-xs font-bold transition-colors cursor-pointer ${
               activeTab === 'top_picks'
-                ? 'bg-white dark:bg-[#1E1E1E] text-[#D83C00] border border-[#E5E7EB] dark:border-[#3F3F46] shadow-none'
+                ? 'bg-white dark:bg-[#1E1E1E] text-[#FCA311] border border-[#E5E7EB] dark:border-[#3F3F46] shadow-none'
                 : 'text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white'
             }`}
           >
@@ -350,7 +350,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E5E7EB] dark:border-[#27272A] bg-white dark:bg-[#181818] hover:bg-slate-100 dark:hover:bg-[#222222] text-[#111827] dark:text-white font-heading text-xs font-bold transition-colors cursor-pointer"
           >
             {isAllSelected ? (
-              <CheckSquare className="w-3.5 h-3.5 text-[#D83C00]" />
+              <CheckSquare className="w-3.5 h-3.5 text-[#FCA311]" />
             ) : (
               <Square className="w-3.5 h-3.5 text-[#9CA3AF]" />
             )}
@@ -370,7 +370,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
 
               <button
                 onClick={() => handleBulkAction(false)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#D83C00] hover:bg-[#B83300] text-white font-heading text-xs font-bold transition-all cursor-pointer shadow-none active:scale-95"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FCA311] hover:bg-[#E08F0A] text-white font-heading text-xs font-bold transition-all cursor-pointer shadow-none active:scale-95"
               >
                 <Check className="w-3.5 h-3.5" />
                 <span>Restore Selected to Kept ({selectedIds.size})</span>
@@ -395,7 +395,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
       {/* 5. Photos Grid or Clean Empty State */}
       {items.length === 0 ? (
         <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-12 text-center flex flex-col items-center justify-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-[#D83C00]/15 text-[#D83C00] border border-[#D83C00]/30 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-2xl bg-[#FCA311]/15 text-[#FCA311] border border-[#FCA311]/30 flex items-center justify-center">
             <FolderOpen className="w-6 h-6" />
           </div>
           <div>
@@ -404,7 +404,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
           {onGoToIngest && (
             <button
               onClick={onGoToIngest}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#D83C00] hover:bg-[#B83300] text-white font-heading text-xs font-bold tracking-wide transition-all mt-2 cursor-pointer shadow-none active:scale-98"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#FCA311] hover:bg-[#E08F0A] text-white font-heading text-xs font-bold tracking-wide transition-all mt-2 cursor-pointer shadow-none active:scale-98"
             >
               <span>Go to Step 1: Ingest Folders</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -428,7 +428,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
                 onClick={() => setInspectingItem(item)}
                 className={`bg-white dark:bg-[#111111] border rounded-2xl overflow-hidden flex flex-col justify-between cursor-pointer transition-colors ${
                   isChecked
-                    ? 'border-[#D83C00] ring-2 ring-[#D83C00]'
+                    ? 'border-[#FCA311] ring-2 ring-[#FCA311]'
                     : isArchived
                     ? 'border-red-500/40'
                     : 'border-[#E5E7EB] dark:border-[#27272A]'
@@ -454,11 +454,11 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
                     {/* Selection Checkbox */}
                     <button
                       onClick={(e) => handleToggleSelection(item.metadata.id, e)}
-                      className="p-1.5 rounded-lg bg-black/80 hover:bg-[#D83C00] text-white transition-colors cursor-pointer pointer-events-auto"
+                      className="p-1.5 rounded-lg bg-black/80 hover:bg-[#FCA311] text-white transition-colors cursor-pointer pointer-events-auto"
                       title={isChecked ? 'Deselect photo' : 'Select photo'}
                     >
                       {isChecked ? (
-                        <CheckSquare className="w-4 h-4 text-[#D83C00]" />
+                        <CheckSquare className="w-4 h-4 text-[#FCA311]" />
                       ) : (
                         <Square className="w-4 h-4 text-white/80" />
                       )}
@@ -474,7 +474,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
                           _archive
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 rounded-md text-2xs font-heading font-extrabold uppercase tracking-wider bg-[#D83C00] text-white">
+                        <span className="px-2 py-0.5 rounded-md text-2xs font-heading font-extrabold uppercase tracking-wider bg-[#FCA311] text-white">
                           Kept
                         </span>
                       )}
@@ -536,7 +536,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
                       className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl font-heading text-xs font-bold tracking-wide transition-colors cursor-pointer ${
                         isArchived
                           ? 'bg-slate-100 hover:bg-slate-200 dark:bg-[#1E1E1E] dark:hover:bg-[#2A2A2A] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#333333]'
-                          : 'bg-[#D83C00] hover:bg-[#B83300] text-white'
+                          : 'bg-[#FCA311] hover:bg-[#E08F0A] text-white'
                       }`}
                     >
                       {isArchived ? (
@@ -571,14 +571,14 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
           >
             <div className="flex items-center justify-between border-b border-[#E5E7EB] dark:border-[#27272A] pb-3">
               <div className="flex items-center gap-2">
-                <Info className="w-5 h-5 text-[#D83C00]" />
+                <Info className="w-5 h-5 text-[#FCA311]" />
                 <h3 className="font-heading text-sm font-bold text-[#111827] dark:text-white">
                   Facet 9-Dimension Quality Breakdown
                 </h3>
               </div>
               <button
                 onClick={() => setInspectingItem(null)}
-                className="p-1 rounded-lg text-[#9CA3AF] hover:text-[#D83C00] hover:bg-[#D83C00]/10 transition-colors"
+                className="p-1 rounded-lg text-[#9CA3AF] hover:text-[#FCA311] hover:bg-[#FCA311]/10 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -602,7 +602,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
               <div className="flex flex-col gap-2.5 text-xs font-sans">
                 <div className="flex items-center justify-between p-2 rounded-xl bg-[#F9FAFB] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#27272A]">
                   <span className="font-heading font-bold text-[#111827] dark:text-white">Facet Overall Score</span>
-                  <span className="font-mono text-base font-extrabold text-[#D83C00]">
+                  <span className="font-mono text-base font-extrabold text-[#FCA311]">
                     {inspectingItem.quality.facet?.facetCompositeScore || inspectingItem.quality.compositeScore}/100
                   </span>
                 </div>
@@ -645,7 +645,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
 
                   <div className="p-2 rounded-xl bg-slate-50 dark:bg-[#141414] border border-[#E5E7EB] dark:border-[#27272A]">
                     <span className="text-[#9CA3AF]">Culling Decision</span>
-                    <div className="font-mono text-xs font-bold text-[#D83C00] mt-0.5">
+                    <div className="font-mono text-xs font-bold text-[#FCA311] mt-0.5">
                       {inspectingItem.isArchived ? '_archive' : 'Kept Winner'}
                     </div>
                   </div>
@@ -667,16 +667,16 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
               <button
                 onClick={handleScanInspectingItemWithGemini}
                 disabled={geminiSingleLoading}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#D83C00]/10 hover:bg-[#D83C00]/20 text-[#D83C00] dark:text-[#FF8C61] border border-[#D83C00]/30 font-heading text-xs font-bold transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FCA311]/10 hover:bg-[#FCA311]/20 text-[#FCA311] dark:text-[#FF8C61] border border-[#FCA311]/30 font-heading text-xs font-bold transition-all cursor-pointer"
               >
                 {geminiSingleLoading ? (
                   <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin text-[#D83C00]" />
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-[#FCA311]" />
                     <span>Analyzing with Gemini Vision...</span>
                   </>
                 ) : (
                   <>
-                    <Zap className="w-3.5 h-3.5 text-[#D83C00]" />
+                    <Zap className="w-3.5 h-3.5 text-[#FCA311]" />
                     <span>⚡ Inspect with Gemini Vision AI</span>
                   </>
                 )}
@@ -690,7 +690,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
                 className={`px-4 py-2 rounded-xl font-heading text-xs font-bold transition-all cursor-pointer ${
                   inspectingItem.isArchived
                     ? 'bg-[#181818] hover:bg-[#222222] text-white border border-[#27272A]'
-                    : 'bg-[#D83C00] hover:bg-[#B83300] text-white'
+                    : 'bg-[#FCA311] hover:bg-[#E08F0A] text-white'
                 }`}
               >
                 {inspectingItem.isArchived ? 'Restore to Kept' : 'Move to _archive'}

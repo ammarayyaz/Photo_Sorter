@@ -342,9 +342,9 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                 : 'text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white'
             }`}
           >
-            <FolderClock className="w-4 h-4 text-[#D83C00]" />
+            <FolderClock className="w-4 h-4 text-[#FCA311]" />
             <span>Unsorted Folders</span>
-            <span className="text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums bg-[#D83C00]/15 text-[#D83C00]">
+            <span className="text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums bg-[#FCA311]/15 text-[#FCA311]">
               {unsortedFoldersList.length} Pending
             </span>
           </button>
@@ -360,7 +360,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
           >
             <FolderCheck className="w-4 h-4 text-[#9CA3AF]" />
             <span>Sorted Folders</span>
-            <span className="text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums bg-[#D83C00]/15 text-[#D83C00] dark:text-[#FF8C61]">
+            <span className="text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums bg-[#FCA311]/15 text-[#FCA311] dark:text-[#FF8C61]">
               {sortedFoldersList.length}
             </span>
           </button>
@@ -369,7 +369,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
         {/* Real File Upload Actions */}
         <div className="flex items-center gap-2 mr-1">
           <label className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white dark:bg-[#181818] hover:bg-slate-100 dark:hover:bg-[#222222] border border-[#E5E7EB] dark:border-[#27272A] text-[#111827] dark:text-white font-heading text-xs font-bold cursor-pointer transition-colors">
-            <FolderPlus className="w-3.5 h-3.5 text-[#D83C00]" />
+            <FolderPlus className="w-3.5 h-3.5 text-[#FCA311]" />
             <span>Select Folder</span>
             <input
               type="file"
@@ -382,7 +382,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
             />
           </label>
 
-          <label className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#D83C00] hover:bg-[#B83300] text-white font-heading text-xs font-bold tracking-wide cursor-pointer transition-all active:scale-98 shadow-none">
+          <label className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#FCA311] hover:bg-[#E08F0A] text-white font-heading text-xs font-bold tracking-wide cursor-pointer transition-all active:scale-98 shadow-none">
             <UploadCloud className="w-3.5 h-3.5" />
             <span>Upload Images</span>
             <input
@@ -398,12 +398,12 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
 
       {/* Analyzing Banner */}
       {isAnalyzing && (
-        <div className="bg-[#D83C00]/10 dark:bg-[#181818] border border-[#D83C00]/30 rounded-2xl p-3 flex items-center justify-between text-xs text-[#111827] dark:text-white font-semibold animate-pulse">
+        <div className="bg-[#FCA311]/10 dark:bg-[#181818] border border-[#FCA311]/30 rounded-2xl p-3 flex items-center justify-between text-xs text-[#111827] dark:text-white font-semibold animate-pulse">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-[#D83C00] animate-spin" />
+            <Sparkles className="w-4 h-4 text-[#FCA311] animate-spin" />
             <span className="font-heading font-semibold">Analyzing image pixels, luminance, and sharpness...</span>
           </div>
-          <span className="font-mono tabular-nums text-2xs bg-[#D83C00] text-white px-2 py-0.5 rounded font-bold">
+          <span className="font-mono tabular-nums text-2xs bg-[#FCA311] text-white px-2 py-0.5 rounded font-bold">
             Reading Canvas
           </span>
         </div>
@@ -418,11 +418,11 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
           onDrop={handleDrop}
           className={`col-span-2 relative rounded-2xl border-2 border-dashed p-5 transition-colors flex flex-col items-center justify-center text-center cursor-pointer ${
             isDragging
-              ? 'border-[#D83C00] bg-[#D83C00]/10'
+              ? 'border-[#FCA311] bg-[#FCA311]/10'
               : 'border-[#E5E7EB] dark:border-[#27272A] bg-[#F9FAFB] dark:bg-[#0E0E0E] hover:bg-slate-100 dark:hover:bg-[#141414]'
           }`}
         >
-          <div className="w-10 h-10 rounded-2xl bg-white dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#27272A] flex items-center justify-center text-[#D83C00] mb-1.5 shadow-none">
+          <div className="w-10 h-10 rounded-2xl bg-white dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#27272A] flex items-center justify-center text-[#FCA311] mb-1.5 shadow-none">
             <UploadCloud className="w-5 h-5 animate-bounce" />
           </div>
 
@@ -432,7 +432,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
 
           <div className="flex items-center gap-2 mt-3">
             <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#27272A] hover:bg-slate-100 dark:hover:bg-[#222222] text-[#111827] dark:text-white font-heading text-xs font-bold cursor-pointer transition-colors">
-              <FolderPlus className="w-3.5 h-3.5 text-[#D83C00]" />
+              <FolderPlus className="w-3.5 h-3.5 text-[#FCA311]" />
               <span>Select Folder</span>
               <input
                 type="file"
@@ -445,7 +445,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
               />
             </label>
 
-            <label className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#D83C00] hover:bg-[#B83300] text-white font-heading text-xs font-bold tracking-wide cursor-pointer transition-all active:scale-98 shadow-none">
+            <label className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#FCA311] hover:bg-[#E08F0A] text-white font-heading text-xs font-bold tracking-wide cursor-pointer transition-all active:scale-98 shadow-none">
               <FileImage className="w-3.5 h-3.5" />
               <span>Choose Images</span>
               <input
@@ -478,7 +478,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
             <h2 className="font-heading text-2xs font-extrabold uppercase tracking-wider text-[#111827] dark:text-white">
               {subTab === 'unsorted' ? 'UNSORTED FOLDERS' : 'ALL SORTED FOLDERS'}
             </h2>
-            <span className="text-2xs px-2 py-0.5 rounded-full font-bold bg-[#D83C00] text-white font-mono tabular-nums">
+            <span className="text-2xs px-2 py-0.5 rounded-full font-bold bg-[#FCA311] text-white font-mono tabular-nums">
               {currentTabFolders.length} Folders
             </span>
           </div>
@@ -557,7 +557,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
           <div className="flex items-center justify-between px-6 py-3.5 border-b border-[#E5E7EB] dark:border-[#27272A] bg-white dark:bg-[#0E0E0E] flex-shrink-0 z-20 transition-colors">
             {/* Left: Folder Name & Count */}
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#D83C00]/15 text-[#D83C00] border border-[#D83C00]/30 flex items-center justify-center font-bold">
+              <div className="w-10 h-10 rounded-xl bg-[#FCA311]/15 text-[#FCA311] border border-[#FCA311]/30 flex items-center justify-center font-bold">
                 <FolderOpen className="w-5 h-5" />
               </div>
               <div>
@@ -565,7 +565,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                   <h1 className="font-heading text-base font-extrabold text-[#111827] dark:text-white tracking-tight">
                     {openedFolder.name}
                   </h1>
-                  <span className="text-2xs px-2 py-0.5 rounded-full bg-[#D83C00] text-white font-mono tabular-nums font-bold">
+                  <span className="text-2xs px-2 py-0.5 rounded-full bg-[#FCA311] text-white font-mono tabular-nums font-bold">
                     {openedFolder.items.length} Photos
                   </span>
                 </div>
@@ -598,7 +598,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                 className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[#E5E7EB] dark:border-[#27272A] bg-white dark:bg-[#181818] hover:bg-slate-100 dark:hover:bg-[#222222] text-[#111827] dark:text-white font-heading text-xs font-bold transition-colors cursor-pointer"
               >
                 {isAllSelected ? (
-                  <CheckSquare className="w-4 h-4 text-[#D83C00]" />
+                  <CheckSquare className="w-4 h-4 text-[#FCA311]" />
                 ) : (
                   <Square className="w-4 h-4 text-[#9CA3AF]" />
                 )}
@@ -622,7 +622,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                   setOpenedFolderId(null);
                   onStartPipeline();
                 }}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#D83C00] hover:bg-[#B83300] text-white font-heading text-xs font-bold tracking-wide transition-all cursor-pointer active:scale-95 shadow-none"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#FCA311] hover:bg-[#E08F0A] text-white font-heading text-xs font-bold tracking-wide transition-all cursor-pointer active:scale-95 shadow-none"
               >
                 <Play className="w-3.5 h-3.5 fill-current" />
                 <span>Start Auto-Sorting</span>
@@ -660,7 +660,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                       }}
                       className={`relative group aspect-[4/3] w-full overflow-hidden cursor-pointer bg-slate-100 dark:bg-neutral-900 select-none border-0 ${
                         isChecked
-                          ? 'ring-4 ring-inset ring-[#D83C00] z-10'
+                          ? 'ring-4 ring-inset ring-[#FCA311] z-10'
                           : ''
                       }`}
                     >
@@ -673,7 +673,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                       />
 
                       {/* Selection Tint when Checked */}
-                      {isChecked && <div className="absolute inset-0 bg-[#D83C00]/20 pointer-events-none" />}
+                      {isChecked && <div className="absolute inset-0 bg-[#FCA311]/20 pointer-events-none" />}
 
                       {/* Top Left Selection Checkbox Overlay */}
                       <button
@@ -684,7 +684,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                         title={isChecked ? 'Deselect image' : 'Select image for deletion'}
                       >
                         {isChecked ? (
-                          <CheckSquare className="w-4 h-4 text-[#D83C00]" />
+                          <CheckSquare className="w-4 h-4 text-[#FCA311]" />
                         ) : (
                           <Square className="w-4 h-4 text-white" />
                         )}
@@ -739,7 +739,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
           >
             {/* Left: Info */}
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-[#D83C00]/15 text-[#D83C00] border border-[#D83C00]/30 flex items-center justify-center font-bold">
+              <div className="w-9 h-9 rounded-xl bg-[#FCA311]/15 text-[#FCA311] border border-[#FCA311]/30 flex items-center justify-center font-bold">
                 <FileImage className="w-4.5 h-4.5" />
               </div>
               <div>
@@ -747,7 +747,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                   <span className="font-heading font-extrabold text-sm text-[#111827] dark:text-white tracking-tight">
                     {lightboxItem.metadata.filename}
                   </span>
-                  <span className="text-2xs px-2 py-0.5 rounded-full bg-[#D83C00] text-white font-mono tabular-nums font-bold">
+                  <span className="text-2xs px-2 py-0.5 rounded-full bg-[#FCA311] text-white font-mono tabular-nums font-bold">
                     {(lightboxItem.metadata.fileSize / 1000000).toFixed(2)} MB
                   </span>
                 </div>
@@ -794,7 +794,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                 onClick={(e) => handleToggleImageSelection(lightboxItem.metadata.id, e)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-colors cursor-pointer font-heading text-xs font-bold ${
                   selectedImageIds.has(lightboxItem.metadata.id)
-                    ? 'border-[#D83C00] bg-[#D83C00] text-white'
+                    ? 'border-[#FCA311] bg-[#FCA311] text-white'
                     : 'border-[#E5E7EB] dark:border-[#27272A] bg-white dark:bg-[#181818] hover:bg-slate-100 dark:hover:bg-[#222222] text-[#111827] dark:text-white'
                 }`}
               >
@@ -827,7 +827,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
               {/* Close Button (X) */}
               <button
                 onClick={() => setLightboxItem(null)}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#D83C00] hover:bg-[#B83300] text-white font-heading text-xs font-bold transition-all cursor-pointer ml-2 shadow-none active:scale-95"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#FCA311] hover:bg-[#E08F0A] text-white font-heading text-xs font-bold transition-all cursor-pointer ml-2 shadow-none active:scale-95"
                 title="Close Full Preview (Esc)"
               >
                 <X className="w-4 h-4" />
@@ -894,7 +894,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
           >
             <div className="flex items-center gap-4 font-mono text-2xs">
               <span>ISO / Lum: <strong className="text-[#111827] dark:text-white font-bold">{lightboxItem.lightroom.meanLuminance}</strong></span>
-              <span>Sharpness: <strong className="text-[#D83C00] font-bold">{lightboxItem.quality.laplacianSharpness.toFixed(1)}</strong></span>
+              <span>Sharpness: <strong className="text-[#FCA311] font-bold">{lightboxItem.quality.laplacianSharpness.toFixed(1)}</strong></span>
               <span>Exposure: <strong className="text-[#111827] dark:text-white font-bold">{lightboxItem.lightroom.exposureState}</strong></span>
               {lightboxItem.lightroom.contrast !== 0 && (
                 <span>Contrast: <strong className="text-[#111827] dark:text-white font-bold">{lightboxItem.lightroom.contrast > 0 ? `+${lightboxItem.lightroom.contrast}` : lightboxItem.lightroom.contrast}</strong></span>

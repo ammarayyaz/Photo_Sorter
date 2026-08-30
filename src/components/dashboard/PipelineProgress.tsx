@@ -58,13 +58,13 @@ export const PipelineProgress: React.FC<PipelineProgressProps> = ({
               key={stage.id}
               className={`flex items-center gap-2 p-2 rounded-xl border text-xs transition-all ${
                 stageState === 'active'
-                  ? 'bg-[#D83C00]/15 border-[#D83C00]/40 text-[#D83C00] dark:text-[#FF8C61] font-semibold'
+                  ? 'bg-[#FCA311]/15 border-[#FCA311]/40 text-[#FCA311] dark:text-[#FF8C61] font-semibold'
                   : stageState === 'completed'
                   ? 'bg-slate-100 dark:bg-[#181818] border-[#E5E7EB] dark:border-[#27272A] text-[#111827] dark:text-white'
                   : 'bg-white dark:bg-[#121212] border-[#E5E7EB] dark:border-[#27272A] text-[#9CA3AF]'
               }`}
             >
-              <Icon className={`w-3.5 h-3.5 ${stageState === 'active' ? 'text-[#D83C00] animate-pulse' : ''}`} />
+              <Icon className={`w-3.5 h-3.5 ${stageState === 'active' ? 'text-[#FCA311] animate-pulse' : ''}`} />
               <span className="truncate text-xs">{stage.label}</span>
             </div>
           );
@@ -95,19 +95,19 @@ export const PipelineProgress: React.FC<PipelineProgressProps> = ({
               {metrics.elapsedTimeSec}s elapsed
             </span>
             {metrics.estimatedTimeRemainingSec > 0 && status !== 'COMPLETED' && (
-              <span className="flex items-center gap-1 text-[#D83C00]">
+              <span className="flex items-center gap-1 text-[#FCA311]">
                 <Zap className="w-3 h-3" />
                 ~{metrics.estimatedTimeRemainingSec}s remaining
               </span>
             )}
-            <span className="font-bold text-[#D83C00]">{percentage}%</span>
+            <span className="font-bold text-[#FCA311]">{percentage}%</span>
           </div>
         </div>
 
         {/* Bar */}
         <div className="w-full bg-[#E5E7EB] dark:bg-[#181818] h-2 rounded-full overflow-hidden border border-[#E5E7EB] dark:border-[#27272A]">
           <div
-            className="bg-[#D83C00] h-full transition-all duration-300 rounded-full"
+            className="bg-[#FCA311] h-full transition-all duration-300 rounded-full"
             style={{ width: `${percentage}%` }}
           />
         </div>

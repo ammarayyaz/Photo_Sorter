@@ -9,17 +9,17 @@ export default {
     extend: {
       colors: {
         brand: {
-          DEFAULT: '#D83C00',
-          hover: '#B83300',
-          light: '#FFEDE5',
-          dark: '#9A2B00',
+          DEFAULT: '#FCA311',
+          hover: '#E08F0A',
+          light: '#FFF8EB',
+          dark: '#B07106',
         },
         dark: {
           bg: '#000000',
-          surface: '#0A0A0A',
-          card: '#121212',
-          sub: '#181818',
-          border: '#27272A',
+          surface: '#0A0F1D',
+          card: '#14213D',
+          sub: '#1A2A4C',
+          border: '#223150',
         },
       },
       fontFamily: {

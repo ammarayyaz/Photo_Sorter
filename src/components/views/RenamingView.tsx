@@ -244,7 +244,7 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
       {/* 1. Header Banner */}
       <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-4 flex items-center justify-between transition-colors shadow-none">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#D83C00]/15 text-[#D83C00] border border-[#D83C00]/30 flex items-center justify-center font-bold">
+          <div className="w-10 h-10 rounded-xl bg-[#FCA311]/15 text-[#FCA311] border border-[#FCA311]/30 flex items-center justify-center font-bold">
             <FileSignature className="w-5 h-5" />
           </div>
           <div>
@@ -252,7 +252,7 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
               Step 4: Batch Image Renaming
             </h2>
             <p className="font-sans text-xs text-[#4B5563] dark:text-[#A1A1AA] mt-0.5">
-              Renames images starting with <span className="text-[#D83C00] font-bold">DSC_01</span> and varies the prefix letter for each folder (<span className="text-[#D83C00] font-bold">DSG</span>, <span className="text-[#D83C00] font-bold">DSH</span>...).
+              Renames images starting with <span className="text-[#FCA311] font-bold">DSC_01</span> and varies the prefix letter for each folder (<span className="text-[#FCA311] font-bold">DSG</span>, <span className="text-[#FCA311] font-bold">DSH</span>...).
             </p>
           </div>
         </div>
@@ -262,7 +262,7 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
           disabled={items.length === 0}
           className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-white font-heading font-bold text-xs tracking-wide transition-all ${
             items.length > 0
-              ? 'bg-[#D83C00] hover:bg-[#B83300] active:scale-98 cursor-pointer shadow-none'
+              ? 'bg-[#FCA311] hover:bg-[#E08F0A] active:scale-98 cursor-pointer shadow-none'
               : 'bg-slate-300 dark:bg-slate-800 cursor-not-allowed opacity-70'
           }`}
         >
@@ -276,12 +276,12 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
         {/* Left: Quick Format Options */}
         <div className="flex items-center gap-3 flex-wrap">
           <div className="flex items-center gap-1.5 bg-white dark:bg-[#181818] px-3 py-1.5 rounded-xl border border-[#E5E7EB] dark:border-[#27272A] text-xs">
-            <Sliders className="w-3.5 h-3.5 text-[#D83C00]" />
+            <Sliders className="w-3.5 h-3.5 text-[#FCA311]" />
             <span className="font-heading font-bold text-[#111827] dark:text-white">Digits:</span>
             <select
               value={paddingDigits}
               onChange={(e) => setPaddingDigits(Number(e.target.value))}
-              className="bg-transparent font-mono text-xs font-bold text-[#D83C00] outline-none cursor-pointer"
+              className="bg-transparent font-mono text-xs font-bold text-[#FCA311] outline-none cursor-pointer"
             >
               <option value={2} className="dark:bg-[#181818] text-[#111827] dark:text-white">2 Digits (01, 02...)</option>
               <option value={3} className="dark:bg-[#181818] text-[#111827] dark:text-white">3 Digits (001, 002...)</option>
@@ -294,7 +294,7 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
             <select
               value={separator}
               onChange={(e) => setSeparator(e.target.value)}
-              className="bg-transparent font-mono text-xs font-bold text-[#D83C00] outline-none cursor-pointer"
+              className="bg-transparent font-mono text-xs font-bold text-[#FCA311] outline-none cursor-pointer"
             >
               <option value="_" className="dark:bg-[#181818] text-[#111827] dark:text-white">Underscore (_)</option>
               <option value="-" className="dark:bg-[#181818] text-[#111827] dark:text-white">Hyphen (-)</option>
@@ -319,7 +319,7 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
             className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl font-heading text-xs font-bold tracking-wide transition-all shadow-none ${
               appliedStatus
                 ? 'bg-emerald-600 text-white'
-                : 'bg-[#D83C00] hover:bg-[#B83300] text-white active:scale-95 cursor-pointer'
+                : 'bg-[#FCA311] hover:bg-[#E08F0A] text-white active:scale-95 cursor-pointer'
             }`}
           >
             {appliedStatus ? (
@@ -349,7 +349,7 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 truncate">
-                  <FolderOpen className="w-4 h-4 text-[#D83C00] flex-shrink-0" />
+                  <FolderOpen className="w-4 h-4 text-[#FCA311] flex-shrink-0" />
                   <span className="font-heading font-bold text-xs text-[#111827] dark:text-white truncate">
                     {group.folderName}
                   </span>
@@ -375,11 +375,11 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
                         [group.folderId]: val,
                       }));
                     }}
-                    className="bg-[#F9FAFB] dark:bg-[#181818] border border-[#D83C00]/40 rounded-lg px-2 py-0.5 font-mono text-xs font-bold text-[#D83C00] text-center w-16 outline-none focus:border-[#D83C00]"
+                    className="bg-[#F9FAFB] dark:bg-[#181818] border border-[#FCA311]/40 rounded-lg px-2 py-0.5 font-mono text-xs font-bold text-[#FCA311] text-center w-16 outline-none focus:border-[#FCA311]"
                   />
                   <button
                     onClick={() => handleApplyFolderRename(group.folderId)}
-                    className="px-2 py-1 rounded-lg bg-[#D83C00] hover:bg-[#B83300] text-white text-[10px] font-heading font-bold cursor-pointer transition-all active:scale-95 shadow-none"
+                    className="px-2 py-1 rounded-lg bg-[#FCA311] hover:bg-[#E08F0A] text-white text-[10px] font-heading font-bold cursor-pointer transition-all active:scale-95 shadow-none"
                     title="Apply this prefix to all photos in this folder"
                   >
                     {appliedFolderIds.has(group.folderId) ? '✓ Applied' : 'Apply'}
@@ -394,7 +394,7 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
       {/* 4. Search Filter & Items Overview Header */}
       <div className="flex items-center justify-between bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-3">
         <div className="flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-[#D83C00]" />
+          <CheckCircle2 className="w-4 h-4 text-[#FCA311]" />
           <span className="font-heading text-xs font-bold text-[#111827] dark:text-white">
             Renaming Preview List ({filteredItems.length} Photos)
           </span>
@@ -471,14 +471,14 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
                   {/* New Renamed Filename Highlight Row */}
                   <div className="flex items-center justify-between pt-1 border-t border-[#E5E7EB] dark:border-[#222222]">
                     <div className="flex items-center gap-1.5 truncate">
-                      <FileSignature className="w-3.5 h-3.5 text-[#D83C00] flex-shrink-0" />
-                      <span className="font-mono text-xs font-extrabold text-[#D83C00] truncate">
+                      <FileSignature className="w-3.5 h-3.5 text-[#FCA311] flex-shrink-0" />
+                      <span className="font-mono text-xs font-extrabold text-[#FCA311] truncate">
                         {preview?.renamed}
                       </span>
                     </div>
                     <button
                       onClick={() => handleApplySingleRename(item.metadata.id)}
-                      className="px-2.5 py-1 rounded-lg bg-[#D83C00] hover:bg-[#B83300] text-white text-[10px] font-heading font-bold ml-2 transition-colors cursor-pointer shadow-none flex-shrink-0"
+                      className="px-2.5 py-1 rounded-lg bg-[#FCA311] hover:bg-[#E08F0A] text-white text-[10px] font-heading font-bold ml-2 transition-colors cursor-pointer shadow-none flex-shrink-0"
                       title="Apply this new name to this photo"
                     >
                       {isSingleApplied ? '✓ Done' : 'Apply'}

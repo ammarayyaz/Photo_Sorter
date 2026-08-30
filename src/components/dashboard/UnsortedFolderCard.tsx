@@ -51,8 +51,8 @@ export const UnsortedFolderCard: React.FC<UnsortedFolderCardProps> = ({
              C 2,8 8,2 18,2 Z"
           className={`transition-colors ${
             isSelected
-              ? 'fill-[#FFEDE5] dark:fill-[#B83300] stroke-[#D83C00] dark:stroke-[#FF8C61]'
-              : 'fill-[#F3F4F6] dark:fill-[#D83C00] stroke-[#E5E7EB] dark:stroke-[#B83300]'
+              ? 'fill-[#FFF8EB] dark:fill-[#E08F0A] stroke-[#FCA311] dark:stroke-[#FF8C61]'
+              : 'fill-[#F3F4F6] dark:fill-[#FCA311] stroke-[#E5E7EB] dark:stroke-[#E08F0A]'
           }`}
           strokeWidth="2"
           strokeLinejoin="round"
@@ -70,8 +70,8 @@ export const UnsortedFolderCard: React.FC<UnsortedFolderCardProps> = ({
         {/* Center Main Paper Sheet */}
         <div className="w-[90px] h-[70px] bg-white dark:bg-[#27272A] rounded-t-2xl border border-[#E5E7EB] dark:border-[#3F3F46] transform translate-y-0 transition-transform duration-200 group-hover:-translate-y-3 z-10 p-2.5 flex flex-col gap-1.5 shadow-none">
           <div className="flex items-center justify-between">
-            <div className="w-8 h-1.5 bg-[#D83C00] rounded-full" />
-            <ImageIcon className="w-3 h-3 text-[#D83C00]" />
+            <div className="w-8 h-1.5 bg-[#FCA311] rounded-full" />
+            <ImageIcon className="w-3 h-3 text-[#FCA311]" />
           </div>
           <div className="w-14 h-1.5 bg-[#9CA3AF]/40 rounded-full mt-1" />
           <div className="w-10 h-1 bg-[#9CA3AF]/20 rounded-full" />
@@ -100,8 +100,8 @@ export const UnsortedFolderCard: React.FC<UnsortedFolderCardProps> = ({
              Z"
           className={`transition-colors ${
             isSelected
-              ? 'fill-[#FFFFFF] dark:fill-[#9E2B00] stroke-[#D83C00] dark:stroke-[#FF8C61]'
-              : 'fill-[#FFFFFF] dark:fill-[#C53700] stroke-[#E5E7EB] dark:stroke-[#B83300]'
+              ? 'fill-[#FFFFFF] dark:fill-[#9E2B00] stroke-[#FCA311] dark:stroke-[#FF8C61]'
+              : 'fill-[#FFFFFF] dark:fill-[#C53700] stroke-[#E5E7EB] dark:stroke-[#E08F0A]'
           }`}
           strokeWidth="2"
           strokeLinejoin="round"
@@ -147,7 +147,7 @@ export const UnsortedFolderCard: React.FC<UnsortedFolderCardProps> = ({
               if (onSortClick) onSortClick();
             }}
             title="Auto-Sort and Enhance this folder"
-            className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#D83C00] hover:bg-[#B83300] dark:bg-white dark:hover:bg-slate-100 text-white dark:text-[#D83C00] font-heading font-bold text-2xs tracking-wide transition-all active:scale-95 cursor-pointer shadow-none"
+            className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#FCA311] hover:bg-[#E08F0A] dark:bg-white dark:hover:bg-slate-100 text-white dark:text-[#FCA311] font-heading font-bold text-2xs tracking-wide transition-all active:scale-95 cursor-pointer shadow-none"
           >
             <Play className="w-2.5 h-2.5 fill-current" />
             <span>Sort</span>
