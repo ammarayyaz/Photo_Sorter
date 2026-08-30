@@ -721,7 +721,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
             <div className="grid grid-cols-2 gap-4 overflow-y-auto">
               <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-slate-900 border border-[#E7E0EE] dark:border-[#4C177D]">
                 <img
-                  src={inspectingItem.transformedThumbnailUrl || inspectingItem.thumbnailUrl}
+                  src={inspectingItem.originalFileUrl || inspectingItem.transformedThumbnailUrl || inspectingItem.thumbnailUrl}
                   alt={inspectingItem.metadata.filename}
                   className="w-full h-full object-cover"
                 />

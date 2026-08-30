@@ -434,8 +434,8 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
 
       resolve({
         metadata,
-        thumbnailUrl: persistentThumbnail,
-        transformedThumbnailUrl: persistentThumbnail,
+        thumbnailUrl: objectUrl || persistentThumbnail,
+        transformedThumbnailUrl: objectUrl || persistentThumbnail,
         originalFileUrl: objectUrl,
         originalFile: file,
         burstGroupId: `burst_${Math.floor(index / 3) + 1}`,

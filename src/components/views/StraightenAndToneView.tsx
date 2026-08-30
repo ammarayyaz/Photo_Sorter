@@ -152,11 +152,11 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
           </div>
 
           {/* Dual Split Slider Container */}
-          <div className="relative flex-1 rounded-xl overflow-hidden bg-slate-950 border border-slate-200 dark:border-[#4C177D] min-h-[260px]">
-            {/* Straightened & Lightroom Toned Output */}
+          <div className="relative flex-1 rounded-xl overflow-hidden bg-slate-950 border border-slate-200 dark:border-[#4C177D] min-h-[300px]">
+            {/* Straightened & Lightroom Toned Output (Full Resolution) */}
             <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
               <img
-                src={selectedItem.thumbnailUrl}
+                src={selectedItem.originalFileUrl || selectedItem.transformedThumbnailUrl || selectedItem.thumbnailUrl}
                 alt="Corrected Preview"
                 style={{
                   filter: lightroom.cssFilter,
@@ -165,20 +165,20 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                   isZoomed ? 'scale-150' : 'scale-100'
                 }`}
               />
-              <div className="absolute top-2.5 right-2.5 bg-black/75 backdrop-blur-sm text-[#FFFDB4] text-2xs font-heading font-extrabold px-2 py-0.5 rounded border border-[#FFFDB4]/30 flex items-center gap-1">
+              <div className="absolute top-2.5 right-2.5 bg-black/75 backdrop-blur-sm text-[#FFFDB4] text-2xs font-heading font-extrabold px-2 py-0.5 rounded border border-[#FFFDB4]/30 flex items-center gap-1 z-10">
                 <CheckCircle2 className="w-3 h-3 text-[#F94500]" />
                 <span>LEVELED 0.0° + LIGHTROOM TONED</span>
               </div>
             </div>
 
-            {/* Original Tilted & Raw Frame */}
+            {/* Original Tilted & Raw Frame (Full Resolution) */}
             <div
-              className="absolute inset-0 overflow-hidden border-r-2 border-[#F94500]"
+              className="absolute inset-0 overflow-hidden border-r-2 border-[#F94500] z-10"
               style={{ width: `${sliderPos}%` }}
             >
-              <div className="absolute inset-0 w-[1000px] h-full flex items-center justify-center">
+              <div className="absolute inset-0 w-full h-full min-w-[600px] flex items-center justify-center pointer-events-none">
                 <img
-                  src={selectedItem.thumbnailUrl}
+                  src={selectedItem.originalFileUrl || selectedItem.thumbnailUrl}
                   alt="Original Raw"
                   className={`w-full h-full object-cover transition-transform duration-200 ${
                     isZoomed ? 'scale-150' : 'scale-100'
@@ -190,7 +190,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                   }}
                 />
               </div>
-              <div className="absolute top-2.5 left-2.5 bg-black/75 backdrop-blur-sm text-[#FFFDB4] text-2xs font-heading font-extrabold px-2 py-0.5 rounded border border-[#FFFDB4]/30">
+              <div className="absolute top-2.5 left-2.5 bg-black/75 backdrop-blur-sm text-[#FFFDB4] text-2xs font-heading font-extrabold px-2 py-0.5 rounded border border-[#FFFDB4]/30 whitespace-nowrap">
                 ORIGINAL RAW TILTED ({geometry.detectedAngleDeg}°)
               </div>
             </div>
