@@ -67,7 +67,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* 1. Sleek Brand Header */}
       <div className="bg-white dark:bg-[#000000] px-5 py-3.5 flex items-center justify-between transition-colors">
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-xl bg-[#D83C00] text-white flex items-center justify-center shadow-none flex-shrink-0">
+          <div className="w-7 h-7 rounded-full bg-[#D83C00] text-white flex items-center justify-center shadow-none flex-shrink-0">
             <Sparkles className="w-4 h-4" />
           </div>
           <span className="font-heading font-extrabold text-base text-[#111827] dark:text-white tracking-tight">
