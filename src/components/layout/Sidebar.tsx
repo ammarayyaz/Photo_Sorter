@@ -84,14 +84,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
     }`;
 
   return (
-    <aside className="relative overflow-hidden w-[245px] h-full flex flex-col bg-white dark:bg-black select-none flex-shrink-0 transition-colors duration-200">
+    <aside className="relative overflow-hidden w-[245px] h-full flex flex-col bg-white select-none flex-shrink-0 transition-colors duration-200">
       {/* 1. Sleek Brand Header */}
-      <div className="relative z-10 bg-white dark:bg-black px-5 py-3.5 flex items-center justify-between transition-colors">
+      <div className="relative z-10 bg-white px-5 py-3.5 flex items-center justify-between transition-colors">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-full bg-[#4D694E] text-[#FFF3D5] flex items-center justify-center shadow-none flex-shrink-0">
             <Sparkles className="w-4 h-4" />
           </div>
-          <span className="font-heading font-extrabold text-base text-[#2D3F2E] dark:text-[#FFF3D5] tracking-tight">
+          <span className="font-heading font-extrabold text-base text-[#2D3F2E] tracking-tight">
             LuminaSort
           </span>
         </div>
