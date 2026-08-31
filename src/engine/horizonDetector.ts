@@ -71,6 +71,8 @@ export function calculateInscribedCrop(
 
 import { detectZoltanvinStraightAngle } from './zoltanvinStraightener';
 import { detectAngleWithCannyHough } from './cannyHoughDetector';
+export { calculateMaxIncludedRectKeepAR, computePerspectiveTrapezoid, createTrapezoid } from './jpegviewPerspective';
+export type { JpegViewTrapezoid, InscribedRect } from './jpegviewPerspective';
 
 /**
  * Available straightening algorithm modes:
