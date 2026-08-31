@@ -114,9 +114,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 if (e.target.files && e.target.files.length > 0 && onAddRealItems) {
                   const files = Array.from(e.target.files);
                   const processed: ProcessedItem[] = [];
-                  for (let i = 0; i < files.length; i++) {
-                    const item = await analyzeRealImageFile(files[i], i);
-                    processed.push(item);
+                  const BATCH_SIZE = 8;
+                  for (let b = 0; b < files.length; b += BATCH_SIZE) {
+                    const batch = files.slice(b, b + BATCH_SIZE);
+                    const results = await Promise.all(
+                      batch.map((f, bi) => analyzeRealImageFile(f, b + bi))
+                    );
+                    processed.push(...results);
+                    // Yield to browser between batches so UI stays responsive
+                    await new Promise(r => setTimeout(r, 0));
                   }
                   const folderName = files[0].webkitRelativePath
                     ? files[0].webkitRelativePath.split('/')[0]

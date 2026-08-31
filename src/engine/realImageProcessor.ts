@@ -180,9 +180,9 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
       const width = img.naturalWidth || 1920;
       const height = img.naturalHeight || 1080;
 
-      // Sample canvas for real pixel luminance, Zoltanvin Hough lines, and edge variance
-      const sampleWidth = 480;
-      const sampleHeight = Math.round((sampleWidth * height) / width) || 320;
+      // Use a tiny canvas (120x90) for analysis — just enough for scoring, not memory-heavy
+      const sampleWidth = 120;
+      const sampleHeight = Math.round((sampleWidth * height) / width) || 90;
       const canvas = document.createElement('canvas');
       canvas.width = sampleWidth;
       canvas.height = sampleHeight;
@@ -487,44 +487,13 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
       // Save full original resolution file to persistent storage
       saveOriginalFileBlob(metadata.id, file);
 
-      let persistentThumbnail = objectUrl;
-      if (ctx) {
-        try {
-          persistentThumbnail = canvas.toDataURL('image/jpeg', 0.85);
-        } catch {
-          // Use objectUrl if toDataURL fails
-        }
-      }
+      // Use objectUrl (blob URL) directly as the thumbnail — fast, zero memory bloat
+      // This avoids toDataURL() which creates massive base64 strings for 200+ images
+      const persistentThumbnail = objectUrl;
 
-      // Generate straightened & inscribed transformed thumbnail if angle was corrected
-      let transformedThumbnail = persistentThumbnail;
-      if (geometry.requiresCorrection && geometry.correctedAngleDeg !== 0) {
-        try {
-          const transCanvas = document.createElement('canvas');
-          transCanvas.width = sampleWidth;
-          transCanvas.height = sampleHeight;
-          const tCtx = transCanvas.getContext('2d');
-          if (tCtx) {
-            tCtx.imageSmoothingEnabled = true;
-            tCtx.imageSmoothingQuality = 'high';
-            const scale = Math.max(width / geometry.cropBox.width, height / geometry.cropBox.height);
-            tCtx.save();
-            tCtx.translate(sampleWidth / 2, sampleHeight / 2);
-            tCtx.rotate((geometry.correctedAngleDeg * Math.PI) / 180);
-            tCtx.drawImage(
-              img,
-              (-sampleWidth * scale) / 2,
-              (-sampleHeight * scale) / 2,
-              sampleWidth * scale,
-              sampleHeight * scale
-            );
-            tCtx.restore();
-            transformedThumbnail = transCanvas.toDataURL('image/jpeg', 0.88);
-          }
-        } catch {
-          // Fallback to original thumbnail
-        }
-      }
+      // Skip costly toDataURL for transformed thumbnail too - use blob URL directly.
+      // Any CSS rotation/straighten is applied at render time via transform style.
+      const transformedThumbnail = persistentThumbnail;
 
       resolve({
         metadata,

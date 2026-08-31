@@ -127,9 +127,15 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
     }
 
     const processedRealItems: ProcessedItem[] = [];
-    for (let i = 0; i < filesArray.length; i++) {
-      const realItem = await analyzeRealImageFile(filesArray[i], i);
-      processedRealItems.push(realItem);
+    const BATCH_SIZE = 8;
+    for (let b = 0; b < filesArray.length; b += BATCH_SIZE) {
+      const batch = filesArray.slice(b, b + BATCH_SIZE);
+      const results = await Promise.all(
+        batch.map((f, bi) => analyzeRealImageFile(f, b + bi))
+      );
+      processedRealItems.push(...results);
+      // Yield to browser between batches so UI stays responsive
+      await new Promise(r => setTimeout(r, 0));
     }
 
     const newFolderId = `f_${Date.now()}`;
