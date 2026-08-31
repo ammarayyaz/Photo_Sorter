@@ -63,9 +63,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
       : 0;
 
   return (
-    <aside className="w-[245px] h-full flex flex-col bg-white dark:bg-[#000000] select-none flex-shrink-0 border-r border-[#E5E7EB] dark:border-[#222222] transition-colors duration-200">
+    <aside className="relative overflow-hidden w-[245px] h-full flex flex-col bg-white dark:bg-[#000000] select-none flex-shrink-0 border-r border-[#E5E5E5] dark:border-[#223150] transition-colors duration-200">
+      {/* Blurred Background Image */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-50 dark:opacity-30">
+        <img 
+          src="./download.jpg" 
+          className="w-full h-full object-cover filter blur-[40px] scale-125" 
+          alt="" 
+        />
+      </div>
+
       {/* 1. Sleek Brand Header */}
-      <div className="bg-white dark:bg-[#000000] px-5 py-3.5 flex items-center justify-between transition-colors">
+      <div className="relative z-10 bg-white/40 dark:bg-black/40 backdrop-blur-md px-5 py-3.5 flex items-center justify-between transition-colors">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-full bg-[#FCA311] text-white flex items-center justify-center shadow-none flex-shrink-0">
             <Sparkles className="w-4 h-4" />
@@ -77,7 +86,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* 2. Main Curved High-Contrast Body */}
-      <div className="flex-1 bg-[#111827] dark:bg-[#0D0D0D] rounded-tr-[36px] p-4 flex flex-col justify-between text-white no-scrollbar overflow-y-auto border-t border-r border-transparent dark:border-[#222222]">
+      <div className="relative z-10 flex-1 bg-[#111827]/60 dark:bg-[#0D0D0D]/65 backdrop-blur-md rounded-tr-[36px] p-4 flex flex-col justify-between text-white no-scrollbar overflow-y-auto border-t border-r border-transparent dark:border-[#223150]">
         <div className="flex flex-col gap-3">
           {/* Upload Button */}
           <label className="w-full bg-[#FCA311] hover:bg-[#E08F0A] text-white font-heading font-bold text-xs tracking-wide py-2.5 px-3.5 rounded-xl transition-all active:scale-98 flex items-center justify-center gap-2 cursor-pointer shadow-none">
