@@ -419,7 +419,7 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
           <h3 className="font-heading text-xs font-bold text-[#111827] dark:text-white">No photos loaded for renaming</h3>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-0 border-t border-l border-[#E5E7EB] dark:border-[#27272A] rounded-2xl overflow-hidden">
           {filteredItems.map((item) => {
             const preview = previewMap.get(item.metadata.id);
             const isArchived = item.isArchived;
@@ -428,7 +428,7 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
             return (
               <div
                 key={item.metadata.id}
-                className="bg-white dark:bg-[#111111] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl overflow-hidden flex flex-col justify-between"
+                className="bg-white dark:bg-[#111111] border-r border-b border-[#E5E7EB] dark:border-[#27272A] rounded-none overflow-hidden flex flex-col justify-between"
               >
                 {/* 1. Unobscured Clean Photo (No Blur · No Glow) */}
                 <div className="relative aspect-[4/3] w-full bg-slate-100 dark:bg-[#000000] overflow-hidden">

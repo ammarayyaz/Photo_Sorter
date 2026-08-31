@@ -412,7 +412,7 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-0 border-t border-l border-[#E5E7EB] dark:border-[#27272A] rounded-2xl overflow-hidden">
           {displayedItems.map((item) => {
             const isArchived = item.isArchived;
             const isMotion = item.blurClassification.blurType === 'MOTION_SHAKE';
@@ -426,12 +426,12 @@ export const CullingSeparationView: React.FC<CullingSeparationViewProps> = ({
               <div
                 key={item.metadata.id}
                 onClick={() => setInspectingItem(item)}
-                className={`bg-white dark:bg-[#111111] border rounded-2xl overflow-hidden flex flex-col justify-between cursor-pointer transition-colors ${
+                className={`bg-white dark:bg-[#111111] border-r border-b border-[#E5E7EB] dark:border-[#27272A] rounded-none overflow-hidden flex flex-col justify-between cursor-pointer transition-colors ${
                   isChecked
-                    ? 'border-[#4D694E] ring-2 ring-[#4D694E]'
+                    ? 'ring-2 ring-inset ring-[#4D694E] z-10'
                     : isArchived
-                    ? 'border-red-500/40'
-                    : 'border-[#E5E7EB] dark:border-[#27272A]'
+                    ? 'bg-red-50/20 dark:bg-red-950/10'
+                    : ''
                 }`}
               >
                 {/* 1. Unobscured Clean Photo (No Blur · No Glow) */}
