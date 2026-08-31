@@ -382,7 +382,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
             />
           </label>
 
-          <label className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#4D694E] hover:bg-[#3C533D] text-white font-heading text-xs font-bold tracking-wide cursor-pointer transition-all active:scale-98 shadow-none">
+          <label className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#4D694E] hover:bg-[#3C533D] text-[#FFF3D5] font-heading text-xs font-bold tracking-wide cursor-pointer transition-all active:scale-98 shadow-none">
             <UploadCloud className="w-3.5 h-3.5" />
             <span>Upload Images</span>
             <input
@@ -403,7 +403,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
             <Sparkles className="w-4 h-4 text-[#4D694E] animate-spin" />
             <span className="font-heading font-semibold">Analyzing image pixels, luminance, and sharpness...</span>
           </div>
-          <span className="font-mono tabular-nums text-2xs bg-[#4D694E] text-white px-2 py-0.5 rounded font-bold">
+          <span className="font-mono tabular-nums text-2xs bg-[#4D694E] text-[#FFF3D5] px-2 py-0.5 rounded font-bold">
             Reading Canvas
           </span>
         </div>
@@ -445,7 +445,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
               />
             </label>
 
-            <label className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#4D694E] hover:bg-[#3C533D] text-white font-heading text-xs font-bold tracking-wide cursor-pointer transition-all active:scale-98 shadow-none">
+            <label className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#4D694E] hover:bg-[#3C533D] text-[#FFF3D5] font-heading text-xs font-bold tracking-wide cursor-pointer transition-all active:scale-98 shadow-none">
               <FileImage className="w-3.5 h-3.5" />
               <span>Choose Images</span>
               <input
@@ -478,7 +478,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
             <h2 className="font-heading text-2xs font-extrabold uppercase tracking-wider text-[#111827] dark:text-white">
               {subTab === 'unsorted' ? 'UNSORTED FOLDERS' : 'ALL SORTED FOLDERS'}
             </h2>
-            <span className="text-2xs px-2 py-0.5 rounded-full font-bold bg-[#4D694E] text-white font-mono tabular-nums">
+            <span className="text-2xs px-2 py-0.5 rounded-full font-bold bg-[#4D694E] text-[#FFF3D5] font-mono tabular-nums">
               {currentTabFolders.length} Folders
             </span>
           </div>
@@ -565,7 +565,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                   <h1 className="font-heading text-base font-extrabold text-[#111827] dark:text-white tracking-tight">
                     {openedFolder.name}
                   </h1>
-                  <span className="text-2xs px-2 py-0.5 rounded-full bg-[#4D694E] text-white font-mono tabular-nums font-bold">
+                  <span className="text-2xs px-2 py-0.5 rounded-full bg-[#4D694E] text-[#FFF3D5] font-mono tabular-nums font-bold">
                     {openedFolder.items.length} Photos
                   </span>
                 </div>
@@ -622,7 +622,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                   setOpenedFolderId(null);
                   onStartPipeline();
                 }}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#4D694E] hover:bg-[#3C533D] text-white font-heading text-xs font-bold tracking-wide transition-all cursor-pointer active:scale-95 shadow-none"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#4D694E] hover:bg-[#3C533D] text-[#FFF3D5] font-heading text-xs font-bold tracking-wide transition-all cursor-pointer active:scale-95 shadow-none"
               >
                 <Play className="w-3.5 h-3.5 fill-current" />
                 <span>Start Auto-Sorting</span>
@@ -747,7 +747,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                   <span className="font-heading font-extrabold text-sm text-[#111827] dark:text-white tracking-tight">
                     {lightboxItem.metadata.filename}
                   </span>
-                  <span className="text-2xs px-2 py-0.5 rounded-full bg-[#4D694E] text-white font-mono tabular-nums font-bold">
+                  <span className="text-2xs px-2 py-0.5 rounded-full bg-[#4D694E] text-[#FFF3D5] font-mono tabular-nums font-bold">
                     {(lightboxItem.metadata.fileSize / 1000000).toFixed(2)} MB
                   </span>
                 </div>
@@ -794,7 +794,7 @@ export const FoldersView: React.FC<FoldersViewProps> = ({
                 onClick={(e) => handleToggleImageSelection(lightboxItem.metadata.id, e)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border transition-colors cursor-pointer font-heading text-xs font-bold ${
                   selectedImageIds.has(lightboxItem.metadata.id)
-                    ? 'border-[#4D694E] bg-[#4D694E] text-white'
+                    ? 'border-[#4D694E] bg-[#4D694E] text-[#FFF3D5]'
                     : 'border-[#E5E7EB] dark:border-[#27272A] bg-white dark:bg-[#181818] hover:bg-slate-100 dark:hover:bg-[#222222] text-[#111827] dark:text-white'
                 }`}
               >

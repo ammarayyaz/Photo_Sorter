@@ -76,12 +76,12 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
           <button
             onClick={handleExportZip}
             disabled={items.length === 0 || isExporting}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-white font-heading font-bold text-xs tracking-wide transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-heading font-bold text-xs tracking-wide transition-all ${
               isExporting
-                ? 'bg-[#4D694E]/70 cursor-wait'
+                ? 'bg-[#4D694E]/70 text-[#FFF3D5] cursor-wait'
                 : items.length > 0
-                ? 'bg-[#4D694E] hover:bg-[#3C533D] active:scale-98 cursor-pointer shadow-none'
-                : 'bg-slate-300 dark:bg-slate-800 cursor-not-allowed opacity-70'
+                ? 'bg-[#4D694E] hover:bg-[#3C533D] text-[#FFF3D5] active:scale-98 cursor-pointer shadow-none'
+                : 'bg-slate-300 dark:bg-slate-800 text-white cursor-not-allowed opacity-70'
             }`}
           >
             {isExporting ? (
@@ -123,7 +123,7 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
           >
             <FolderCheck className="w-4 h-4 text-[#4D694E]" />
             <span>Final Enhanced Output</span>
-            <span className="text-2xs px-2 py-0.5 rounded-full font-mono tabular-nums font-bold bg-[#4D694E] text-white">
+            <span className="text-2xs px-2 py-0.5 rounded-full font-mono tabular-nums font-bold bg-[#4D694E] text-[#FFF3D5]">
               {mainItems.length}
             </span>
           </button>
@@ -197,7 +197,7 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
 
                     <button
                       onClick={() => handleDownloadSingle(item)}
-                      className="p-1.5 rounded-lg bg-black/80 hover:bg-[#4D694E] text-white transition-colors flex items-center gap-1 text-2xs font-bold cursor-pointer"
+                      className="p-1.5 rounded-lg bg-black/80 hover:bg-[#4D694E] text-white hover:text-[#FFF3D5] transition-colors flex items-center gap-1 text-2xs font-bold cursor-pointer"
                       title="Download this image"
                     >
                       {hasDownloaded ? (

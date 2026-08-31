@@ -260,10 +260,10 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
         <button
           onClick={onContinueToOutput}
           disabled={items.length === 0}
-          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-white font-heading font-bold text-xs tracking-wide transition-all ${
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl font-heading font-bold text-xs tracking-wide transition-all ${
             items.length > 0
-              ? 'bg-[#4D694E] hover:bg-[#3C533D] active:scale-98 cursor-pointer shadow-none'
-              : 'bg-slate-300 dark:bg-slate-800 cursor-not-allowed opacity-70'
+              ? 'bg-[#4D694E] hover:bg-[#3C533D] text-[#FFF3D5] active:scale-98 cursor-pointer shadow-none'
+              : 'bg-slate-300 dark:bg-slate-800 text-white cursor-not-allowed opacity-70'
           }`}
         >
           <span>Proceed to Step 5: Final Output</span>
@@ -319,7 +319,7 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
             className={`flex items-center gap-1.5 px-4 py-1.5 rounded-xl font-heading text-xs font-bold tracking-wide transition-all shadow-none ${
               appliedStatus
                 ? 'bg-emerald-600 text-white'
-                : 'bg-[#4D694E] hover:bg-[#3C533D] text-white active:scale-95 cursor-pointer'
+                : 'bg-[#4D694E] hover:bg-[#3C533D] text-[#FFF3D5] active:scale-95 cursor-pointer'
             }`}
           >
             {appliedStatus ? (
@@ -379,7 +379,7 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
                   />
                   <button
                     onClick={() => handleApplyFolderRename(group.folderId)}
-                    className="px-2 py-1 rounded-lg bg-[#4D694E] hover:bg-[#3C533D] text-white text-[10px] font-heading font-bold cursor-pointer transition-all active:scale-95 shadow-none"
+                    className="px-2 py-1 rounded-lg bg-[#4D694E] hover:bg-[#3C533D] text-[#FFF3D5] text-[10px] font-heading font-bold cursor-pointer transition-all active:scale-95 shadow-none"
                     title="Apply this prefix to all photos in this folder"
                   >
                     {appliedFolderIds.has(group.folderId) ? '✓ Applied' : 'Apply'}
@@ -478,7 +478,7 @@ export const RenamingView: React.FC<RenamingViewProps> = ({
                     </div>
                     <button
                       onClick={() => handleApplySingleRename(item.metadata.id)}
-                      className="px-2.5 py-1 rounded-lg bg-[#4D694E] hover:bg-[#3C533D] text-white text-[10px] font-heading font-bold ml-2 transition-colors cursor-pointer shadow-none flex-shrink-0"
+                      className="px-2.5 py-1 rounded-lg bg-[#4D694E] hover:bg-[#3C533D] text-[#FFF3D5] text-[10px] font-heading font-bold ml-2 transition-colors cursor-pointer shadow-none flex-shrink-0"
                       title="Apply this new name to this photo"
                     >
                       {isSingleApplied ? '✓ Done' : 'Apply'}

@@ -101,7 +101,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <div className="flex-1 bg-[#FFF3D5] dark:bg-[#1E2620] rounded-tr-[36px] p-4 flex flex-col justify-between text-[#2D3F2E] dark:text-[#FFF3D5] no-scrollbar overflow-y-auto">
         <div className="flex flex-col gap-3">
           {/* Upload Button */}
-          <label className="w-full bg-[#4D694E] hover:bg-[#3C533D] text-white font-heading font-bold text-xs tracking-wide py-2.5 px-3.5 rounded-xl transition-all active:scale-98 flex items-center justify-center gap-2 cursor-pointer shadow-none">
+          <label className="w-full bg-[#4D694E] hover:bg-[#3C533D] text-[#FFF3D5] font-heading font-bold text-xs tracking-wide py-2.5 px-3.5 rounded-xl transition-all active:scale-98 flex items-center justify-center gap-2 cursor-pointer shadow-none">
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>Upload New Files</span>
             <input
