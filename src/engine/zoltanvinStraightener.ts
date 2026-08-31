@@ -203,12 +203,22 @@ export function detectZoltanvinStraightAngle(
     // Weight votes by line length so longer structural lines (horizons, pillars) dominate
     const votes = Math.max(1, Math.round(seg.length / 8));
 
-    if (angle >= -45 && angle <= 45) {
+    // Strictly filter out diagonal perspective lines (> 12° from horizontal or vertical)
+    if (Math.abs(angle) <= 12.0) {
+      // True horizontal line
       for (let v = 0; v < votes; v++) horizontalAngles.push(angle);
-    } else {
-      // In Zoltanvin algorithm, vertical lines are converted to tilt offset from 90°
-      const vTilt = angle > 0 ? angle - 90 : angle + 90;
-      for (let v = 0; v < votes; v++) verticalAngles.push(vTilt);
+    } else if (angle >= 78) {
+      // True vertical line (positive)
+      const vTilt = angle - 90;
+      if (Math.abs(vTilt) <= 12.0) {
+        for (let v = 0; v < votes; v++) verticalAngles.push(vTilt);
+      }
+    } else if (angle <= -78) {
+      // True vertical line (negative)
+      const vTilt = angle + 90;
+      if (Math.abs(vTilt) <= 12.0) {
+        for (let v = 0; v < votes; v++) verticalAngles.push(vTilt);
+      }
     }
   }
 

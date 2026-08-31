@@ -71,8 +71,10 @@ export function calculateInscribedCrop(
 
 import { detectZoltanvinStraightAngle } from './zoltanvinStraightener';
 import { detectAngleWithCannyHough } from './cannyHoughDetector';
+import { detectSubjectInertiaAngle, calculateZeroBlackBorderCrop } from './subjectPerspectiveStraightener';
 export { calculateMaxIncludedRectKeepAR, computePerspectiveTrapezoid, createTrapezoid } from './jpegviewPerspective';
 export type { JpegViewTrapezoid, InscribedRect } from './jpegviewPerspective';
+export { calculateZeroBlackBorderCrop, detectSubjectInertiaAngle } from './subjectPerspectiveStraightener';
 
 /**
  * Available straightening algorithm modes:
@@ -203,54 +205,55 @@ export function detectHorizonAndTiltAngle(
   const radonRawAngle = Number((minAngle + peakBinIdx * step).toFixed(1));
   const snr = stdDev > 0 ? (peakEnergy - mean) / stdDev : 0;
 
-  // 4. Decide Angle Based on Requested Algorithm Mode
+    // 4. Decide Angle Based on Requested Algorithm Mode
+  // Subject Reference Check: If subject (person/face) is detected, lock to subject vertical
+  const subjectAxis = detectSubjectInertiaAngle(gray, sampleWidth, sampleHeight, faceTiltHint);
+
   let finalDetectedAngle = 0.0;
   let confidence = 0.5;
 
-  if (algorithm === 'zoltanvin-hough') {
-    if (zoltanResult.requiresCorrection) {
+  if (algorithm === 'portrait-body' || (algorithm === 'hybrid-ensemble' && subjectAxis && subjectAxis.confidence >= 0.85)) {
+    // Subject-First Reference: Align vertical posture of the person
+    finalDetectedAngle = subjectAxis ? subjectAxis.angleDeg : (typeof faceTiltHint === 'number' ? faceTiltHint : 0);
+    confidence = subjectAxis ? subjectAxis.confidence : 0.90;
+  } else if (algorithm === 'zoltanvin-hough') {
+    if (zoltanResult.requiresCorrection && Math.abs(zoltanResult.detectedAngleDeg) <= 12.0) {
       finalDetectedAngle = zoltanResult.detectedAngleDeg;
       confidence = zoltanResult.confidence;
-    } else if (Math.abs(radonRawAngle) >= 0.5 && (snr >= 1.15 || peakEnergy > mean * 1.15)) {
+    } else if (Math.abs(radonRawAngle) >= 0.5 && Math.abs(radonRawAngle) <= 12.0 && (snr >= 1.15 || peakEnergy > mean * 1.15)) {
       finalDetectedAngle = radonRawAngle;
       confidence = Math.min(0.95, snr / 3.0);
     }
   } else if (algorithm === 'canny-hough') {
-    // Pure Canny-Hough: ported from SpicerSolutions/opencv-python-automatic-image-straightening
-    // Otsu threshold → Canny edges → Hough sinusoidal vote → weighted-median angle
-    if (cannyHoughResult.requiresCorrection) {
+    // Pure Canny-Hough with perspective vanishing filter
+    if (cannyHoughResult.requiresCorrection && Math.abs(cannyHoughResult.angleDeg) <= 12.0) {
       finalDetectedAngle = cannyHoughResult.angleDeg;
       confidence = cannyHoughResult.confidence;
     }
-  } else if (algorithm === 'portrait-body' && typeof faceTiltHint === 'number' && Math.abs(faceTiltHint) >= 0.5) {
-    finalDetectedAngle = Number(faceTiltHint.toFixed(1));
-    confidence = 0.90;
   } else if (algorithm === 'radon-profile') {
-    if (Math.abs(radonRawAngle) >= 0.5 && (snr >= 1.15 || peakEnergy > mean * 1.15)) {
+    if (Math.abs(radonRawAngle) >= 0.5 && Math.abs(radonRawAngle) <= 12.0 && (snr >= 1.15 || peakEnergy > mean * 1.15)) {
       finalDetectedAngle = radonRawAngle;
       confidence = Math.min(0.95, snr / 3.0);
     }
   } else {
-    // Hybrid Ensemble: Weighted consensus of Zoltanvin + Canny-Hough + Radon + Body
-    // Adding Canny-Hough as a 4th candidate gives a more robust vote on real photos.
+    // Hybrid Ensemble: Weighted consensus of Subject + Zoltanvin + Canny-Hough + Radon
     const candidates: Array<{ angle: number; weight: number; source: string }> = [];
 
-    if (zoltanResult.requiresCorrection) {
+    if (subjectAxis && subjectAxis.confidence > 0.7) {
+      candidates.push({ angle: subjectAxis.angleDeg, weight: 2.5, source: 'subject-axis' });
+    }
+    if (zoltanResult.requiresCorrection && Math.abs(zoltanResult.detectedAngleDeg) <= 12.0) {
       candidates.push({ angle: zoltanResult.detectedAngleDeg, weight: 1.5, source: 'zoltanvin' });
     }
-    // Canny-Hough: weight by its own confidence × 1.4 base (rewards sharp-edged images)
-    if (cannyHoughResult.requiresCorrection && cannyHoughResult.lineCount >= 3) {
+    if (cannyHoughResult.requiresCorrection && Math.abs(cannyHoughResult.angleDeg) <= 12.0 && cannyHoughResult.lineCount >= 3) {
       candidates.push({
         angle: cannyHoughResult.angleDeg,
         weight: 1.4 * cannyHoughResult.confidence,
         source: 'canny-hough',
       });
     }
-    if (Math.abs(radonRawAngle) >= 0.5 && snr >= 1.15) {
-      candidates.push({ angle: radonRawAngle, weight: 1.2, source: 'radon' });
-    }
-    if (typeof faceTiltHint === 'number' && Math.abs(faceTiltHint) >= 0.5) {
-      candidates.push({ angle: faceTiltHint, weight: 1.3, source: 'face-tilt' });
+    if (Math.abs(radonRawAngle) >= 0.5 && Math.abs(radonRawAngle) <= 12.0 && snr >= 1.15) {
+      candidates.push({ angle: radonRawAngle, weight: 1.0, source: 'radon' });
     }
 
     if (candidates.length > 0) {
@@ -265,9 +268,12 @@ export function detectHorizonAndTiltAngle(
     }
   }
 
+  // Strictly clamp final angle to realistic tilt (never rotate more than 12° unless manually overridden)
+  finalDetectedAngle = Math.max(-12.0, Math.min(12.0, finalDetectedAngle));
+
   const requiresCorrection = Math.abs(finalDetectedAngle) >= 0.5;
   const correctedAngleDeg = Number((-finalDetectedAngle).toFixed(1));
-  const crop = calculateInscribedCrop(originalWidth, originalHeight, finalDetectedAngle);
+  const crop = calculateZeroBlackBorderCrop(originalWidth, originalHeight, finalDetectedAngle);
 
   return {
     detectedAngleDeg: finalDetectedAngle,

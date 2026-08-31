@@ -592,13 +592,11 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
             {/* BASE LAYER: Straightened & Inscribed Cropped + Lightroom Toned */}
             <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
               <img
-                src={activeFullResUrl || selectedItem.transformedThumbnailUrl || selectedItem.thumbnailUrl}
+                src={activeFullResUrl || selectedItem.thumbnailUrl}
                 alt="Straightened & Toned Preview"
                 onError={(e) => {
                   const target = e.currentTarget;
-                  if (target.src !== selectedItem.transformedThumbnailUrl && selectedItem.transformedThumbnailUrl) {
-                    target.src = selectedItem.transformedThumbnailUrl;
-                  } else if (target.src !== selectedItem.thumbnailUrl && selectedItem.thumbnailUrl) {
+                  if (target.src !== selectedItem.thumbnailUrl && selectedItem.thumbnailUrl) {
                     target.src = selectedItem.thumbnailUrl;
                   }
                 }}

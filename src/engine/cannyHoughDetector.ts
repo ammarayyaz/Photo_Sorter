@@ -416,18 +416,22 @@ function extractTiltFromHoughLines(lines: HoughLine[]): { angleDeg: number; conf
 
   for (const line of lines) {
     const thetaDeg = (line.theta * 180) / Math.PI;
-    let tilt: number;
+    let tilt: number | null = null;
 
-    if (line.theta > 1.0) {
-      // Near-vertical line → tilt = angle - 90
+    // In Hough transform: theta is the angle of the normal.
+    // Horizontal line -> normal theta is near 90° (pi/2). Tilt from horizontal = theta - 90°.
+    // Vertical line -> normal theta is near 0° or 180°. Tilt from vertical = theta or theta - 180°.
+    // Diagonal perspective lines (15° < theta < 75° or 105° < theta < 165°) are rejected.
+    if (thetaDeg >= 75 && thetaDeg <= 105) {
       tilt = thetaDeg - 90;
-    } else {
-      // Near-horizontal line → tilt = angle
+    } else if (thetaDeg <= 15) {
       tilt = thetaDeg;
+    } else if (thetaDeg >= 165) {
+      tilt = thetaDeg - 180;
     }
 
-    // Clamp to usable range
-    if (Math.abs(tilt) <= 45) {
+    // Strictly clamp to natural handheld tilt range (<= 12 degrees)
+    if (tilt !== null && Math.abs(tilt) <= 12.0) {
       tilts.push({ tilt, weight: line.votes });
     }
   }
