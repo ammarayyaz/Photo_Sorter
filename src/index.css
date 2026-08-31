@@ -62,11 +62,16 @@ html, body {
 }
 
 /* Hierarchy: Headings use Plus Jakarta Sans */
-h1, h2, h3, h4, h5, h6, .font-heading {
+h1, h2, h3, h4, h5, h6 {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-weight: 700;
   letter-spacing: -0.015em;
   color: var(--text-main);
+}
+.font-heading {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.015em;
 }
 
 /* Numbers, Metrics & Data: Inter Tabular Figures */

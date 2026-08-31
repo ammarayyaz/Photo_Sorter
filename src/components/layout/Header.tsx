@@ -131,7 +131,7 @@ export const Header: React.FC<HeaderProps> = ({
         {status === 'IDLE' && (
           <button
             onClick={onStart}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#4D694E] hover:bg-[#3C533D] text-white font-heading font-bold text-xs tracking-wide transition-all active:scale-98 cursor-pointer shadow-none"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#4D694E] hover:bg-[#3C533D] text-[#FFF3D5] font-heading font-bold text-xs tracking-wide transition-all active:scale-98 cursor-pointer shadow-none"
           >
             <Play className="w-3 h-3 fill-current" />
             <span>Run 5-Step Pipeline</span>
@@ -151,7 +151,7 @@ export const Header: React.FC<HeaderProps> = ({
         {status === 'PAUSED' && (
           <button
             onClick={onResume}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#4D694E] hover:bg-[#3C533D] text-white font-heading font-bold text-xs transition-colors cursor-pointer shadow-none"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#4D694E] hover:bg-[#3C533D] text-[#FFF3D5] font-heading font-bold text-xs transition-colors cursor-pointer shadow-none"
           >
             <Play className="w-3.5 h-3.5 fill-current" />
             <span>Resume</span>
