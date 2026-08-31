@@ -590,7 +590,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
             )}
 
             {/* BASE LAYER: Straightened & Inscribed Cropped + Lightroom Toned */}
-            <div className="absolute inset-0 flex items-center justify-center overflow-hidden">
+            <div className="absolute inset-0 flex items-center justify-center overflow-hidden p-2">
               <img
                 src={activeFullResUrl || selectedItem.thumbnailUrl}
                 alt="Straightened & Toned Preview"
@@ -602,10 +602,10 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                 }}
                 style={{
                   filter: lightroom.cssFilter || 'none',
-                  transform: `rotate(${geometry.correctedAngleDeg}deg) scale(${previewScale * (isZoomed ? 1.5 : 1.0)})`,
+                  transform: `rotate(${geometry.correctedAngleDeg}deg) scale(${((geometry.correctedAngleDeg !== 0 ? previewScale : 1.0) * (isZoomed ? 1.5 : 1.0)).toFixed(4)})`,
                   transformOrigin: 'center center',
                 }}
-                className="w-full h-full object-cover transition-transform duration-150"
+                className="max-w-full max-h-full object-contain transition-transform duration-150"
               />
               <div className="absolute top-2.5 right-2.5 bg-black/80 backdrop-blur-sm text-white text-2xs font-heading font-extrabold px-2 py-0.5 rounded border border-white/20 flex items-center gap-1 z-30">
                 <CheckCircle2 className="w-3 h-3 text-[#4D694E]" />
@@ -619,10 +619,10 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
 
             {/* OVERLAY LAYER (Left side): Pure Original Raw Input */}
             <div
-              className="absolute inset-0 overflow-hidden border-r-2 border-[#4D694E] z-10"
+              className="absolute inset-0 overflow-hidden border-r-2 border-[#4D694E] z-10 p-2"
               style={{ width: `${sliderPos}%` }}
             >
-              <div className="absolute inset-0 w-full h-full min-w-[640px] flex items-center justify-center pointer-events-none">
+              <div className="absolute inset-0 w-full h-full flex items-center justify-center pointer-events-none p-2" style={{ width: `${100 / Math.max(0.01, sliderPos / 100)}%` }}>
                 <img
                   src={activeFullResUrl || selectedItem.thumbnailUrl}
                   alt="Original Raw Input"
@@ -632,7 +632,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                       target.src = selectedItem.thumbnailUrl;
                     }
                   }}
-                  className={`w-full h-full object-cover transition-transform duration-150 ${
+                  className={`max-w-full max-h-full object-contain transition-transform duration-150 ${
                     isZoomed ? 'scale-150' : 'scale-100'
                   }`}
                   style={{

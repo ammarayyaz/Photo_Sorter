@@ -308,14 +308,23 @@ export async function renderStraightenedImageBlob(
   if (!ctx) throw new Error('Canvas 2D context not available');
 
   ctx.save();
-  // Translate to center of crop
-  ctx.translate(cropBox.width / 2, cropBox.height / 2);
-  // Rotate to straighten
-  ctx.rotate((-angleDeg * Math.PI) / 180);
-  // Draw full original image centered
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+
   const origW = 'naturalWidth' in sourceImageElement ? sourceImageElement.naturalWidth : sourceImageElement.width;
   const origH = 'naturalHeight' in sourceImageElement ? sourceImageElement.naturalHeight : sourceImageElement.height;
-  ctx.drawImage(sourceImageElement, -origW / 2, -origH / 2, origW, origH);
+
+  if (Math.abs(angleDeg) < 0.01) {
+    // 0° rotation: direct draw full crop without rotation
+    ctx.drawImage(sourceImageElement, 0, 0, cropBox.width, cropBox.height);
+  } else {
+    // Translate to center of crop
+    ctx.translate(cropBox.width / 2, cropBox.height / 2);
+    // Rotate to straighten matching CSS rotation (positive = CW, negative = CCW)
+    ctx.rotate((angleDeg * Math.PI) / 180);
+    // Draw full original image centered
+    ctx.drawImage(sourceImageElement, -origW / 2, -origH / 2, origW, origH);
+  }
   ctx.restore();
 
   return new Promise((resolve, reject) => {

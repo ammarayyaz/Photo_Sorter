@@ -382,51 +382,61 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
             });
           }
 
-          // 4. Calculate Real Horizon & Portrait Tilt Angle via Zoltanvin Hough Lines & Silhouette Inertia
+          // 4. Calculate Real Horizon & Subject-First Tilt Angle
           let faceTiltHint: number | null = null;
-          
-          // Sample top background / sky reference color
-          const skyR = (data[0] + data[(sampleWidth - 1) * 4]) / 2;
-          const skyG = (data[1] + data[(sampleWidth - 1) * 4 + 1]) / 2;
-          const skyB = (data[2] + data[(sampleWidth - 1) * 4 + 2]) / 2;
 
-          let fgCount = 0;
-          let fgSumX = 0;
-          let fgSumY = 0;
-          const isFg = new Uint8Array(pixelCount);
+          if (detectedFaces.length > 0) {
+            // Human subject is present! A person standing or looking around naturally is upright.
+            // Do NOT let background tree branches or roofs tilt the human.
+            faceTiltHint = 0.0;
+          } else {
+            // Check if there is a dominant central subject / body
+            let fgCount = 0;
+            let fgSumX = 0;
+            let fgSumY = 0;
+            const isFg = new Uint8Array(pixelCount);
 
-          for (let i = 0; i < pixelCount; i++) {
-            const r = data[i * 4];
-            const g = data[i * 4 + 1];
-            const b = data[i * 4 + 2];
-            const diff = Math.hypot(r - skyR, g - skyG, b - skyB);
-            if (diff > 20 || isSkin[i] === 1) {
-              isFg[i] = 1;
-              fgCount++;
-              fgSumX += i % sampleWidth;
-              fgSumY += Math.floor(i / sampleWidth);
-            }
-          }
+            const skyR = (data[0] + data[(sampleWidth - 1) * 4]) / 2;
+            const skyG = (data[1] + data[(sampleWidth - 1) * 4 + 1]) / 2;
+            const skyB = (data[2] + data[(sampleWidth - 1) * 4 + 2]) / 2;
 
-          if (fgCount > 80) {
-            const avgX = fgSumX / fgCount;
-            const avgY = fgSumY / fgCount;
-            let covXX = 0, covYY = 0, covXY = 0;
             for (let i = 0; i < pixelCount; i++) {
-              if (isFg[i] === 1) {
-                const px = (i % sampleWidth) - avgX;
-                const py = Math.floor(i / sampleWidth) - avgY;
-                covXX += px * px;
-                covYY += py * py;
-                covXY += px * py;
+              const r = data[i * 4];
+              const g = data[i * 4 + 1];
+              const b = data[i * 4 + 2];
+              const diff = Math.hypot(r - skyR, g - skyG, b - skyB);
+              if (diff > 25 || isSkin[i] === 1) {
+                isFg[i] = 1;
+                fgCount++;
+                fgSumX += i % sampleWidth;
+                fgSumY += Math.floor(i / sampleWidth);
               }
             }
-            if (covXX + covYY > 0) {
-              const theta = 0.5 * Math.atan2(2 * covXY, covXX - covYY);
-              let bodyTilt = (theta * 180) / Math.PI;
-              while (bodyTilt < -45) bodyTilt += 90;
-              while (bodyTilt > 45) bodyTilt -= 90;
-              faceTiltHint = bodyTilt;
+
+            if (fgCount > pixelCount * 0.15 && fgCount < pixelCount * 0.85) {
+              const avgX = fgSumX / fgCount;
+              const avgY = fgSumY / fgCount;
+              let covXX = 0, covYY = 0, covXY = 0;
+              for (let i = 0; i < pixelCount; i++) {
+                if (isFg[i] === 1) {
+                  const px = (i % sampleWidth) - avgX;
+                  const py = Math.floor(i / sampleWidth) - avgY;
+                  covXX += px * px;
+                  covYY += py * py;
+                  covXY += px * py;
+                }
+              }
+              if (covXX + covYY > 0) {
+                const theta = 0.5 * Math.atan2(2 * covXY, covXX - covYY);
+                let bodyTilt = (theta * 180) / Math.PI;
+                while (bodyTilt < -45) bodyTilt += 90;
+                while (bodyTilt > 45) bodyTilt -= 90;
+                if (Math.abs(bodyTilt) < 3.5) {
+                  faceTiltHint = 0.0;
+                } else if (Math.abs(bodyTilt) <= 10.0) {
+                  faceTiltHint = Number(bodyTilt.toFixed(1));
+                }
+              }
             }
           }
 
