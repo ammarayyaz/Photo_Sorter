@@ -62,34 +62,56 @@ export const Sidebar: React.FC<SidebarProps> = ({
       ? Math.min(100, Math.max(1, (totalBytes / 1000000000000) * 100))
       : 0;
 
+  const getTabClass = (isActive: boolean) => 
+    `flex items-center justify-between px-3 py-2 rounded-xl transition-all text-left cursor-pointer duration-150 ${
+      isActive 
+        ? 'bg-[#4D694E] text-[#FFF3D5] font-bold shadow-sm' 
+        : 'text-[#2D3F2E]/80 dark:text-[#FFF3D5]/80 hover:text-[#2D3F2E] dark:hover:text-[#FFF3D5] hover:bg-[#4D694E]/10 dark:hover:bg-[#4D694E]/25'
+    }`;
+
+  const getSubTabClass = (isActive: boolean) => 
+    `flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-all text-left text-2xs cursor-pointer duration-150 ${
+      isActive 
+        ? 'bg-[#4D694E] text-[#FFF3D5] font-bold shadow-sm' 
+        : 'text-[#2D3F2E]/80 dark:text-[#FFF3D5]/80 hover:text-[#2D3F2E] dark:hover:text-[#FFF3D5] hover:bg-[#4D694E]/10 dark:hover:bg-[#4D694E]/25'
+    }`;
+
+  const getBadgeClass = (isActive: boolean) => 
+    `text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums ${
+      isActive 
+        ? 'bg-black/20 text-[#FFF3D5]' 
+        : 'bg-[#4D694E]/15 dark:bg-white/10 text-[#2D3F2E]/80 dark:text-[#FFF3D5]/80'
+    }`;
+
   return (
-    <aside className="relative overflow-hidden w-[245px] h-full flex flex-col bg-white dark:bg-[#000000] select-none flex-shrink-0 transition-colors duration-200">
-      {/* Blurred Background Image */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-50 dark:opacity-30">
-        <img 
-          src="./download.jpg" 
-          className="w-full h-full object-cover filter blur-[10px] scale-110" 
-          alt="" 
+    <aside className="relative overflow-hidden w-[245px] h-full flex flex-col bg-white dark:bg-[#121813] select-none flex-shrink-0 transition-colors duration-200">
+      {/* Blurred Background Gradient */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-90 dark:opacity-50">
+        <div 
+          className="w-full h-full filter blur-[20px] scale-125" 
+          style={{
+            background: 'radial-gradient(circle at top left, var(--nav-gradient-start, #4D694E), var(--nav-gradient-end, #FFF3D5) 75%)'
+          }}
         />
       </div>
 
       {/* 1. Sleek Brand Header */}
-      <div className="relative z-10 bg-white dark:bg-[#000000] px-5 py-3.5 flex items-center justify-between transition-colors">
+      <div className="relative z-10 bg-transparent px-5 py-3.5 flex items-center justify-between transition-colors">
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-full bg-[#FCA311] text-white flex items-center justify-center shadow-none flex-shrink-0">
+          <div className="w-7 h-7 rounded-full bg-[#4D694E] text-[#FFF3D5] flex items-center justify-center shadow-none flex-shrink-0">
             <Sparkles className="w-4 h-4" />
           </div>
-          <span className="font-heading font-extrabold text-base text-[#111827] dark:text-white tracking-tight">
+          <span className="font-heading font-extrabold text-base text-[#2D3F2E] dark:text-[#FFF3D5] tracking-tight">
             LuminaSort
           </span>
         </div>
       </div>
 
       {/* 2. Main Curved High-Contrast Body */}
-      <div className="relative z-10 flex-1 bg-[#111827]/60 dark:bg-[#0D0D0D]/65 backdrop-blur-md rounded-tr-[36px] p-4 flex flex-col justify-between text-white no-scrollbar overflow-y-auto">
+      <div className="relative z-10 flex-1 bg-transparent p-4 flex flex-col justify-between text-[#2D3F2E] dark:text-[#FFF3D5] no-scrollbar overflow-y-auto">
         <div className="flex flex-col gap-3">
           {/* Upload Button */}
-          <label className="w-full bg-[#FCA311] hover:bg-[#E08F0A] text-white font-heading font-bold text-xs tracking-wide py-2.5 px-3.5 rounded-xl transition-all active:scale-98 flex items-center justify-center gap-2 cursor-pointer shadow-none">
+          <label className="w-full bg-[#4D694E] hover:bg-[#3C533D] text-white font-heading font-bold text-xs tracking-wide py-2.5 px-3.5 rounded-xl transition-all active:scale-98 flex items-center justify-center gap-2 cursor-pointer shadow-none">
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>Upload New Files</span>
             <input
@@ -125,7 +147,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           {/* 5-Step Pipeline Section */}
           <div className="flex flex-col gap-1">
-            <div className="font-heading text-2xs font-extrabold uppercase tracking-wider text-[#9CA3AF] dark:text-[#71717A] px-1 pt-1">
+            <div className="font-heading text-2xs font-extrabold uppercase tracking-wider text-[#2D3F2E]/60 dark:text-[#FFF3D5]/60 px-1 pt-1">
               5-Step Photo Pipeline
             </div>
 
@@ -133,23 +155,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {/* Step 1: Ingest Folders */}
               <button
                 onClick={() => setActiveTab('step1-folders')}
-                className={`flex items-center justify-between px-3 py-2 rounded-xl transition-colors text-left cursor-pointer ${
-                  activeTab === 'step1-folders'
-                    ? 'bg-[#FCA311] text-white font-bold'
-                    : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
-                }`}
+                className={getTabClass(activeTab === 'step1-folders')}
               >
                 <div className="flex items-center gap-2.5">
                   <Folder className="w-4 h-4 stroke-[2]" />
                   <span className="font-sans">1. Ingest Folders</span>
                 </div>
-                <span
-                  className={`text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums ${
-                    activeTab === 'step1-folders'
-                      ? 'bg-black/30 text-white'
-                      : 'bg-white/15 text-[#D1D5DB]'
-                  }`}
-                >
+                <span className={getBadgeClass(activeTab === 'step1-folders')}>
                   {metrics.totalScanned > 0 ? metrics.totalScanned : items.length}
                 </span>
               </button>
@@ -161,24 +173,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     setActiveTab('step2-culling');
                     if (onSelectCullingSubTab) onSelectCullingSubTab('all');
                   }}
-                  className={`flex items-center justify-between px-3 py-2 rounded-xl transition-colors text-left cursor-pointer ${
-                    activeTab === 'step2-culling' && (!cullingSubTab || cullingSubTab === 'all')
-                      ? 'bg-[#FCA311] text-white font-bold'
-                      : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
-                  }`}
+                  className={getTabClass(activeTab === 'step2-culling' && (!cullingSubTab || cullingSubTab === 'all'))}
                 >
                   <div className="flex items-center gap-2.5">
                     <Archive className="w-4 h-4 stroke-[2]" />
                     <span className="font-sans">2. Eye &amp; Motion</span>
                   </div>
                   {items.length > 0 && (
-                    <span
-                      className={`text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums ${
-                        activeTab === 'step2-culling' && (!cullingSubTab || cullingSubTab === 'all')
-                          ? 'bg-black/30 text-white'
-                          : 'bg-white/15 text-[#D1D5DB]'
-                      }`}
-                    >
+                    <span className={getBadgeClass(activeTab === 'step2-culling' && (!cullingSubTab || cullingSubTab === 'all'))}>
                       {items.length}
                     </span>
                   )}
@@ -186,30 +188,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
                 {/* Sub-menu: Kept & Archived */}
                 {(activeTab === 'step2-culling' || items.length > 0) && (
-                  <div className="flex flex-col gap-1 pl-3.5 ml-2 border-l border-white/20 dark:border-[#27272A] my-0.5">
+                  <div className="flex flex-col gap-1 pl-3.5 ml-2 border-l border-[#2D3F2E]/20 dark:border-[#2C3A2F] my-0.5">
                     {/* Kept Sub-option */}
                     <button
                       onClick={() => {
                         setActiveTab('step2-culling');
                         if (onSelectCullingSubTab) onSelectCullingSubTab('kept');
                       }}
-                      className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-colors text-left text-2xs cursor-pointer ${
-                        activeTab === 'step2-culling' && cullingSubTab === 'kept'
-                          ? 'bg-[#FCA311] text-white font-bold'
-                          : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
-                      }`}
+                      className={getSubTabClass(activeTab === 'step2-culling' && cullingSubTab === 'kept')}
                     >
                       <div className="flex items-center gap-2">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-[#FCA311] dark:text-[#FF8C61]" />
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#4D694E]" />
                         <span>Kept Photos</span>
                       </div>
-                      <span
-                        className={`px-1.5 py-0.2 rounded font-mono font-bold text-2xs ${
-                          activeTab === 'step2-culling' && cullingSubTab === 'kept'
-                            ? 'bg-black/30 text-white'
-                            : 'bg-white/15 text-white'
-                        }`}
-                      >
+                      <span className={getBadgeClass(activeTab === 'step2-culling' && cullingSubTab === 'kept')}>
                         {items.filter((i) => !i.isArchived).length}
                       </span>
                     </button>
@@ -220,23 +212,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         setActiveTab('step2-culling');
                         if (onSelectCullingSubTab) onSelectCullingSubTab('archived');
                       }}
-                      className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg transition-colors text-left text-2xs cursor-pointer ${
-                        activeTab === 'step2-culling' && cullingSubTab === 'archived'
-                          ? 'bg-[#27272A] text-white font-bold border border-[#3F3F46]'
-                          : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
-                      }`}
+                      className={getSubTabClass(activeTab === 'step2-culling' && cullingSubTab === 'archived')}
                     >
                       <div className="flex items-center gap-2">
-                        <EyeOff className="w-3.5 h-3.5 text-red-400" />
+                        <EyeOff className="w-3.5 h-3.5 text-red-450" />
                         <span>_archive</span>
                       </div>
-                      <span
-                        className={`px-1.5 py-0.2 rounded font-mono font-bold text-2xs ${
-                          activeTab === 'step2-culling' && cullingSubTab === 'archived'
-                            ? 'bg-black/40 text-white'
-                            : 'bg-white/15 text-white'
-                        }`}
-                      >
+                      <span className={getBadgeClass(activeTab === 'step2-culling' && cullingSubTab === 'archived')}>
                         {items.filter((i) => i.isArchived).length}
                       </span>
                     </button>
@@ -247,24 +229,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {/* Step 3: Straighten & Lightroom Tone Tuning */}
               <button
                 onClick={() => setActiveTab('step3-enhancement')}
-                className={`flex items-center justify-between px-3 py-2 rounded-xl transition-colors text-left cursor-pointer ${
-                  activeTab === 'step3-enhancement'
-                    ? 'bg-[#FCA311] text-white font-bold'
-                    : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
-                }`}
+                className={getTabClass(activeTab === 'step3-enhancement')}
               >
                 <div className="flex items-center gap-2.5">
                   <Compass className="w-4 h-4 stroke-[2]" />
                   <span className="font-sans">3. Straighten &amp; Tone</span>
                 </div>
                 {metrics.imagesStraightened > 0 && (
-                  <span
-                    className={`text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums ${
-                      activeTab === 'step3-enhancement'
-                        ? 'bg-black/30 text-white'
-                        : 'bg-white/15 text-[#D1D5DB]'
-                    }`}
-                  >
+                  <span className={getBadgeClass(activeTab === 'step3-enhancement')}>
                     {metrics.imagesStraightened}
                   </span>
                 )}
@@ -273,24 +245,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {/* Step 4: Batch Renaming */}
               <button
                 onClick={() => setActiveTab('step4-renaming')}
-                className={`flex items-center justify-between px-3 py-2 rounded-xl transition-colors text-left cursor-pointer ${
-                  activeTab === 'step4-renaming'
-                    ? 'bg-[#FCA311] text-white font-bold'
-                    : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
-                }`}
+                className={getTabClass(activeTab === 'step4-renaming')}
               >
                 <div className="flex items-center gap-2.5">
                   <FileSignature className="w-4 h-4 stroke-[2]" />
                   <span className="font-sans">4. Batch Rename</span>
                 </div>
                 {items.length > 0 && (
-                  <span
-                    className={`text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums ${
-                      activeTab === 'step4-renaming'
-                        ? 'bg-black/30 text-white'
-                        : 'bg-white/15 text-[#D1D5DB]'
-                    }`}
-                  >
+                  <span className={getBadgeClass(activeTab === 'step4-renaming')}>
                     {items.length}
                   </span>
                 )}
@@ -299,23 +261,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {/* Step 5: Final Output Gallery */}
               <button
                 onClick={() => setActiveTab('step5-output')}
-                className={`flex items-center justify-between px-3 py-2 rounded-xl transition-colors text-left cursor-pointer ${
-                  activeTab === 'step5-output'
-                    ? 'bg-[#FCA311] text-white font-bold'
-                    : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
-                }`}
+                className={getTabClass(activeTab === 'step5-output')}
               >
                 <div className="flex items-center gap-2.5">
                   <CheckCircle2 className="w-4 h-4 stroke-[2]" />
                   <span className="font-sans">5. Output &amp; Review</span>
                 </div>
-                <span
-                  className={`text-2xs px-2 py-0.5 rounded-full font-mono font-bold tabular-nums ${
-                    activeTab === 'step5-output'
-                      ? 'bg-black/30 text-white'
-                      : 'bg-white/15 text-[#D1D5DB]'
-                  }`}
-                >
+                <span className={getBadgeClass(activeTab === 'step5-output')}>
                   {items.filter((i) => !i.isArchived).length}
                 </span>
               </button>
@@ -324,7 +276,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           {/* Secondary Utilities */}
           <div className="flex flex-col gap-1 pt-1">
-            <div className="font-heading text-2xs font-extrabold uppercase tracking-wider text-[#9CA3AF] dark:text-[#71717A] px-1">
+            <div className="font-heading text-2xs font-extrabold uppercase tracking-wider text-[#2D3F2E]/60 dark:text-[#FFF3D5]/60 px-1">
               Organize &amp; Settings
             </div>
 
@@ -332,18 +284,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {/* Shared With Me / Face Clusters */}
               <button
                 onClick={() => setActiveTab('faces')}
-                className={`flex items-center justify-between px-3 py-1.5 rounded-xl transition-colors text-left cursor-pointer ${
-                  activeTab === 'faces'
-                    ? 'bg-[#FCA311] text-white font-bold'
-                    : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
-                }`}
+                className={getTabClass(activeTab === 'faces')}
               >
                 <div className="flex items-center gap-2.5">
                   <Users className="w-4 h-4 stroke-[1.8]" />
                   <span className="font-sans">Shared With Me</span>
                 </div>
                 {metrics.distinctPeopleCount > 0 && (
-                  <span className="text-2xs px-2 py-0.5 rounded-full font-mono tabular-nums bg-white/20 text-white">
+                  <span className={getBadgeClass(activeTab === 'faces')}>
                     {metrics.distinctPeopleCount}
                   </span>
                 )}
@@ -352,11 +300,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {/* Settings & Backups */}
               <button
                 onClick={() => setActiveTab('settings')}
-                className={`flex items-center gap-2.5 px-3 py-1.5 rounded-xl transition-colors text-left cursor-pointer ${
-                  activeTab === 'settings'
-                    ? 'bg-[#FCA311] text-white font-bold'
-                    : 'text-[#D1D5DB] dark:text-[#A1A1AA] hover:text-white hover:bg-white/10'
-                }`}
+                className={getTabClass(activeTab === 'settings')}
               >
                 <RotateCcw className="w-4 h-4 stroke-[1.8]" />
                 <span className="font-sans">Backups &amp; Settings</span>
@@ -366,27 +310,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* 3. Bottom Storage Details */}
-        <div className="pt-3 border-t border-white/15 dark:border-[#222222] flex flex-col gap-2 text-xs">
-          <div className="flex items-center justify-between text-xs font-semibold text-white/90">
+        <div className="pt-3 border-t border-[#2D3F2E]/15 dark:border-[#2C3A2F] flex flex-col gap-2 text-xs">
+          <div className="flex items-center justify-between text-xs font-semibold text-[#2D3F2E]/90 dark:text-[#FFF3D5]/90">
             <span className="flex items-center gap-1.5">
-              <Cloud className="w-3.5 h-3.5 text-[#9CA3AF]" />
+              <Cloud className="w-3.5 h-3.5 text-[#2D3F2E]/60 dark:text-[#FFF3D5]/60" />
               <span>Storage</span>
             </span>
-            <span className="font-mono text-2xs tabular-nums text-[#D1D5DB]">
+            <span className="font-mono text-2xs tabular-nums text-[#2D3F2E]/80 dark:text-[#FFF3D5]/80">
               {formattedStorage} / 1 TB
             </span>
           </div>
 
-          <div className="w-full bg-white/15 dark:bg-[#1E1E1E] h-1.5 rounded-full overflow-hidden">
+          <div className="w-full bg-[#4D694E]/10 dark:bg-white/10 h-1.5 rounded-full overflow-hidden">
             <div
-              className="bg-[#FCA311] h-full rounded-full transition-all duration-300"
+              className="bg-[#4D694E] h-full rounded-full transition-all duration-300"
               style={{ width: `${usedPercentage}%` }}
             />
           </div>
 
           <button
             onClick={() => setActiveTab('settings')}
-            className="flex items-center justify-between text-2xs font-heading font-bold text-[#FCA311] dark:text-[#FF8C61] hover:underline pt-0.5 cursor-pointer"
+            className="flex items-center justify-between text-2xs font-heading font-bold text-[#4D694E] hover:underline pt-0.5 cursor-pointer"
           >
             <span>Upgrade Storage</span>
             <ArrowUpRight className="w-3 h-3" />

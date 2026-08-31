@@ -61,7 +61,7 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
       {/* 1. Header Banner */}
       <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-4 flex items-center justify-between transition-colors">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#FCA311]/15 text-[#FCA311] border border-[#FCA311]/30 flex items-center justify-center font-bold">
+          <div className="w-10 h-10 rounded-xl bg-[#4D694E]/15 text-[#4D694E] border border-[#4D694E]/30 flex items-center justify-center font-bold">
             <CheckCircle2 className="w-5 h-5" />
           </div>
           <div>
@@ -78,9 +78,9 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
             disabled={items.length === 0 || isExporting}
             className={`flex items-center gap-2 px-4 py-2 rounded-xl text-white font-heading font-bold text-xs tracking-wide transition-all ${
               isExporting
-                ? 'bg-[#FCA311]/70 cursor-wait'
+                ? 'bg-[#4D694E]/70 cursor-wait'
                 : items.length > 0
-                ? 'bg-[#FCA311] hover:bg-[#E08F0A] active:scale-98 cursor-pointer shadow-none'
+                ? 'bg-[#4D694E] hover:bg-[#3C533D] active:scale-98 cursor-pointer shadow-none'
                 : 'bg-slate-300 dark:bg-slate-800 cursor-not-allowed opacity-70'
             }`}
           >
@@ -103,7 +103,7 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
       {isExporting && (
         <div className="w-full bg-[#E5E7EB] dark:bg-[#1E1E1E] h-2 rounded-full overflow-hidden">
           <div
-            className="bg-[#FCA311] h-full rounded-full transition-all duration-200"
+            className="bg-[#4D694E] h-full rounded-full transition-all duration-200"
             style={{ width: `${exportProgress}%` }}
           />
         </div>
@@ -121,9 +121,9 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
                 : 'text-[#4B5563] dark:text-[#A1A1AA] hover:text-[#111827] dark:hover:text-white'
             }`}
           >
-            <FolderCheck className="w-4 h-4 text-[#FCA311]" />
+            <FolderCheck className="w-4 h-4 text-[#4D694E]" />
             <span>Final Enhanced Output</span>
-            <span className="text-2xs px-2 py-0.5 rounded-full font-mono tabular-nums font-bold bg-[#FCA311] text-white">
+            <span className="text-2xs px-2 py-0.5 rounded-full font-mono tabular-nums font-bold bg-[#4D694E] text-white">
               {mainItems.length}
             </span>
           </button>
@@ -153,7 +153,7 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
       {/* 3. Output Photo Grid with Direct Download Triggers */}
       {items.length === 0 ? (
         <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-12 text-center flex flex-col items-center justify-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-[#FCA311]/15 text-[#FCA311] border border-[#FCA311]/30 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-2xl bg-[#4D694E]/15 text-[#4D694E] border border-[#4D694E]/30 flex items-center justify-center">
             <FolderOpen className="w-6 h-6" />
           </div>
           <div>
@@ -197,7 +197,7 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
 
                     <button
                       onClick={() => handleDownloadSingle(item)}
-                      className="p-1.5 rounded-lg bg-black/80 hover:bg-[#FCA311] text-white transition-colors flex items-center gap-1 text-2xs font-bold cursor-pointer"
+                      className="p-1.5 rounded-lg bg-black/80 hover:bg-[#4D694E] text-white transition-colors flex items-center gap-1 text-2xs font-bold cursor-pointer"
                       title="Download this image"
                     >
                       {hasDownloaded ? (
@@ -228,7 +228,7 @@ export const OutputGalleryView: React.FC<OutputGalleryViewProps> = ({
                     </span>
                     <button
                       onClick={() => handleDownloadSingle(item)}
-                      className="flex items-center gap-1 text-[#FCA311] hover:text-[#E08F0A] font-heading font-bold cursor-pointer transition-colors flex-shrink-0"
+                      className="flex items-center gap-1 text-[#4D694E] hover:text-[#3C533D] font-heading font-bold cursor-pointer transition-colors flex-shrink-0"
                     >
                       <Download className="w-3.5 h-3.5" />
                       <span>Download</span>

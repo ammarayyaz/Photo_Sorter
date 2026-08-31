@@ -44,7 +44,7 @@ export const FaceClustersView: React.FC<FaceClustersViewProps> = ({
       {/* Header Info */}
       <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-4 flex items-center justify-between transition-colors">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#FCA311]/15 text-[#FCA311] flex items-center justify-center font-bold border border-[#FCA311]/30">
+          <div className="w-9 h-9 rounded-xl bg-[#4D694E]/15 text-[#4D694E] flex items-center justify-center font-bold border border-[#4D694E]/30">
             <Users className="w-5 h-5" />
           </div>
           <div>
@@ -83,11 +83,11 @@ export const FaceClustersView: React.FC<FaceClustersViewProps> = ({
             return (
               <div
                 key={cluster.clusterId}
-                className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-3.5 flex flex-col gap-3 transition-colors hover:border-[#FCA311]"
+                className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-3.5 flex flex-col gap-3 transition-colors hover:border-[#4D694E]"
               >
                 {/* Face Thumbnail Representative */}
                 <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-100 dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#27272A] flex items-center justify-center">
-                  <div className="w-14 h-14 rounded-full bg-[#FCA311] text-white flex items-center justify-center font-heading font-extrabold text-lg shadow-none">
+                  <div className="w-14 h-14 rounded-full bg-[#4D694E] text-white flex items-center justify-center font-heading font-extrabold text-lg shadow-none">
                     {displayName.charAt(0).toUpperCase()}
                   </div>
                   <span className="absolute bottom-2 right-2 px-2 py-0.5 rounded-full text-2xs font-mono tabular-nums bg-black/60 text-white backdrop-blur-sm">
@@ -108,11 +108,11 @@ export const FaceClustersView: React.FC<FaceClustersViewProps> = ({
                           if (e.key === 'Escape') setEditingId(null);
                         }}
                         autoFocus
-                        className="w-full bg-[#F9FAFB] dark:bg-[#181818] border border-[#FCA311] rounded-lg px-2 py-1 font-sans text-xs text-[#111827] dark:text-white outline-none"
+                        className="w-full bg-[#F9FAFB] dark:bg-[#181818] border border-[#4D694E] rounded-lg px-2 py-1 font-sans text-xs text-[#111827] dark:text-white outline-none"
                       />
                       <button
                         onClick={() => handleSaveRename(cluster.clusterId)}
-                        className="p-1 rounded-lg bg-[#FCA311] text-white hover:bg-[#E08F0A] transition-colors"
+                        className="p-1 rounded-lg bg-[#4D694E] text-white hover:bg-[#3C533D] transition-colors"
                       >
                         <Check className="w-3.5 h-3.5" />
                       </button>
@@ -131,7 +131,7 @@ export const FaceClustersView: React.FC<FaceClustersViewProps> = ({
                   {!isEditing && (
                     <button
                       onClick={() => handleStartRename(cluster)}
-                      className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-[#FCA311] hover:bg-slate-100 dark:hover:bg-[#181818] transition-colors cursor-pointer"
+                      className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-[#4D694E] hover:bg-slate-100 dark:hover:bg-[#181818] transition-colors cursor-pointer"
                       title="Rename person"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
@@ -141,7 +141,7 @@ export const FaceClustersView: React.FC<FaceClustersViewProps> = ({
 
                 <div className="pt-2 border-t border-[#E5E7EB] dark:border-[#27272A] flex items-center justify-between text-2xs text-[#9CA3AF] font-mono tabular-nums">
                   <span>{cluster.associatedImageIds.length} Matches</span>
-                  <span className="text-[#FCA311] font-heading font-bold flex items-center gap-0.5">
+                  <span className="text-[#4D694E] font-heading font-bold flex items-center gap-0.5">
                     <Sparkles className="w-2.5 h-2.5" />
                     Auto-Routed
                   </span>

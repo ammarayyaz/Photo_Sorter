@@ -49,7 +49,7 @@ export const RightInfoPanel: React.FC<RightInfoPanelProps> = ({
         <button
           onClick={onToggleCollapse}
           title="Expand Info Inspector"
-          className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-[#FCA311] hover:bg-slate-100 dark:hover:bg-[#181818] transition-colors cursor-pointer"
+          className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-[#4D694E] hover:bg-slate-100 dark:hover:bg-[#181818] transition-colors cursor-pointer"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
@@ -57,17 +57,17 @@ export const RightInfoPanel: React.FC<RightInfoPanelProps> = ({
         <button
           onClick={onToggleCollapse}
           title="Expand Info Inspector"
-          className="flex flex-col items-center gap-2 text-[#9CA3AF] hover:text-[#FCA311] transition-colors cursor-pointer py-4"
+          className="flex flex-col items-center gap-2 text-[#9CA3AF] hover:text-[#4D694E] transition-colors cursor-pointer py-4"
         >
-          <Info className="w-4 h-4 text-[#FCA311]" />
+          <Info className="w-4 h-4 text-[#4D694E]" />
           <span className="[writing-mode:vertical-lr] rotate-180 text-[10px] font-heading font-extrabold uppercase tracking-widest text-[#9CA3AF] dark:text-[#71717A]">
             Inspector
           </span>
         </button>
 
-        <div className="flex flex-col items-center gap-1.5 text-2xs font-mono text-[#FCA311]">
+        <div className="flex flex-col items-center gap-1.5 text-2xs font-mono text-[#4D694E]">
           {items.length > 0 ? (
-            <span className="w-2 h-2 rounded-full bg-[#FCA311]" />
+            <span className="w-2 h-2 rounded-full bg-[#4D694E]" />
           ) : (
             <span className="w-2 h-2 rounded-full bg-[#9CA3AF]/40" />
           )}
@@ -82,7 +82,7 @@ export const RightInfoPanel: React.FC<RightInfoPanelProps> = ({
       {/* 1. Header with Collapse Action */}
       <div className="p-3.5 pb-2.5 border-b border-[#E5E7EB] dark:border-[#222222] flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Info className="w-4 h-4 text-[#FCA311]" />
+          <Info className="w-4 h-4 text-[#4D694E]" />
           <span className="font-heading font-extrabold text-xs text-[#111827] dark:text-white tracking-tight">
             Info Inspector
           </span>
@@ -90,7 +90,7 @@ export const RightInfoPanel: React.FC<RightInfoPanelProps> = ({
         <button
           onClick={onToggleCollapse}
           title="Collapse Info Inspector"
-          className="p-1 rounded-lg text-[#9CA3AF] hover:text-[#FCA311] hover:bg-slate-100 dark:hover:bg-[#181818] transition-colors cursor-pointer"
+          className="p-1 rounded-lg text-[#9CA3AF] hover:text-[#4D694E] hover:bg-slate-100 dark:hover:bg-[#181818] transition-colors cursor-pointer"
         >
           <ChevronRight className="w-4 h-4" />
         </button>
@@ -112,7 +112,7 @@ export const RightInfoPanel: React.FC<RightInfoPanelProps> = ({
             </div>
             <div className="w-full bg-[#E5E7EB] dark:bg-[#1E1E1E] h-1.5 rounded-full overflow-hidden">
               <div
-                className="bg-[#FCA311] h-full rounded-full transition-all duration-300"
+                className="bg-[#4D694E] h-full rounded-full transition-all duration-300"
                 style={{
                   width: `${items.length > 0 ? 100 : 0}%`,
                 }}
@@ -133,7 +133,7 @@ export const RightInfoPanel: React.FC<RightInfoPanelProps> = ({
             </div>
             <div className="w-full bg-[#E5E7EB] dark:bg-[#1E1E1E] h-1.5 rounded-full overflow-hidden">
               <div
-                className="bg-[#FCA311]/60 h-full rounded-full transition-all duration-300"
+                className="bg-[#4D694E]/60 h-full rounded-full transition-all duration-300"
                 style={{
                   width: `${items.length > 0 ? Math.round((enhancedItems.length / items.length) * 100) : 0}%`,
                 }}
@@ -147,7 +147,7 @@ export const RightInfoPanel: React.FC<RightInfoPanelProps> = ({
           <div className="flex items-center justify-between">
             <span className="font-heading text-xs font-extrabold text-[#111827] dark:text-white">Properties</span>
             {displayItem ? (
-              <span className="text-[10px] font-mono tabular-nums text-[#FCA311] font-semibold truncate max-w-[130px]">
+              <span className="text-[10px] font-mono tabular-nums text-[#4D694E] font-semibold truncate max-w-[130px]">
                 {displayItem.metadata.filename}
               </span>
             ) : (
@@ -192,10 +192,10 @@ export const RightInfoPanel: React.FC<RightInfoPanelProps> = ({
 
               <div className="flex justify-between py-1 border-b border-[#E5E7EB] dark:border-[#222222]">
                 <span className="font-sans text-[#9CA3AF] dark:text-[#71717A] flex items-center gap-1">
-                  <Compass className="w-3.5 h-3.5 text-[#FCA311]" />
+                  <Compass className="w-3.5 h-3.5 text-[#4D694E]" />
                   Tilt Angle
                 </span>
-                <span className="font-mono tabular-nums text-[#FCA311] font-bold">
+                <span className="font-mono tabular-nums text-[#4D694E] font-bold">
                   {displayItem.geometry.detectedAngleDeg > 0 ? '+' : ''}
                   {displayItem.geometry.detectedAngleDeg}°
                 </span>
@@ -203,7 +203,7 @@ export const RightInfoPanel: React.FC<RightInfoPanelProps> = ({
 
               <div className="flex justify-between py-1">
                 <span className="font-sans text-[#9CA3AF] dark:text-[#71717A] flex items-center gap-1">
-                  <ScanEye className="w-3.5 h-3.5 text-[#FCA311]" />
+                  <ScanEye className="w-3.5 h-3.5 text-[#4D694E]" />
                   Sharpness
                 </span>
                 <span className="font-mono tabular-nums text-[#111827] dark:text-white font-bold">
@@ -213,7 +213,7 @@ export const RightInfoPanel: React.FC<RightInfoPanelProps> = ({
             </div>
           ) : (
             <div className="bg-[#F9FAFB] dark:bg-[#121212] border border-[#E5E7EB] dark:border-[#222222] rounded-xl p-2.5 flex items-center gap-2 my-1">
-              <Sparkles className="w-3.5 h-3.5 text-[#FCA311]" />
+              <Sparkles className="w-3.5 h-3.5 text-[#4D694E]" />
               <span className="text-xs font-bold text-[#111827] dark:text-white font-heading">No item selected</span>
             </div>
           )}
@@ -234,7 +234,7 @@ export const RightInfoPanel: React.FC<RightInfoPanelProps> = ({
                 </span>
               )}
               {displayItem.isBurstWinner && (
-                <span className="px-2 py-0.5 rounded-full bg-[#FCA311]/15 text-[#FCA311] dark:text-[#FF8C61] border border-[#FCA311]/30 font-heading text-[10px] font-bold">
+                <span className="px-2 py-0.5 rounded-full bg-[#4D694E]/15 text-[#4D694E] dark:text-[#FF8C61] border border-[#4D694E]/30 font-heading text-[10px] font-bold">
                   • Kept Winner
                 </span>
               )}
@@ -276,10 +276,10 @@ export const RightInfoPanel: React.FC<RightInfoPanelProps> = ({
 
           <div className="flex items-center justify-between text-[#9CA3AF] text-[11px] py-0.5">
             <span className="flex items-center gap-1.5 font-sans">
-              <Activity className="w-3.5 h-3.5 text-[#FCA311]" />
+              <Activity className="w-3.5 h-3.5 text-[#4D694E]" />
               <span>Straightened</span>
             </span>
-            <span className="font-mono tabular-nums font-bold text-[#FCA311]">
+            <span className="font-mono tabular-nums font-bold text-[#4D694E]">
               {metrics.imagesStraightened}
             </span>
           </div>

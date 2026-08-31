@@ -42,7 +42,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-4 flex flex-col gap-3 transition-colors">
         <div className="flex items-center justify-between pb-2 border-b border-[#E5E7EB] dark:border-[#27272A]">
           <div className="flex items-center gap-2 text-xs font-bold text-[#111827] dark:text-white">
-            <Key className="w-4 h-4 text-[#FCA311]" />
+            <Key className="w-4 h-4 text-[#4D694E]" />
             <span className="font-heading">Google Gemini Vision API Authentication</span>
           </div>
           <span className="text-2xs text-[#9CA3AF] font-mono tabular-nums">Gemini 2.0 / 2.5 Flash Vision</span>
@@ -59,14 +59,14 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 setTestStatus('idle');
               }}
               placeholder="Paste AI Studio Key (AIza... / AQ...)"
-              className="flex-1 bg-[#F9FAFB] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#27272A] rounded-xl px-3 py-2 text-xs font-mono tabular-nums text-[#111827] dark:text-white outline-none focus:border-[#FCA311]"
+              className="flex-1 bg-[#F9FAFB] dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#27272A] rounded-xl px-3 py-2 text-xs font-mono tabular-nums text-[#111827] dark:text-white outline-none focus:border-[#4D694E]"
             />
             <button
               onClick={handleTestApiKey}
               disabled={testStatus === 'testing'}
               className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white dark:bg-[#181818] hover:bg-slate-100 dark:hover:bg-[#222222] border border-[#E5E7EB] dark:border-[#27272A] font-heading text-xs font-bold text-[#111827] dark:text-white transition-colors cursor-pointer"
             >
-              <Sparkles className="w-3.5 h-3.5 text-[#FCA311]" />
+              <Sparkles className="w-3.5 h-3.5 text-[#4D694E]" />
               <span>{testStatus === 'testing' ? 'Testing...' : 'Validate Key'}</span>
             </button>
           </div>
@@ -90,7 +90,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-4 flex flex-col gap-3 transition-colors">
         <div className="flex items-center justify-between pb-2 border-b border-[#E5E7EB] dark:border-[#27272A]">
           <div className="flex items-center gap-2 text-xs font-bold text-[#111827] dark:text-white">
-            <Cpu className="w-4 h-4 text-[#FCA311]" />
+            <Cpu className="w-4 h-4 text-[#4D694E]" />
             <span className="font-heading">Multi-Threading Optimization</span>
           </div>
           <span className="text-2xs text-[#9CA3AF] font-mono tabular-nums">Hardware Acceleration</span>
@@ -120,7 +120,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-4 flex flex-col gap-3 transition-colors">
         <div className="flex items-center justify-between pb-2 border-b border-[#E5E7EB] dark:border-[#27272A]">
           <div className="flex items-center gap-2 text-xs font-bold text-[#111827] dark:text-white">
-            <HardDrive className="w-4 h-4 text-[#FCA311]" />
+            <HardDrive className="w-4 h-4 text-[#4D694E]" />
             <span className="font-heading">Export Compression &amp; Format Rules</span>
           </div>
           <span className="text-2xs text-[#9CA3AF] font-mono tabular-nums">Non-Destructive Write</span>
@@ -143,7 +143,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           <div className="flex flex-col gap-1.5">
             <div className="flex items-center justify-between">
               <span className="font-heading font-semibold text-[#111827] dark:text-[#A1A1AA]">JPEG Quality Level</span>
-              <span className="font-mono tabular-nums text-[#FCA311] font-bold">{config.jpegQuality}%</span>
+              <span className="font-mono tabular-nums text-[#4D694E] font-bold">{config.jpegQuality}%</span>
             </div>
             <input
               type="range"
@@ -151,7 +151,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               max="100"
               value={config.jpegQuality}
               onChange={(e) => onChangeConfig({ jpegQuality: Number(e.target.value) })}
-              className="accent-[#FCA311] w-full cursor-pointer mt-1"
+              className="accent-[#4D694E] w-full cursor-pointer mt-1"
             />
           </div>
         </div>

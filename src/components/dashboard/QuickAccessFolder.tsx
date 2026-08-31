@@ -54,8 +54,8 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
              C 2,8 8,2 18,2 Z"
           className={`transition-colors ${
             isActive
-              ? 'fill-[#E08F0A] dark:fill-[#E08F0A] stroke-[#FCA311] dark:stroke-[#FF8C61]'
-              : 'fill-[#F9FAFB] dark:fill-[#FCA311] stroke-[#E5E7EB] dark:stroke-[#E08F0A]'
+              ? 'fill-[#3C533D] dark:fill-[#3C533D] stroke-[#4D694E] dark:stroke-[#FF8C61]'
+              : 'fill-[#F9FAFB] dark:fill-[#4D694E] stroke-[#E5E7EB] dark:stroke-[#3C533D]'
           }`}
           strokeWidth="2"
           strokeLinejoin="round"
@@ -71,7 +71,7 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
               className={`w-6 h-6 rounded-lg flex items-center justify-center font-bold text-xs ${
                 isActive
                   ? 'bg-white/20 text-white'
-                  : 'bg-[#FCA311]/15 dark:bg-black/30 text-[#FCA311] dark:text-white'
+                  : 'bg-[#4D694E]/15 dark:bg-black/30 text-[#4D694E] dark:text-white'
               }`}
             >
               <Folder className="w-3.5 h-3.5" />
@@ -90,7 +90,7 @@ export const QuickAccessFolder: React.FC<QuickAccessFolderProps> = ({
               className={`font-mono tabular-nums text-2xs font-bold px-2 py-0.5 rounded-md ${
                 isActive
                   ? 'bg-black/30 text-white'
-                  : 'bg-[#FCA311]/15 dark:bg-black/40 text-[#FCA311] dark:text-white border dark:border-white/20'
+                  : 'bg-[#4D694E]/15 dark:bg-black/40 text-[#4D694E] dark:text-white border dark:border-white/20'
               }`}
             >
               {folder.photoCount} photos

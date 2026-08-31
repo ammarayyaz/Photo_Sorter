@@ -416,7 +416,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
       {/* 1. Header Banner */}
       <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-4 flex items-center justify-between transition-colors">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#FCA311]/15 text-[#FCA311] border border-[#FCA311]/30 flex items-center justify-center font-bold">
+          <div className="w-10 h-10 rounded-xl bg-[#4D694E]/15 text-[#4D694E] border border-[#4D694E]/30 flex items-center justify-center font-bold">
             <Compass className="w-5 h-5" />
           </div>
           <div>
@@ -434,7 +434,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
           <button
             onClick={handleBatchGeminiAiStraightenAll}
             disabled={isAiAnalyzing || isAutoDetecting}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#FCA311]/10 hover:bg-[#FCA311]/20 text-[#FCA311] border border-[#FCA311]/30 font-heading font-bold text-xs tracking-wide transition-all cursor-pointer shadow-none whitespace-nowrap flex-shrink-0"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#4D694E]/10 hover:bg-[#4D694E]/20 text-[#4D694E] border border-[#4D694E]/30 font-heading font-bold text-xs tracking-wide transition-all cursor-pointer shadow-none whitespace-nowrap flex-shrink-0"
             title="Scan all images with Gemini Vision AI to detect and level tilted photos"
           >
             <Sparkles className={`w-3.5 h-3.5 flex-shrink-0 ${isAiAnalyzing ? 'animate-spin' : ''}`} />
@@ -446,13 +446,13 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
             disabled={isAutoDetecting || isAiAnalyzing}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#181818] dark:hover:bg-[#222222] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] font-heading font-bold text-xs tracking-wide transition-all cursor-pointer whitespace-nowrap flex-shrink-0"
           >
-            <Compass className="w-3.5 h-3.5 text-[#FCA311] flex-shrink-0" />
+            <Compass className="w-3.5 h-3.5 text-[#4D694E] flex-shrink-0" />
             <span className="whitespace-nowrap">Auto-Level All</span>
           </button>
 
           <button
             onClick={onContinueToOutput}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#FCA311] hover:bg-[#E08F0A] text-white font-heading font-bold text-xs tracking-wide transition-all active:scale-98 cursor-pointer shadow-none whitespace-nowrap flex-shrink-0"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#4D694E] hover:bg-[#3C533D] text-white font-heading font-bold text-xs tracking-wide transition-all active:scale-98 cursor-pointer shadow-none whitespace-nowrap flex-shrink-0"
           >
             <span className="whitespace-nowrap">Proceed to Step 4: Batch Rename</span>
             <ArrowRight className="w-3.5 h-3.5 flex-shrink-0" />
@@ -512,17 +512,17 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
             <span className="font-heading font-semibold text-[#111827] dark:text-white">Under-Exposed Photos</span>
             <Moon className="w-4 h-4 text-[#9CA3AF]" />
           </div>
-          <div className="font-mono tabular-nums text-xl font-extrabold text-[#FCA311] mt-1">
+          <div className="font-mono tabular-nums text-xl font-extrabold text-[#4D694E] mt-1">
             {metrics.underexposedCount > 0 ? metrics.underexposedCount : realUnderexposed} frames
           </div>
         </div>
 
         <div className="bg-white dark:bg-[#0E0E0E] border border-[#E5E7EB] dark:border-[#27272A] rounded-2xl p-3 flex flex-col justify-between">
           <div className="flex items-center justify-between text-xs">
-            <span className="font-heading font-semibold text-[#FCA311]">Over-Exposed Photos</span>
-            <Sun className="w-4 h-4 text-[#FCA311]" />
+            <span className="font-heading font-semibold text-[#4D694E]">Over-Exposed Photos</span>
+            <Sun className="w-4 h-4 text-[#4D694E]" />
           </div>
-          <div className="font-mono tabular-nums text-xl font-extrabold text-[#FCA311] mt-1">
+          <div className="font-mono tabular-nums text-xl font-extrabold text-[#4D694E] mt-1">
             {metrics.overexposedCount > 0 ? metrics.overexposedCount : realOverexposed} frames
           </div>
         </div>
@@ -552,7 +552,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-2xs font-mono tabular-nums font-bold text-[#FCA311] bg-[#FCA311]/10 px-2 py-0.5 rounded border border-[#FCA311]/30 flex items-center gap-1">
+              <span className="text-2xs font-mono tabular-nums font-bold text-[#4D694E] bg-[#4D694E]/10 px-2 py-0.5 rounded border border-[#4D694E]/30 flex items-center gap-1">
                 <Compass className="w-3 h-3" />
                 {geometry.correctedAngleDeg !== 0 ? (
                   `${geometry.correctedAngleDeg > 0 ? '+' : ''}${geometry.correctedAngleDeg.toFixed(1)}° Straightened`
@@ -577,7 +577,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                   <div className="border-b border-white/20 border-dashed" />
                   <div className="border-r border-b border-white/20 border-dashed" />
                   <div className="border-r border-b border-white/20 border-dashed relative">
-                    <div className="absolute inset-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 border border-[#FCA311]/60 rounded-full" />
+                    <div className="absolute inset-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 border border-[#4D694E]/60 rounded-full" />
                   </div>
                   <div className="border-b border-white/20 border-dashed" />
                   <div className="border-r border-white/20 border-dashed" />
@@ -608,7 +608,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                 className="w-full h-full object-cover transition-transform duration-150"
               />
               <div className="absolute top-2.5 right-2.5 bg-black/80 backdrop-blur-sm text-white text-2xs font-heading font-extrabold px-2 py-0.5 rounded border border-white/20 flex items-center gap-1 z-30">
-                <CheckCircle2 className="w-3 h-3 text-[#FCA311]" />
+                <CheckCircle2 className="w-3 h-3 text-[#4D694E]" />
                 <span>
                   {geometry.correctedAngleDeg !== 0
                     ? `STRAIGHTENED (${geometry.correctedAngleDeg > 0 ? '+' : ''}${geometry.correctedAngleDeg.toFixed(1)}°) + TONED`
@@ -619,7 +619,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
 
             {/* OVERLAY LAYER (Left side): Pure Original Raw Input */}
             <div
-              className="absolute inset-0 overflow-hidden border-r-2 border-[#FCA311] z-10"
+              className="absolute inset-0 overflow-hidden border-r-2 border-[#4D694E] z-10"
               style={{ width: `${sliderPos}%` }}
             >
               <div className="absolute inset-0 w-full h-full min-w-[640px] flex items-center justify-center pointer-events-none">
@@ -657,10 +657,10 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
 
             {/* Divider Handle */}
             <div
-              className="absolute top-0 bottom-0 w-0.5 bg-[#FCA311] pointer-events-none z-30"
+              className="absolute top-0 bottom-0 w-0.5 bg-[#4D694E] pointer-events-none z-30"
               style={{ left: `${sliderPos}%` }}
             >
-              <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-[#FCA311] text-white flex items-center justify-center text-xs font-bold shadow-md">
+              <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-[#4D694E] text-white flex items-center justify-center text-xs font-bold shadow-md">
                 ↔
               </div>
             </div>
@@ -670,7 +670,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
               <button
                 onClick={() => setShowGrid(!showGrid)}
                 className={`p-1.5 rounded-lg text-xs transition-colors cursor-pointer ${
-                  showGrid ? 'bg-[#FCA311] text-white' : 'text-white/70 hover:text-white hover:bg-white/10'
+                  showGrid ? 'bg-[#4D694E] text-white' : 'text-white/70 hover:text-white hover:bg-white/10'
                 }`}
                 title="Toggle Leveling Grid"
               >
@@ -680,7 +680,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
               <button
                 onClick={() => setIsZoomed(!isZoomed)}
                 className={`p-1.5 rounded-lg text-xs transition-colors cursor-pointer ${
-                  isZoomed ? 'bg-[#FCA311] text-white' : 'text-white/70 hover:text-white hover:bg-white/10'
+                  isZoomed ? 'bg-[#4D694E] text-white' : 'text-white/70 hover:text-white hover:bg-white/10'
                 }`}
                 title="Toggle 1.5x Zoom"
               >
@@ -694,7 +694,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
             <span>
               Inscribed Crop: {geometry.cropBox.width} × {geometry.cropBox.height} px (Crop Loss: {geometry.cropLossPercentage}%, Zero black borders)
             </span>
-            <span className="text-[#FCA311] font-bold">{lightroom.appliedToneDescription}</span>
+            <span className="text-[#4D694E] font-bold">{lightroom.appliedToneDescription}</span>
           </div>
         </div>
 
@@ -704,7 +704,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
           <div className="flex flex-col gap-2.5 pb-3 border-b border-[#E5E7EB] dark:border-[#27272A]">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Compass className="w-4 h-4 text-[#FCA311]" />
+                <Compass className="w-4 h-4 text-[#4D694E]" />
                 <span className="font-heading font-bold text-xs text-[#111827] dark:text-white">
                   Straighten &amp; Leveling
                 </span>
@@ -716,7 +716,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
               <button
                 onClick={handleGeminiAiStraighten}
                 disabled={isAiAnalyzing}
-                className="flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-xl bg-[#FCA311] hover:bg-[#E08F0A] text-white font-heading font-bold text-2xs cursor-pointer transition-colors shadow-none whitespace-nowrap"
+                className="flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-xl bg-[#4D694E] hover:bg-[#3C533D] text-white font-heading font-bold text-2xs cursor-pointer transition-colors shadow-none whitespace-nowrap"
                 title="Analyze image with Gemini AI Vision to detect if straight or tilted"
               >
                 <Sparkles className={`w-3.5 h-3.5 flex-shrink-0 ${isAiAnalyzing ? 'animate-spin' : ''}`} />
@@ -729,7 +729,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                 className="flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-xl bg-slate-100 dark:bg-[#181818] hover:bg-slate-200 dark:hover:bg-[#222222] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] font-heading font-bold text-2xs cursor-pointer transition-colors whitespace-nowrap"
                 title="Run local geometric line detection"
               >
-                <Wand2 className={`w-3.5 h-3.5 flex-shrink-0 text-[#FCA311] ${isAutoDetecting ? 'animate-spin' : ''}`} />
+                <Wand2 className={`w-3.5 h-3.5 flex-shrink-0 text-[#4D694E] ${isAutoDetecting ? 'animate-spin' : ''}`} />
                 <span className="whitespace-nowrap">{isAutoDetecting ? 'Detecting...' : 'Auto-Detect'}</span>
               </button>
             </div>
@@ -739,14 +739,14 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
               <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-[#141414] border border-[#E5E7EB] dark:border-[#27272A] flex flex-col gap-1.5 text-2xs">
                 <div className="flex items-center justify-between">
                   <span className="font-heading font-bold text-xs flex items-center gap-1 text-[#111827] dark:text-white">
-                    <Sparkles className="w-3.5 h-3.5 text-[#FCA311]" />
+                    <Sparkles className="w-3.5 h-3.5 text-[#4D694E]" />
                     AI Vision Verdict
                   </span>
                   <span
                     className={`font-mono font-bold px-1.5 py-0.5 rounded text-[10px] ${
                       aiResults[selectedItem.metadata.id].isStraight
                         ? 'bg-emerald-500/15 text-emerald-500'
-                        : 'bg-[#FCA311]/15 text-[#FCA311]'
+                        : 'bg-[#4D694E]/15 text-[#4D694E]'
                     }`}
                   >
                     {aiResults[selectedItem.metadata.id].isStraight
@@ -768,7 +768,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                   </span>
                   <span>
                     Confidence:{' '}
-                    <strong className="text-[#FCA311]">
+                    <strong className="text-[#4D694E]">
                       {(aiResults[selectedItem.metadata.id].confidence * 100).toFixed(0)}%
                     </strong>
                   </span>
@@ -788,9 +788,9 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                     max="45"
                     value={geometry.correctedAngleDeg}
                     onChange={(e) => handleApplyAngle(parseFloat(e.target.value) || 0)}
-                    className="w-16 px-1.5 py-0.5 rounded bg-slate-100 dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#27272A] text-right font-mono text-xs font-bold text-[#FCA311] focus:outline-none focus:border-[#FCA311]"
+                    className="w-16 px-1.5 py-0.5 rounded bg-slate-100 dark:bg-[#181818] border border-[#E5E7EB] dark:border-[#27272A] text-right font-mono text-xs font-bold text-[#4D694E] focus:outline-none focus:border-[#4D694E]"
                   />
-                  <span className="text-[#FCA311]">°</span>
+                  <span className="text-[#4D694E]">°</span>
                 </div>
               </div>
 
@@ -802,7 +802,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                 step="0.1"
                 value={geometry.correctedAngleDeg}
                 onChange={(e) => handleApplyAngle(parseFloat(e.target.value))}
-                className="accent-[#FCA311] w-full cursor-pointer"
+                className="accent-[#4D694E] w-full cursor-pointer"
               />
 
               {/* Quick Step Buttons */}
@@ -823,7 +823,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                 </button>
                 <button
                   onClick={() => handleApplyAngle(0.0)}
-                  className="px-1 py-1 rounded bg-slate-100 dark:bg-[#181818] hover:bg-slate-200 dark:hover:bg-[#222222] text-2xs font-mono font-bold text-[#FCA311] border border-[#E5E7EB] dark:border-[#27272A] cursor-pointer"
+                  className="px-1 py-1 rounded bg-slate-100 dark:bg-[#181818] hover:bg-slate-200 dark:hover:bg-[#222222] text-2xs font-mono font-bold text-[#4D694E] border border-[#E5E7EB] dark:border-[#27272A] cursor-pointer"
                   title="Reset to 0.0"
                 >
                   0.0°
@@ -850,7 +850,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                   <span className="text-[10px] font-heading font-extrabold text-[#4B5563] dark:text-[#A1A1AA] uppercase tracking-wider">
                     Detection Algorithm Engine
                   </span>
-                  <span className="text-[9px] font-mono text-[#FCA311] font-bold">
+                  <span className="text-[9px] font-mono text-[#4D694E] font-bold">
                     {algorithm === 'zoltanvin-hough' ? 'HoughLinesP' : algorithm === 'hybrid-ensemble' ? 'AI Consensus' : algorithm === 'portrait-body' ? 'Body Lean' : 'Radon 2D'}
                   </span>
                 </div>
@@ -863,8 +863,8 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                     }}
                     className={`px-2 py-1.5 rounded-lg text-left transition-all cursor-pointer ${
                       algorithm === 'zoltanvin-hough'
-                        ? 'bg-[#FCA311] text-white shadow-sm'
-                        : 'bg-white dark:bg-[#1C1C1E] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] hover:border-[#FCA311]'
+                        ? 'bg-[#4D694E] text-white shadow-sm'
+                        : 'bg-white dark:bg-[#1C1C1E] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] hover:border-[#4D694E]'
                     }`}
                   >
                     <div className="font-bold text-xs leading-tight">Zoltanvin Hough</div>
@@ -880,8 +880,8 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                     }}
                     className={`px-2 py-1.5 rounded-lg text-left transition-all cursor-pointer ${
                       algorithm === 'hybrid-ensemble'
-                        ? 'bg-[#FCA311] text-white shadow-sm'
-                        : 'bg-white dark:bg-[#1C1C1E] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] hover:border-[#FCA311]'
+                        ? 'bg-[#4D694E] text-white shadow-sm'
+                        : 'bg-white dark:bg-[#1C1C1E] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] hover:border-[#4D694E]'
                     }`}
                   >
                     <div className="font-bold text-xs leading-tight">Hybrid AI</div>
@@ -897,8 +897,8 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                     }}
                     className={`px-2 py-1.5 rounded-lg text-left transition-all cursor-pointer ${
                       algorithm === 'portrait-body'
-                        ? 'bg-[#FCA311] text-white shadow-sm'
-                        : 'bg-white dark:bg-[#1C1C1E] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] hover:border-[#FCA311]'
+                        ? 'bg-[#4D694E] text-white shadow-sm'
+                        : 'bg-white dark:bg-[#1C1C1E] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] hover:border-[#4D694E]'
                     }`}
                   >
                     <div className="font-bold text-xs leading-tight">Portrait Lean</div>
@@ -914,8 +914,8 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                     }}
                     className={`px-2 py-1.5 rounded-lg text-left transition-all cursor-pointer ${
                       algorithm === 'radon-profile'
-                        ? 'bg-[#FCA311] text-white shadow-sm'
-                        : 'bg-white dark:bg-[#1C1C1E] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] hover:border-[#FCA311]'
+                        ? 'bg-[#4D694E] text-white shadow-sm'
+                        : 'bg-white dark:bg-[#1C1C1E] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] hover:border-[#4D694E]'
                     }`}
                   >
                     <div className="font-bold text-xs leading-tight">Radon Profile</div>
@@ -950,7 +950,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Sliders className="w-4 h-4 text-[#FCA311]" />
+                <Sliders className="w-4 h-4 text-[#4D694E]" />
                 <span className="font-heading font-bold text-xs text-[#111827] dark:text-white">
                   Lightroom Tone Tuning
                 </span>
@@ -971,7 +971,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                 isUnder
                   ? 'bg-amber-500/10 border-amber-500/30 text-amber-500'
                   : isOver
-                  ? 'bg-[#FCA311]/15 border-[#FCA311]/40 text-[#FCA311]'
+                  ? 'bg-[#4D694E]/15 border-[#4D694E]/40 text-[#4D694E]'
                   : 'bg-emerald-500/10 border-emerald-500/30 text-emerald-500'
               }`}
             >
@@ -996,7 +996,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
               <div className="flex flex-col gap-1">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-[#4B5563] dark:text-[#A1A1AA] font-medium">Contrast</span>
-                  <span className={`font-mono tabular-nums font-bold ${lightroom.contrast !== 0 ? 'text-[#FCA311]' : 'text-[#9CA3AF]'}`}>
+                  <span className={`font-mono tabular-nums font-bold ${lightroom.contrast !== 0 ? 'text-[#4D694E]' : 'text-[#9CA3AF]'}`}>
                     {lightroom.contrast > 0 ? `+${lightroom.contrast}` : lightroom.contrast}
                   </span>
                 </div>
@@ -1006,7 +1006,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                   max="100"
                   value={lightroom.contrast}
                   onChange={(e) => handleToneChange('contrast', parseInt(e.target.value, 10))}
-                  className="accent-[#FCA311] w-full cursor-pointer"
+                  className="accent-[#4D694E] w-full cursor-pointer"
                 />
               </div>
 
@@ -1014,7 +1014,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
               <div className="flex flex-col gap-1">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-[#4B5563] dark:text-[#A1A1AA] font-medium">Highlights</span>
-                  <span className={`font-mono tabular-nums font-bold ${lightroom.highlights !== 0 ? 'text-[#FCA311]' : 'text-[#9CA3AF]'}`}>
+                  <span className={`font-mono tabular-nums font-bold ${lightroom.highlights !== 0 ? 'text-[#4D694E]' : 'text-[#9CA3AF]'}`}>
                     {lightroom.highlights > 0 ? `+${lightroom.highlights}` : lightroom.highlights}
                   </span>
                 </div>
@@ -1024,7 +1024,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                   max="100"
                   value={lightroom.highlights}
                   onChange={(e) => handleToneChange('highlights', parseInt(e.target.value, 10))}
-                  className="accent-[#FCA311] w-full cursor-pointer"
+                  className="accent-[#4D694E] w-full cursor-pointer"
                 />
               </div>
 
@@ -1032,7 +1032,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
               <div className="flex flex-col gap-1">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-[#4B5563] dark:text-[#A1A1AA] font-medium">Shadows</span>
-                  <span className={`font-mono tabular-nums font-bold ${lightroom.shadows !== 0 ? 'text-[#FCA311]' : 'text-[#9CA3AF]'}`}>
+                  <span className={`font-mono tabular-nums font-bold ${lightroom.shadows !== 0 ? 'text-[#4D694E]' : 'text-[#9CA3AF]'}`}>
                     {lightroom.shadows > 0 ? `+${lightroom.shadows}` : lightroom.shadows}
                   </span>
                 </div>
@@ -1042,7 +1042,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                   max="100"
                   value={lightroom.shadows}
                   onChange={(e) => handleToneChange('shadows', parseInt(e.target.value, 10))}
-                  className="accent-[#FCA311] w-full cursor-pointer"
+                  className="accent-[#4D694E] w-full cursor-pointer"
                 />
               </div>
 
@@ -1050,7 +1050,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
               <div className="flex flex-col gap-1">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-[#4B5563] dark:text-[#A1A1AA] font-medium">Whites</span>
-                  <span className={`font-mono tabular-nums font-bold ${lightroom.whites !== 0 ? 'text-[#FCA311]' : 'text-[#9CA3AF]'}`}>
+                  <span className={`font-mono tabular-nums font-bold ${lightroom.whites !== 0 ? 'text-[#4D694E]' : 'text-[#9CA3AF]'}`}>
                     {lightroom.whites > 0 ? `+${lightroom.whites}` : lightroom.whites}
                   </span>
                 </div>
@@ -1060,7 +1060,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                   max="100"
                   value={lightroom.whites}
                   onChange={(e) => handleToneChange('whites', parseInt(e.target.value, 10))}
-                  className="accent-[#FCA311] w-full cursor-pointer"
+                  className="accent-[#4D694E] w-full cursor-pointer"
                 />
               </div>
             </div>
@@ -1085,7 +1085,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                     setShowAppliedToast(true);
                     setTimeout(() => setShowAppliedToast(false), 2000);
                   }}
-                  className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-[#FCA311] hover:bg-[#E08F0A] text-white font-heading font-bold text-xs tracking-wide transition-all active:scale-98 cursor-pointer shadow-none"
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-[#4D694E] hover:bg-[#3C533D] text-white font-heading font-bold text-xs tracking-wide transition-all active:scale-98 cursor-pointer shadow-none"
                   title="Apply current horizon tilt & tone adjustments to this individual image"
                 >
                   <Check className="w-3.5 h-3.5" />
@@ -1121,7 +1121,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                   className="flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-slate-100 dark:bg-[#181818] hover:bg-slate-200 dark:hover:bg-[#222222] text-[#111827] dark:text-white font-heading font-bold text-xs border border-[#E5E7EB] dark:border-[#27272A] transition-all active:scale-98 cursor-pointer"
                   title="Apply current straightening & Lightroom tone curve to all photos in the album"
                 >
-                  <FolderCheck className="w-3.5 h-3.5 text-[#FCA311]" />
+                  <FolderCheck className="w-3.5 h-3.5 text-[#4D694E]" />
                   <span>{showAppliedFolderToast ? '✓ Applied to Folder' : 'Apply Step to Folder'}</span>
                 </button>
               </div>
@@ -1137,7 +1137,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
           <div className="flex items-center gap-1 text-xs">
             <button
               onClick={() => setFilterMode('all')}
-              className={`px-2 py-0.5 rounded-lg font-heading font-bold cursor-pointer ${filterMode === 'all' ? 'bg-[#FCA311] text-white' : 'text-[#9CA3AF]'}`}
+              className={`px-2 py-0.5 rounded-lg font-heading font-bold cursor-pointer ${filterMode === 'all' ? 'bg-[#4D694E] text-white' : 'text-[#9CA3AF]'}`}
             >
               All ({items.length})
             </button>
@@ -1149,19 +1149,19 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
             </button>
             <button
               onClick={() => setFilterMode('straightened')}
-              className={`px-2 py-0.5 rounded-lg font-heading font-bold cursor-pointer ${filterMode === 'straightened' ? 'bg-[#FCA311] text-white' : 'text-[#9CA3AF]'}`}
+              className={`px-2 py-0.5 rounded-lg font-heading font-bold cursor-pointer ${filterMode === 'straightened' ? 'bg-[#4D694E] text-white' : 'text-[#9CA3AF]'}`}
             >
               Straightened ({realStraightened})
             </button>
             <button
               onClick={() => setFilterMode('underexposed')}
-              className={`px-2 py-0.5 rounded-lg font-heading font-bold cursor-pointer ${filterMode === 'underexposed' ? 'bg-[#FCA311] text-white' : 'text-[#9CA3AF]'}`}
+              className={`px-2 py-0.5 rounded-lg font-heading font-bold cursor-pointer ${filterMode === 'underexposed' ? 'bg-[#4D694E] text-white' : 'text-[#9CA3AF]'}`}
             >
               Underexposed ({metrics.underexposedCount || realUnderexposed})
             </button>
             <button
               onClick={() => setFilterMode('overexposed')}
-              className={`px-2 py-0.5 rounded-lg font-heading font-bold cursor-pointer ${filterMode === 'overexposed' ? 'bg-[#FCA311] text-white' : 'text-[#9CA3AF]'}`}
+              className={`px-2 py-0.5 rounded-lg font-heading font-bold cursor-pointer ${filterMode === 'overexposed' ? 'bg-[#4D694E] text-white' : 'text-[#9CA3AF]'}`}
             >
               Overexposed ({metrics.overexposedCount || realOverexposed})
             </button>
@@ -1185,7 +1185,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                 onClick={() => setSelectedItemId(item.metadata.id)}
                 className={`w-28 flex-shrink-0 cursor-pointer rounded-xl border p-1.5 transition-colors ${
                   selectedItemId === item.metadata.id
-                    ? 'border-[#FCA311] bg-[#FCA311]/10'
+                    ? 'border-[#4D694E] bg-[#4D694E]/10'
                     : isTilted
                     ? 'border-amber-500/50 bg-amber-500/5'
                     : 'border-[#E5E7EB] dark:border-[#27272A] hover:border-[#9CA3AF]'
@@ -1210,7 +1210,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                     </span>
                   )}
                   {isCorrected ? (
-                    <span className="absolute bottom-1 right-1 bg-[#FCA311] text-white text-2xs font-mono font-bold px-1 rounded">
+                    <span className="absolute bottom-1 right-1 bg-[#4D694E] text-white text-2xs font-mono font-bold px-1 rounded">
                       ✓ {item.geometry.correctedAngleDeg > 0 ? '+' : ''}{item.geometry.correctedAngleDeg.toFixed(1)}°
                     </span>
                   ) : isTilted ? (

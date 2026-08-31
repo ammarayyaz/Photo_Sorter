@@ -450,15 +450,15 @@ export const AppContent: React.FC = () => {
   const isElectron = typeof window !== 'undefined' && navigator.userAgent.toLowerCase().includes('electron');
 
   return (
-    <div className="w-screen h-screen m-0 p-0 bg-[#F8F9FA] dark:bg-[#000000] flex flex-col overflow-hidden font-sans transition-colors duration-200">
+    <div className="w-screen h-screen m-0 p-0 bg-[var(--bg-page)] dark:bg-[var(--bg-page)] flex flex-col overflow-hidden font-sans transition-colors duration-200">
       {isElectron && (
         <div 
-          className="w-full h-8 bg-white dark:bg-[#000000] border-b border-[#E5E5E5] dark:border-[#223150] flex items-center justify-between px-3.5 select-none flex-shrink-0"
+          className="w-full h-8 bg-[var(--bg-page)] dark:bg-[var(--bg-page)] border-b border-[#E5E5E5] dark:border-[#2C3A2F] flex items-center justify-between px-3.5 select-none flex-shrink-0"
           style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
         >
           {/* Logo & Title */}
           <div className="flex items-center gap-2">
-            <span className="font-heading text-2xs font-extrabold uppercase tracking-widest text-[#FCA311]">
+            <span className="font-heading text-2xs font-extrabold uppercase tracking-widest text-[#4D694E]">
               LuminaSort
             </span>
           </div>
@@ -467,21 +467,21 @@ export const AppContent: React.FC = () => {
           <div className="flex items-center gap-1" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
             <button 
               onClick={() => (window as any).electronAPI?.minimize()}
-              className="p-1 hover:bg-slate-200 dark:hover:bg-white/10 rounded transition-colors text-[#14213D] dark:text-slate-400 cursor-pointer"
+              className="p-1 hover:bg-slate-200 dark:hover:bg-white/10 rounded transition-colors text-[#2D3F2E] dark:text-slate-400 cursor-pointer"
               title="Minimize"
             >
               <Minus className="w-3.5 h-3.5" />
             </button>
             <button 
               onClick={() => (window as any).electronAPI?.maximize()}
-              className="p-1 hover:bg-slate-200 dark:hover:bg-white/10 rounded transition-colors text-[#14213D] dark:text-slate-400 cursor-pointer"
+              className="p-1 hover:bg-slate-200 dark:hover:bg-white/10 rounded transition-colors text-[#2D3F2E] dark:text-slate-400 cursor-pointer"
               title="Maximize"
             >
               <Square className="w-3 h-3" />
             </button>
             <button 
               onClick={() => (window as any).electronAPI?.close()}
-              className="p-1 hover:bg-red-500 hover:text-white rounded transition-colors text-[#14213D] dark:text-slate-400 cursor-pointer"
+              className="p-1 hover:bg-red-500 hover:text-white rounded transition-colors text-[#2D3F2E] dark:text-slate-400 cursor-pointer"
               title="Close"
             >
               <X className="w-3.5 h-3.5" />

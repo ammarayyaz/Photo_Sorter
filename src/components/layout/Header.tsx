@@ -76,7 +76,7 @@ export const Header: React.FC<HeaderProps> = ({
       {/* 1. Left Breadcrumb Navigation */}
       <div className="flex items-center gap-2 text-xs">
         <div className="flex items-center gap-1.5">
-          <span className="font-heading text-[#FCA311] font-bold tracking-tight">{getTabBreadcrumb()}</span>
+          <span className="font-heading text-[#4D694E] font-bold tracking-tight">{getTabBreadcrumb()}</span>
           {folderName && folderName.trim().length > 0 && (
             <>
               <ChevronRight className="w-3.5 h-3.5 text-[#9CA3AF] dark:text-[#71717A]" />
@@ -105,7 +105,7 @@ export const Header: React.FC<HeaderProps> = ({
             onClick={onToggleInspector}
             className={`p-1.5 rounded-xl border transition-colors cursor-pointer shadow-none ${
               !isInspectorCollapsed
-                ? 'bg-[#FCA311]/15 text-[#FCA311] border-[#FCA311]/30'
+                ? 'bg-[#4D694E]/15 text-[#4D694E] border-[#4D694E]/30'
                 : 'bg-white dark:bg-[#121212] hover:bg-slate-100 dark:hover:bg-[#1E1E1E] border-[#E5E7EB] dark:border-[#27272A] text-[#9CA3AF]'
             }`}
             title={isInspectorCollapsed ? 'Expand Info Inspector' : 'Collapse Info Inspector'}
@@ -121,7 +121,7 @@ export const Header: React.FC<HeaderProps> = ({
           title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
         >
           {theme === 'dark' ? (
-            <Sun className="w-3.5 h-3.5 text-[#FCA311]" />
+            <Sun className="w-3.5 h-3.5 text-[#4D694E]" />
           ) : (
             <Moon className="w-3.5 h-3.5 text-[#4B5563]" />
           )}
@@ -131,7 +131,7 @@ export const Header: React.FC<HeaderProps> = ({
         {status === 'IDLE' && (
           <button
             onClick={onStart}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#FCA311] hover:bg-[#E08F0A] text-white font-heading font-bold text-xs tracking-wide transition-all active:scale-98 cursor-pointer shadow-none"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#4D694E] hover:bg-[#3C533D] text-white font-heading font-bold text-xs tracking-wide transition-all active:scale-98 cursor-pointer shadow-none"
           >
             <Play className="w-3 h-3 fill-current" />
             <span>Run 5-Step Pipeline</span>
@@ -151,7 +151,7 @@ export const Header: React.FC<HeaderProps> = ({
         {status === 'PAUSED' && (
           <button
             onClick={onResume}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#FCA311] hover:bg-[#E08F0A] text-white font-heading font-bold text-xs transition-colors cursor-pointer shadow-none"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#4D694E] hover:bg-[#3C533D] text-white font-heading font-bold text-xs transition-colors cursor-pointer shadow-none"
           >
             <Play className="w-3.5 h-3.5 fill-current" />
             <span>Resume</span>
@@ -159,8 +159,8 @@ export const Header: React.FC<HeaderProps> = ({
         )}
 
         {status === 'COMPLETED' && (
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FCA311]/15 dark:bg-[#FCA311]/20 text-[#FCA311] dark:text-[#FF8C61] border border-[#FCA311]/30 font-heading font-bold text-xs">
-            <Sparkles className="w-3.5 h-3.5 text-[#FCA311]" />
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#4D694E]/15 dark:bg-[#4D694E]/20 text-[#4D694E] dark:text-[#FF8C61] border border-[#4D694E]/30 font-heading font-bold text-xs">
+            <Sparkles className="w-3.5 h-3.5 text-[#4D694E]" />
             <span>Complete</span>
           </div>
         )}

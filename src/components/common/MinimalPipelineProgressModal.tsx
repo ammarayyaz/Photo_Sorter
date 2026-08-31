@@ -118,11 +118,11 @@ export const MinimalPipelineProgressModal: React.FC<MinimalPipelineProgressModal
           {/* Header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-[#FCA311]/15 text-[#FCA311] border border-[#FCA311]/30 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-[#4D694E]/15 text-[#4D694E] border border-[#4D694E]/30 flex items-center justify-center">
                 {status === 'COMPLETED' ? (
                   <Check className="w-4 h-4 text-emerald-500 stroke-[3]" />
                 ) : (
-                  <Sparkles className="w-4 h-4 text-[#FCA311]" />
+                  <Sparkles className="w-4 h-4 text-[#4D694E]" />
                 )}
               </div>
               <div>
@@ -135,7 +135,7 @@ export const MinimalPipelineProgressModal: React.FC<MinimalPipelineProgressModal
               </div>
             </div>
 
-            <span className="font-mono text-xs font-bold text-[#FCA311] tabular-nums">
+            <span className="font-mono text-xs font-bold text-[#4D694E] tabular-nums">
               {status === 'COMPLETED' ? '100%' : `${progressPercent}%`}
             </span>
           </div>
@@ -151,7 +151,7 @@ export const MinimalPipelineProgressModal: React.FC<MinimalPipelineProgressModal
                   key={step.stepNumber}
                   className={`flex items-center justify-between py-1.5 px-2.5 rounded-xl transition-colors ${
                     isActive
-                      ? 'bg-[#FCA311]/10 dark:bg-[#FCA311]/15 border border-[#FCA311]/30'
+                      ? 'bg-[#4D694E]/10 dark:bg-[#4D694E]/15 border border-[#4D694E]/30'
                       : 'bg-transparent'
                   }`}
                 >
@@ -162,7 +162,7 @@ export const MinimalPipelineProgressModal: React.FC<MinimalPipelineProgressModal
                         isCompleted
                           ? 'bg-emerald-500 text-white'
                           : isActive
-                          ? 'bg-[#FCA311] text-white'
+                          ? 'bg-[#4D694E] text-white'
                           : 'bg-slate-200 dark:bg-[#222222] text-[#9CA3AF]'
                       }`}
                     >
@@ -199,8 +199,8 @@ export const MinimalPipelineProgressModal: React.FC<MinimalPipelineProgressModal
                         <span>Done</span>
                       </span>
                     ) : isActive ? (
-                      <span className="flex items-center gap-1 text-[10px] font-mono font-bold text-[#FCA311]">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#FCA311] animate-ping" />
+                      <span className="flex items-center gap-1 text-[10px] font-mono font-bold text-[#4D694E]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#4D694E] animate-ping" />
                         <span>Running</span>
                       </span>
                     ) : (
@@ -217,7 +217,7 @@ export const MinimalPipelineProgressModal: React.FC<MinimalPipelineProgressModal
           {/* Minimal Bottom Progress Track */}
           <div className="w-full bg-[#E5E7EB] dark:bg-[#222222] h-1.5 rounded-full overflow-hidden">
             <motion.div
-              className="bg-[#FCA311] h-full rounded-full"
+              className="bg-[#4D694E] h-full rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${progressPercent}%` }}
               transition={{ duration: 0.3, ease: 'easeOut' }}

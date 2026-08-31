@@ -85,7 +85,7 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
       {/* Calendar Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5">
-          <div className="w-6 h-6 rounded-lg bg-[#FCA311]/15 text-[#FCA311] flex items-center justify-center">
+          <div className="w-6 h-6 rounded-lg bg-[#4D694E]/15 text-[#4D694E] flex items-center justify-center">
             <CalendarIcon className="w-3.5 h-3.5" />
           </div>
           <div>
@@ -191,9 +191,9 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
               }}
               className={`relative h-7 rounded-lg flex flex-col items-center justify-center text-xs font-mono tabular-nums transition-all cursor-pointer ${
                 isSelected
-                  ? 'bg-[#FCA311] text-white font-bold'
+                  ? 'bg-[#4D694E] text-white font-bold'
                   : hasPhotos
-                  ? 'bg-[#FCA311]/15 text-[#FCA311] dark:text-[#FF8C61] font-bold border border-[#FCA311]/30 hover:bg-[#FCA311]/25'
+                  ? 'bg-[#4D694E]/15 text-[#4D694E] dark:text-[#FF8C61] font-bold border border-[#4D694E]/30 hover:bg-[#4D694E]/25'
                   : isToday
                   ? 'bg-slate-100 dark:bg-[#1E1E1E] text-[#111827] dark:text-white font-bold'
                   : 'text-[#4B5563] dark:text-[#A1A1AA] hover:bg-slate-100 dark:hover:bg-[#181818]'
@@ -206,8 +206,8 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
                 <span
                   className={`absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full flex items-center justify-center text-[8px] font-mono tabular-nums font-extrabold ${
                     isSelected
-                      ? 'bg-black text-[#FCA311]'
-                      : 'bg-[#FCA311] text-white'
+                      ? 'bg-black text-[#4D694E]'
+                      : 'bg-[#4D694E] text-white'
                   }`}
                 >
                   {datePhotos.length > 9 ? '9+' : datePhotos.length}
@@ -230,7 +230,7 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
           {/* Tooltip Header */}
           <div className="flex items-center justify-between pb-2 border-b border-[#27272A]">
             <div className="flex items-center gap-1.5">
-              <CalendarIcon className="w-3.5 h-3.5 text-[#FCA311]" />
+              <CalendarIcon className="w-3.5 h-3.5 text-[#4D694E]" />
               <span className="font-heading font-bold text-xs text-white">
                 {new Date(hoveredDate + 'T00:00:00').toLocaleDateString(undefined, {
                   month: 'short',
@@ -239,7 +239,7 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
                 })}
               </span>
             </div>
-            <span className="text-2xs font-mono tabular-nums px-1.5 py-0.5 rounded bg-[#FCA311] text-white font-bold">
+            <span className="text-2xs font-mono tabular-nums px-1.5 py-0.5 rounded bg-[#4D694E] text-white font-bold">
               {hoveredItems.length} photos
             </span>
           </div>
@@ -256,7 +256,7 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
                   className="flex items-center justify-between text-xs bg-[#181818] px-2 py-1 rounded-lg border border-[#27272A]"
                 >
                   <div className="flex items-center gap-1.5 truncate max-w-[150px]">
-                    <ImageIcon className="w-3 h-3 text-[#FCA311] flex-shrink-0" />
+                    <ImageIcon className="w-3 h-3 text-[#4D694E] flex-shrink-0" />
                     <span className="truncate text-white font-medium">
                       {item.metadata.filename}
                     </span>
@@ -280,7 +280,7 @@ export const MinimalPhotoCalendar: React.FC<MinimalPhotoCalendarProps> = ({
               <HardDrive className="w-3 h-3 text-[#9CA3AF]" />
               Total Date Size
             </span>
-            <span className="text-[#FCA311] font-bold">
+            <span className="text-[#4D694E] font-bold">
               {(
                 hoveredItems.reduce((sum, i) => sum + i.metadata.fileSize, 0) / 1000000
               ).toFixed(2)}{' '}

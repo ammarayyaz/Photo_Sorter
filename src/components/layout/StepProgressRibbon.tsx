@@ -47,7 +47,7 @@ export const StepProgressRibbon: React.FC<StepProgressRibbonProps> = ({
               onClick={() => onSelectTab(step.id)}
               className={`relative flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-heading font-bold transition-all cursor-pointer ${
                 isActive
-                  ? 'bg-[#FCA311] text-white shadow-sm'
+                  ? 'bg-[#4D694E] text-white shadow-sm'
                   : isPast
                   ? 'bg-slate-200 dark:bg-[#1E1E1E] text-[#111827] dark:text-white hover:bg-slate-300 dark:hover:bg-[#282828]'
                   : 'text-[#9CA3AF] hover:text-[#111827] dark:hover:text-white'
@@ -57,7 +57,7 @@ export const StepProgressRibbon: React.FC<StepProgressRibbonProps> = ({
               <div
                 className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${
                   isActive
-                    ? 'bg-white text-[#FCA311]'
+                    ? 'bg-white text-[#4D694E]'
                     : isPast
                     ? 'bg-emerald-500 text-white'
                     : 'bg-[#9CA3AF]/30 text-[#9CA3AF]'
