@@ -70,8 +70,17 @@ export function calculateInscribedCrop(
 }
 
 import { detectZoltanvinStraightAngle } from './zoltanvinStraightener';
+import { detectAngleWithCannyHough } from './cannyHoughDetector';
 
-export type StraighteningAlgorithm = 'zoltanvin-hough' | 'hybrid-ensemble' | 'radon-profile' | 'portrait-body';
+/**
+ * Available straightening algorithm modes:
+ *  - 'zoltanvin-hough'  : Probabilistic Hough Line segments (Zoltanvin)
+ *  - 'canny-hough'      : Canny edge detection + Hough Lines (SpicerSolutions port)
+ *  - 'radon-profile'    : Radon / Sobel projection profile
+ *  - 'portrait-body'    : Face/body tilt hint from pose estimation
+ *  - 'hybrid-ensemble'  : Weighted consensus of all four methods (most accurate)
+ */
+export type StraighteningAlgorithm = 'zoltanvin-hough' | 'canny-hough' | 'hybrid-ensemble' | 'radon-profile' | 'portrait-body';
 
 /**
  * Analyzes image pixel gradients using Multi-Axis Radon Projection, Zoltanvin Hough Line Segments,
@@ -96,6 +105,9 @@ export function detectHorizonAndTiltAngle(
 ): DetectedHorizonGeometry {
   // 1. Run Zoltanvin Probabilistic Hough Line Algorithm (from zoltanvin/straight-image)
   const zoltanResult = detectZoltanvinStraightAngle(gray, sampleWidth, sampleHeight);
+
+  // 1b. Run Canny-Hough pipeline (ported from SpicerSolutions/opencv-python-automatic-image-straightening)
+  const cannyHoughResult = detectAngleWithCannyHough(gray, sampleWidth, sampleHeight);
 
   // 2. Run Radon & Cardinal Sobel Projection Profile
   const minAngle = -45.0;
@@ -201,6 +213,13 @@ export function detectHorizonAndTiltAngle(
       finalDetectedAngle = radonRawAngle;
       confidence = Math.min(0.95, snr / 3.0);
     }
+  } else if (algorithm === 'canny-hough') {
+    // Pure Canny-Hough: ported from SpicerSolutions/opencv-python-automatic-image-straightening
+    // Otsu threshold → Canny edges → Hough sinusoidal vote → weighted-median angle
+    if (cannyHoughResult.requiresCorrection) {
+      finalDetectedAngle = cannyHoughResult.angleDeg;
+      confidence = cannyHoughResult.confidence;
+    }
   } else if (algorithm === 'portrait-body' && typeof faceTiltHint === 'number' && Math.abs(faceTiltHint) >= 0.5) {
     finalDetectedAngle = Number(faceTiltHint.toFixed(1));
     confidence = 0.90;
@@ -210,16 +229,26 @@ export function detectHorizonAndTiltAngle(
       confidence = Math.min(0.95, snr / 3.0);
     }
   } else {
-    // Hybrid Ensemble: Consensus of Zoltanvin Hough + Radon + Body
-    const candidates: Array<{ angle: number; weight: number }> = [];
+    // Hybrid Ensemble: Weighted consensus of Zoltanvin + Canny-Hough + Radon + Body
+    // Adding Canny-Hough as a 4th candidate gives a more robust vote on real photos.
+    const candidates: Array<{ angle: number; weight: number; source: string }> = [];
+
     if (zoltanResult.requiresCorrection) {
-      candidates.push({ angle: zoltanResult.detectedAngleDeg, weight: 1.5 });
+      candidates.push({ angle: zoltanResult.detectedAngleDeg, weight: 1.5, source: 'zoltanvin' });
+    }
+    // Canny-Hough: weight by its own confidence × 1.4 base (rewards sharp-edged images)
+    if (cannyHoughResult.requiresCorrection && cannyHoughResult.lineCount >= 3) {
+      candidates.push({
+        angle: cannyHoughResult.angleDeg,
+        weight: 1.4 * cannyHoughResult.confidence,
+        source: 'canny-hough',
+      });
     }
     if (Math.abs(radonRawAngle) >= 0.5 && snr >= 1.15) {
-      candidates.push({ angle: radonRawAngle, weight: 1.2 });
+      candidates.push({ angle: radonRawAngle, weight: 1.2, source: 'radon' });
     }
     if (typeof faceTiltHint === 'number' && Math.abs(faceTiltHint) >= 0.5) {
-      candidates.push({ angle: faceTiltHint, weight: 1.3 });
+      candidates.push({ angle: faceTiltHint, weight: 1.3, source: 'face-tilt' });
     }
 
     if (candidates.length > 0) {
@@ -230,7 +259,7 @@ export function detectHorizonAndTiltAngle(
         totalW += c.weight;
       }
       finalDetectedAngle = Number((weightedSum / totalW).toFixed(1));
-      confidence = Math.min(0.98, 0.70 + candidates.length * 0.1);
+      confidence = Math.min(0.98, 0.70 + candidates.length * 0.08);
     }
   }
 

@@ -220,7 +220,9 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
           sampleWidth,
           sampleHeight,
           img.naturalWidth || sampleWidth,
-          img.naturalHeight || sampleHeight
+          img.naturalHeight || sampleHeight,
+          selectedItem.faces && selectedItem.faces.length > 0 ? 0 : null,
+          algorithm
         );
 
         handleApplyAngle(detectedGeom.correctedAngleDeg);
@@ -493,7 +495,7 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
             All loaded photos are perfectly leveled &amp; verified straight (0.0° deviation).
           </span>
           <span className="text-[#4B5563] dark:text-[#A1A1AA] font-mono tabular-nums font-semibold">
-            Active Engine: {algorithm === 'zoltanvin-hough' ? 'Zoltanvin HoughLines' : algorithm === 'hybrid-ensemble' ? 'Hybrid AI Ensemble' : algorithm === 'portrait-body' ? 'Portrait Body Lean' : 'Radon Profile'}
+            Active Engine: {algorithm === 'canny-hough' ? 'Canny-Hough (Spicer/Nostrenz)' : algorithm === 'zoltanvin-hough' ? 'Zoltanvin HoughLines' : algorithm === 'hybrid-ensemble' ? 'Hybrid AI Ensemble' : algorithm === 'portrait-body' ? 'Portrait Body Lean' : 'Radon Profile'}
           </span>
         </div>
       )}
@@ -851,28 +853,11 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                     Detection Algorithm Engine
                   </span>
                   <span className="text-[9px] font-mono text-[#4D694E] font-bold">
-                    {algorithm === 'zoltanvin-hough' ? 'HoughLinesP' : algorithm === 'hybrid-ensemble' ? 'AI Consensus' : algorithm === 'portrait-body' ? 'Body Lean' : 'Radon 2D'}
+                    {algorithm === 'canny-hough' ? 'Canny-Hough' : algorithm === 'zoltanvin-hough' ? 'HoughLinesP' : algorithm === 'hybrid-ensemble' ? 'AI Consensus' : algorithm === 'portrait-body' ? 'Body Lean' : 'Radon 2D'}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-1 text-2xs font-sans">
-                  <button
-                    onClick={() => {
-                      setAlgorithm('zoltanvin-hough');
-                      setTimeout(() => handleAutoDetect(), 50);
-                    }}
-                    className={`px-2 py-1.5 rounded-lg text-left transition-all cursor-pointer ${
-                      algorithm === 'zoltanvin-hough'
-                        ? 'bg-[#4D694E] text-[#FFF3D5] shadow-sm'
-                        : 'bg-white dark:bg-[#1C1C1E] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] hover:border-[#4D694E]'
-                    }`}
-                  >
-                    <div className="font-bold text-xs leading-tight">Zoltanvin Hough</div>
-                    <div className={`text-[9px] ${algorithm === 'zoltanvin-hough' ? 'text-[#FFF3D5]/80' : 'text-[#9CA3AF]'}`}>
-                      OpenCV Line Segments
-                    </div>
-                  </button>
-
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-1 text-2xs font-sans">
                   <button
                     onClick={() => {
                       setAlgorithm('hybrid-ensemble');
@@ -887,6 +872,40 @@ export const StraightenAndToneView: React.FC<StraightenAndToneViewProps> = ({
                     <div className="font-bold text-xs leading-tight">Hybrid AI</div>
                     <div className={`text-[9px] ${algorithm === 'hybrid-ensemble' ? 'text-[#FFF3D5]/80' : 'text-[#9CA3AF]'}`}>
                       Multi-Model Consensus
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setAlgorithm('canny-hough');
+                      setTimeout(() => handleAutoDetect(), 50);
+                    }}
+                    className={`px-2 py-1.5 rounded-lg text-left transition-all cursor-pointer ${
+                      algorithm === 'canny-hough'
+                        ? 'bg-[#4D694E] text-[#FFF3D5] shadow-sm'
+                        : 'bg-white dark:bg-[#1C1C1E] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] hover:border-[#4D694E]'
+                    }`}
+                  >
+                    <div className="font-bold text-xs leading-tight">Canny-Hough</div>
+                    <div className={`text-[9px] ${algorithm === 'canny-hough' ? 'text-[#FFF3D5]/80' : 'text-[#9CA3AF]'}`}>
+                      Otsu + Canny Sinusoidal
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setAlgorithm('zoltanvin-hough');
+                      setTimeout(() => handleAutoDetect(), 50);
+                    }}
+                    className={`px-2 py-1.5 rounded-lg text-left transition-all cursor-pointer ${
+                      algorithm === 'zoltanvin-hough'
+                        ? 'bg-[#4D694E] text-[#FFF3D5] shadow-sm'
+                        : 'bg-white dark:bg-[#1C1C1E] text-[#111827] dark:text-white border border-[#E5E7EB] dark:border-[#27272A] hover:border-[#4D694E]'
+                    }`}
+                  >
+                    <div className="font-bold text-xs leading-tight">Zoltanvin Hough</div>
+                    <div className={`text-[9px] ${algorithm === 'zoltanvin-hough' ? 'text-[#FFF3D5]/80' : 'text-[#9CA3AF]'}`}>
+                      Line Segment Prob.
                     </div>
                   </button>
 

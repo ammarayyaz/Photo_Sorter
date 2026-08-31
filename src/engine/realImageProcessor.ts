@@ -437,7 +437,7 @@ export async function analyzeRealImageFile(file: File, index: number = 0): Promi
             width,
             height,
             faceTiltHint,
-            'zoltanvin-hough'
+            'hybrid-ensemble'
           );
         } catch {
           // Fallback if canvas read restriction occurs
