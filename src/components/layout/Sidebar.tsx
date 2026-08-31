@@ -84,19 +84,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
     }`;
 
   return (
-    <aside className="relative overflow-hidden w-[245px] h-full flex flex-col bg-white dark:bg-[#121813] select-none flex-shrink-0 transition-colors duration-200">
-      {/* Blurred Background Gradient */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-90 dark:opacity-50">
-        <div 
-          className="w-full h-full filter blur-[20px] scale-125" 
-          style={{
-            background: 'radial-gradient(circle at top left, var(--nav-gradient-start, #4D694E), var(--nav-gradient-end, #FFF3D5) 75%)'
-          }}
-        />
-      </div>
-
+    <aside className="relative overflow-hidden w-[245px] h-full flex flex-col bg-white dark:bg-black select-none flex-shrink-0 transition-colors duration-200">
       {/* 1. Sleek Brand Header */}
-      <div className="relative z-10 bg-transparent px-5 py-3.5 flex items-center justify-between transition-colors">
+      <div className="relative z-10 bg-white dark:bg-black px-5 py-3.5 flex items-center justify-between transition-colors">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-full bg-[#4D694E] text-[#FFF3D5] flex items-center justify-center shadow-none flex-shrink-0">
             <Sparkles className="w-4 h-4" />
@@ -108,8 +98,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* 2. Main Curved High-Contrast Body */}
-      <div className="relative z-10 flex-1 bg-transparent p-4 flex flex-col justify-between text-[#2D3F2E] dark:text-[#FFF3D5] no-scrollbar overflow-y-auto">
-        <div className="flex flex-col gap-3">
+      <div className="relative overflow-hidden z-10 flex-1 bg-white/10 dark:bg-black/30 rounded-tr-[36px] p-4 flex flex-col justify-between text-[#2D3F2E] dark:text-[#FFF3D5] no-scrollbar overflow-y-auto">
+        {/* Blurred Background Gradient */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-90 dark:opacity-50">
+          <div 
+            className="w-full h-full filter blur-[20px] scale-125" 
+            style={{
+              background: 'radial-gradient(circle at top left, var(--nav-gradient-start, #4D694E), var(--nav-gradient-end, #FFF3D5) 75%)'
+            }}
+          />
+        </div>
+
+        <div className="relative z-10 flex flex-col gap-3">
           {/* Upload Button */}
           <label className="w-full bg-[#4D694E] hover:bg-[#3C533D] text-white font-heading font-bold text-xs tracking-wide py-2.5 px-3.5 rounded-xl transition-all active:scale-98 flex items-center justify-center gap-2 cursor-pointer shadow-none">
             <Plus className="w-4 h-4 stroke-[2.5]" />
@@ -310,7 +310,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* 3. Bottom Storage Details */}
-        <div className="pt-3 border-t border-[#2D3F2E]/15 dark:border-[#2C3A2F] flex flex-col gap-2 text-xs">
+        <div className="relative z-10 pt-3 border-t border-[#2D3F2E]/15 dark:border-[#2C3A2F] flex flex-col gap-2 text-xs">
           <div className="flex items-center justify-between text-xs font-semibold text-[#2D3F2E]/90 dark:text-[#FFF3D5]/90">
             <span className="flex items-center gap-1.5">
               <Cloud className="w-3.5 h-3.5 text-[#2D3F2E]/60 dark:text-[#FFF3D5]/60" />
